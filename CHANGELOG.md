@@ -283,6 +283,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **developer** — add csv data profiler ([5657137](https://github.com/detachedsoul/click-kit/commit/5657137))
 - **developer** — add regex visual explainer ([28842af](https://github.com/detachedsoul/click-kit/commit/28842af))
 - **developer** — add html email previewer ([08972ec](https://github.com/detachedsoul/click-kit/commit/08972ec))
 - **developer** — add cors-safe api tester ([51ad7d8](https://github.com/detachedsoul/click-kit/commit/51ad7d8))
