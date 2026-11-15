@@ -19,6 +19,7 @@ describe("tool dates", () => {
 		expect(toolAddedOn("world-clock")).toBe("2026-11-21");
 		expect(toolAddedOn("audio-visualizer")).toBe("2026-11-21");
 		expect(toolAddedOn("subtitle-editor")).toBe("2026-11-15");
+		expect(toolAddedOn("regex-visual-explainer")).toBe("2026-11-15");
 		expect(toolAddedOn("word-counter")).toBeNull();
 		expect(TOOL_TRACKING_SINCE).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 	});

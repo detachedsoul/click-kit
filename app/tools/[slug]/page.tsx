@@ -33,6 +33,7 @@ import { ChmodTool } from "@/features/developer-tools/chmod-tool";
 import { IdToolkitTool } from "@/features/developer-tools/id-tool";
 import { CurlTool } from "@/features/developer-tools/curl-tool";
 import { ApiTesterTool } from "@/features/developer-tools/api-tester-tool";
+import { RegexExplainerTool } from "@/features/developer-tools/regex-explainer-tool";
 import { EmailPreviewTool } from "@/features/developer-tools/email-preview-tool";
 import { HttpStatusTool } from "@/features/developer-tools/http-status-tool";
 import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
@@ -201,6 +202,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"base64": Base64Tool,
 	"uuid-generator": UuidGeneratorTool,
 	"regex-tester": RegexTesterTool,
+	"regex-visual-explainer": RegexExplainerTool,
 	"timestamp-converter": TimestampConverterTool,
 	"url-inspector": UrlInspectorTool,
 	"hash-generator": HashGeneratorTool,
