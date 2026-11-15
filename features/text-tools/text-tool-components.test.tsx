@@ -3,12 +3,43 @@ import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import WordCounter from "@/features/text-tools/word-counter";
+import ReadAloud from "@/features/text-tools/read-aloud";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+type TestUtterance = {
+	text: string;
+	voice: SpeechSynthesisVoice | null;
+	rate: number;
+};
+
+const mockSpeechSynthesis = (voices: SpeechSynthesisVoice[] = []) => {
+	const utterances: TestUtterance[] = [];
+	const speechSynthesis = {
+		getVoices: vi.fn(() => voices),
+		addEventListener: vi.fn(),
+		removeEventListener: vi.fn(),
+		cancel: vi.fn(),
+		speak: vi.fn((utterance: SpeechSynthesisUtterance) => utterances.push(utterance)),
+		pause: vi.fn(),
+		resume: vi.fn(),
+	};
+	class MockUtterance {
+		voice: SpeechSynthesisVoice | null = null;
+		rate = 1;
+
+		constructor(public text: string) {}
+	}
+
+	vi.stubGlobal("speechSynthesis", speechSynthesis);
+	vi.stubGlobal("SpeechSynthesisUtterance", MockUtterance);
+	return { speechSynthesis, utterances };
+};
 
 afterEach(() => {
 	cleanup();
 	vi.restoreAllMocks();
+	vi.unstubAllGlobals();
 });
 
 describe("WordCounter", () => {
@@ -85,6 +116,42 @@ describe("TextCleaner", () => {
 			target: { value: "  keep   this  " },
 		});
 		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("  keep   this  ");
+	});
+});
+
+describe("ReadAloud", () => {
+	it("speaks pasted text locally and supports pause, resume, and stop", async () => {
+		const user = userEvent.setup();
+		const browserVoice: SpeechSynthesisVoice = {
+			name: "Browser English",
+			voiceURI: "browser-en",
+			lang: "en",
+			default: true,
+			localService: true,
+		};
+		const { speechSynthesis, utterances } = mockSpeechSynthesis([browserVoice]);
+		render(<ReadAloud />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text to read aloud" }), {
+			target: { value: "A sentence to hear." },
+		});
+		await user.selectOptions(screen.getByRole("combobox", { name: "Voice" }), "browser-en");
+		fireEvent.change(screen.getByRole("slider", { name: "Speaking speed" }), { target: { value: "1.4" } });
+
+		const readButton = screen.getByRole("button", { name: "Read aloud" });
+		expect(readButton.className).toContain("cursor-pointer");
+		await user.click(readButton);
+		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
+		expect(utterances[0].text).toBe("A sentence to hear.");
+		expect(utterances[0].voice).toBe(browserVoice);
+		expect(utterances[0].rate).toBe(1.4);
+		expect(screen.getByText("Reading your text…")).toBeTruthy();
+
+		await user.click(screen.getByRole("button", { name: "Pause" }));
+		expect(speechSynthesis.pause).toHaveBeenCalledOnce();
+		await user.click(screen.getByRole("button", { name: "Resume" }));
+		expect(speechSynthesis.resume).toHaveBeenCalledOnce();
+		await user.click(screen.getByRole("button", { name: "Stop" }));
+		expect(speechSynthesis.cancel).toHaveBeenCalled();
 	});
 });
 

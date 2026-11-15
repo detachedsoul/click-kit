@@ -4,6 +4,7 @@ import WordCounter from "@/features/text-tools/word-counter";
 import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
+import ReadAloud from "@/features/text-tools/read-aloud";
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
@@ -15,6 +16,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"case-converter": CaseConverter,
 	"text-cleaner": TextCleaner,
 	"text-diff": TextDiffChecker,
+	"read-aloud": ReadAloud,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));

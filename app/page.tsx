@@ -5,7 +5,7 @@ import { ArrowRight, LockKeyhole } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
 
 const HomePage = () => {
-	const featuredTools = ["word-counter", "json-formatter", "percentage-calculator", "password-generator", "case-converter", "qr-generator", "unit-converter", "pomodoro-timer"]
+	const featuredTools = ["word-counter", "read-aloud", "percentage-calculator", "password-generator", "case-converter", "qr-generator", "unit-converter", "pomodoro-timer"]
 		.map((id) => tools.find((tool) => tool.id === id)!)
 		.filter(Boolean);
 	const readyToolsCount = tools.filter((tool) => tool.status === "available").length;
@@ -30,7 +30,7 @@ const HomePage = () => {
 						<strong className="font-serif text-[76px] font-normal leading-[.8] tracking-[-.035em] text-[#f1c891] max-[620px]:text-6xl">{String(readyToolsCount).padStart(2, "0")}</strong>
 						<span className="text-xs text-[#e7e8dd]">tools ready now</span>
 					</div>
-					<p className="relative z-10 m-0 max-w-[250px] text-xs leading-[1.65] text-[#c6cec3] max-[620px]:max-w-[360px]">Quick ways to count, compare, clean, and reshape your words. More useful things are on the way.</p>
+					<p className="relative z-10 m-0 max-w-[250px] text-xs leading-[1.65] text-[#c6cec3] max-[620px]:max-w-[360px]">Quick ways to count, compare, clean, reshape, and listen to your words. More useful things are on the way.</p>
 				</aside>
 			</Shell>
 		</section>
