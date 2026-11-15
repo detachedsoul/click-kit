@@ -5,7 +5,6 @@ import {
 	countText,
 	DEFAULT_CLEAN_TEXT_OPTIONS,
 	diffText,
-	TextDiffLimitError,
 } from "@/features/text-tools/text-utils";
 
 describe("countText", () => {
@@ -106,8 +105,15 @@ describe("diffText", () => {
 		}
 	});
 
-	it("rejects pathological input sizes with a clear error instead of attempting a huge comparison", () => {
-		expect(() => diffText("x".repeat(20_001), "x")).toThrow(TextDiffLimitError);
-		expect(() => diffText(Array.from({ length: 1_501 }, () => "a").join(" "), "")).toThrow(TextDiffLimitError);
+	it("compares long passages beyond the old character and chunk thresholds", () => {
+		const sharedPassage = "a useful sentence with several words. ".repeat(1_000);
+		const original = `${sharedPassage}original ending`;
+		const revised = `${sharedPassage}revised ending`;
+		const result = diffText(original, revised);
+
+		expect(original.length).toBeGreaterThan(20_000);
+		expect(result.added).toBe(1);
+		expect(result.removed).toBe(1);
+		expect(result.segments.filter((segment) => segment.kind === "same").map((segment) => segment.text).join("")).toContain(sharedPassage);
 	});
 });

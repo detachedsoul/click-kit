@@ -1,10 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
 import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import WordCounter from "@/features/text-tools/word-counter";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 afterEach(() => {
 	cleanup();
@@ -106,11 +106,14 @@ describe("TextDiffChecker", () => {
 		expect(screen.getByRole("status").textContent).toContain("The passages are identical");
 	});
 
-	it("shows a useful error for an over-limit passage", async () => {
+	it("compares passages longer than the previous character limit", async () => {
 		const user = userEvent.setup();
-		render(<TextDiffChecker />);
-		fireEvent.change(screen.getByRole("textbox", { name: "Original text" }), { target: { value: "x".repeat(20_001) } });
+		const { container } = render(<TextDiffChecker />);
+		const longPassage = "x".repeat(20_001);
+		fireEvent.change(screen.getByRole("textbox", { name: "Original text" }), { target: { value: longPassage } });
 		await user.click(screen.getByRole("button", { name: /Compare passages/ }));
-		expect(screen.getByRole("alert").textContent).toContain("20,000 characters or fewer");
+
+		expect(screen.queryByRole("alert")).toBeNull();
+		expect(container.querySelector("del")?.textContent).toBe(longPassage);
 	});
 });

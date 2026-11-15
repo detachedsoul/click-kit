@@ -32,16 +32,6 @@ export const DEFAULT_CLEAN_TEXT_OPTIONS: Readonly<CleanTextOptions> = {
 	removeBlankLines: false,
 };
 
-export const MAX_DIFF_CHARACTERS = 20_000;
-export const MAX_DIFF_TOKENS = 1_500;
-
-export class TextDiffLimitError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = "TextDiffLimitError";
-	}
-}
-
 const wordSegmenter = typeof Intl.Segmenter === "undefined"
 	? undefined
 	: new Intl.Segmenter(undefined, { granularity: "word" });
@@ -185,19 +175,52 @@ const findCommonMatches = (
 	rightOffset = 0,
 ): Match[] => {
 	if (left.length === 0 || right.length === 0) return [];
-	if (left.length === 1) {
-		const rightIndex = right.indexOf(left[0]);
-		return rightIndex === -1 ? [] : [{ leftIndex: leftOffset, rightIndex: rightOffset + rightIndex }];
+
+	let commonPrefixLength = 0;
+	while (commonPrefixLength < left.length && commonPrefixLength < right.length && left[commonPrefixLength] === right[commonPrefixLength]) {
+		commonPrefixLength += 1;
 	}
 
-	const leftMiddle = Math.floor(left.length / 2);
-	const leftHalfLengths = getLcsLengths(left.slice(0, leftMiddle), right);
-	const rightHalfLengths = getLcsLengths(left.slice(leftMiddle).reverse(), right.slice().reverse());
+	let commonSuffixLength = 0;
+	while (
+		commonSuffixLength < left.length - commonPrefixLength
+		&& commonSuffixLength < right.length - commonPrefixLength
+		&& left[left.length - commonSuffixLength - 1] === right[right.length - commonSuffixLength - 1]
+	) {
+		commonSuffixLength += 1;
+	}
+
+	const prefixMatches = Array.from({ length: commonPrefixLength }, (_, index) => ({
+		leftIndex: leftOffset + index,
+		rightIndex: rightOffset + index,
+	}));
+	const suffixMatches = Array.from({ length: commonSuffixLength }, (_, index) => ({
+		leftIndex: leftOffset + left.length - commonSuffixLength + index,
+		rightIndex: rightOffset + right.length - commonSuffixLength + index,
+	}));
+	const middleLeft = left.slice(commonPrefixLength, left.length - commonSuffixLength);
+	const middleRight = right.slice(commonPrefixLength, right.length - commonSuffixLength);
+
+	if (middleLeft.length === 0 || middleRight.length === 0) return [...prefixMatches, ...suffixMatches];
+	const rightTokens = new Set(middleRight);
+	if (!middleLeft.some((token) => rightTokens.has(token))) return [...prefixMatches, ...suffixMatches];
+	if (middleLeft.length === 1) {
+		const rightIndex = middleRight.indexOf(middleLeft[0]);
+		const middleMatches = rightIndex === -1 ? [] : [{
+			leftIndex: leftOffset + commonPrefixLength,
+			rightIndex: rightOffset + commonPrefixLength + rightIndex,
+		}];
+		return [...prefixMatches, ...middleMatches, ...suffixMatches];
+	}
+
+	const leftMiddle = Math.floor(middleLeft.length / 2);
+	const leftHalfLengths = getLcsLengths(middleLeft.slice(0, leftMiddle), middleRight);
+	const rightHalfLengths = getLcsLengths(middleLeft.slice(leftMiddle).reverse(), middleRight.slice().reverse());
 	let rightMiddle = 0;
 	let longestLength = -1;
 
-	for (let rightIndex = 0; rightIndex <= right.length; rightIndex += 1) {
-		const combinedLength = leftHalfLengths[rightIndex] + rightHalfLengths[right.length - rightIndex];
+	for (let rightIndex = 0; rightIndex <= middleRight.length; rightIndex += 1) {
+		const combinedLength = leftHalfLengths[rightIndex] + rightHalfLengths[middleRight.length - rightIndex];
 		if (combinedLength > longestLength) {
 			longestLength = combinedLength;
 			rightMiddle = rightIndex;
@@ -205,8 +228,10 @@ const findCommonMatches = (
 	}
 
 	return [
-		...findCommonMatches(left.slice(0, leftMiddle), right.slice(0, rightMiddle), leftOffset, rightOffset),
-		...findCommonMatches(left.slice(leftMiddle), right.slice(rightMiddle), leftOffset + leftMiddle, rightOffset + rightMiddle),
+		...prefixMatches,
+		...findCommonMatches(middleLeft.slice(0, leftMiddle), middleRight.slice(0, rightMiddle), leftOffset + commonPrefixLength, rightOffset + commonPrefixLength),
+		...findCommonMatches(middleLeft.slice(leftMiddle), middleRight.slice(rightMiddle), leftOffset + commonPrefixLength + leftMiddle, rightOffset + commonPrefixLength + rightMiddle),
+		...suffixMatches,
 	];
 };
 
@@ -216,16 +241,16 @@ const countChangedUnits = (text: string): number => {
 };
 
 export const diffText = (originalText: string, revisedText: string): TextDiffResult => {
-	if (originalText.length > MAX_DIFF_CHARACTERS || revisedText.length > MAX_DIFF_CHARACTERS) {
-		throw new TextDiffLimitError(`Each passage must be ${MAX_DIFF_CHARACTERS.toLocaleString()} characters or fewer.`);
+	if (originalText === revisedText) {
+		return {
+			segments: originalText ? [{ kind: "same", text: originalText }] : [],
+			added: 0,
+			removed: 0,
+		};
 	}
 
 	const originalTokens = tokenizeForDiff(originalText);
 	const revisedTokens = tokenizeForDiff(revisedText);
-	if (originalTokens.length > MAX_DIFF_TOKENS || revisedTokens.length > MAX_DIFF_TOKENS) {
-		throw new TextDiffLimitError(`Each passage must contain ${MAX_DIFF_TOKENS.toLocaleString()} text chunks or fewer.`);
-	}
-
 	const matches = findCommonMatches(originalTokens, revisedTokens);
 	const segments: TextDiffSegment[] = [];
 	const appendSegment = (kind: TextDiffKind, text: string) => {
