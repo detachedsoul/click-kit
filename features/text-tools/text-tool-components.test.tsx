@@ -126,7 +126,7 @@ describe("ReadAloud", () => {
 			name: "Browser English",
 			voiceURI: "browser-en",
 			lang: "en",
-			default: true,
+			default: false,
 			localService: true,
 		};
 		const { speechSynthesis, utterances } = mockSpeechSynthesis([browserVoice]);
@@ -134,17 +134,24 @@ describe("ReadAloud", () => {
 		fireEvent.change(screen.getByRole("textbox", { name: "Text to read aloud" }), {
 			target: { value: "A sentence to hear." },
 		});
-		await user.selectOptions(screen.getByRole("combobox", { name: "Voice" }), "browser-en");
-		fireEvent.change(screen.getByRole("slider", { name: "Speaking speed" }), { target: { value: "1.4" } });
 
+		const voiceSelect = screen.getByRole("combobox", { name: "Voice" }) as HTMLSelectElement;
+		expect(voiceSelect.disabled).toBe(false);
 		const readButton = screen.getByRole("button", { name: "Read aloud" });
 		expect(readButton.className).toContain("cursor-pointer");
 		await user.click(readButton);
 		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
 		expect(utterances[0].text).toBe("A sentence to hear.");
-		expect(utterances[0].voice).toBe(browserVoice);
-		expect(utterances[0].rate).toBe(1.4);
+		expect(utterances[0].rate).toBe(1);
 		expect(screen.getByText("Reading your text…")).toBeTruthy();
+
+		await user.selectOptions(voiceSelect, "browser-en");
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(2);
+		expect(utterances[1].voice).toBe(browserVoice);
+		fireEvent.change(screen.getByRole("slider", { name: "Speaking speed" }), { target: { value: "1.4" } });
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
+		expect(utterances[2].rate).toBe(1.4);
+		expect(utterances[2].voice).toBe(browserVoice);
 
 		await user.click(screen.getByRole("button", { name: "Pause" }));
 		expect(speechSynthesis.pause).toHaveBeenCalledOnce();

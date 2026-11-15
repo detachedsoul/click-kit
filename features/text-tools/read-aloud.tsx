@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { LockKeyhole, Pause, Play, RotateCcw, Square, Volume2 } from "lucide-react";
+import { LockKeyhole, Pause, Play, RotateCcw, Square, Volume2, RefreshCw } from "lucide-react";
 import { countGraphemes } from "@/features/text-tools/text-utils";
 
 type SpeechSnapshot = {
@@ -12,20 +12,26 @@ type SpeechSnapshot = {
 const emptySpeechSnapshot: SpeechSnapshot = { supported: false, voices: [] };
 let speechSnapshot = emptySpeechSnapshot;
 
+const speechSubscribers = new Set<() => void>();
 const getSpeechSnapshot = () => speechSnapshot;
 const getServerSpeechSnapshot = () => emptySpeechSnapshot;
+
+const refreshSpeechSnapshot = () => {
+	if (typeof window === "undefined" || !window.speechSynthesis) return;
+	speechSnapshot = { supported: true, voices: window.speechSynthesis.getVoices() };
+	speechSubscribers.forEach((subscriber) => subscriber());
+};
 
 const subscribeToSpeech = (onStoreChange: () => void) => {
 	if (typeof window === "undefined" || !window.speechSynthesis) return () => undefined;
 	const synthesis = window.speechSynthesis;
-	const updateSnapshot = () => {
-		speechSnapshot = { supported: true, voices: synthesis.getVoices() };
-		onStoreChange();
+	speechSubscribers.add(onStoreChange);
+	synthesis.addEventListener("voiceschanged", refreshSpeechSnapshot);
+	refreshSpeechSnapshot();
+	return () => {
+		speechSubscribers.delete(onStoreChange);
+		synthesis.removeEventListener("voiceschanged", refreshSpeechSnapshot);
 	};
-
-	synthesis.addEventListener("voiceschanged", updateSnapshot);
-	updateSnapshot();
-	return () => synthesis.removeEventListener("voiceschanged", updateSnapshot);
 };
 
 const ReadAloud = () => {
@@ -37,7 +43,6 @@ const ReadAloud = () => {
 	const [message, setMessage] = useState("");
 	const activeUtteranceId = useRef(0);
 	const { supported: isSupported, voices } = useSyncExternalStore(subscribeToSpeech, getSpeechSnapshot, getServerSpeechSnapshot);
-	const selectedVoice = voices.find((voice) => voice.voiceURI === selectedVoiceURI);
 
 	useEffect(() => {
 		if (!isSupported) return;
@@ -47,7 +52,7 @@ const ReadAloud = () => {
 		};
 	}, [isSupported]);
 
-	const startReading = () => {
+	const startReading = (nextRate = rate, voiceURI = selectedVoiceURI) => {
 		if (!text.trim() || !isSupported) return;
 		const synthesis = window.speechSynthesis;
 		if (!synthesis) return;
@@ -56,8 +61,9 @@ const ReadAloud = () => {
 		const utteranceId = activeUtteranceId.current;
 		synthesis.cancel();
 		const utterance = new SpeechSynthesisUtterance(text);
-		if (selectedVoice) utterance.voice = selectedVoice;
-		utterance.rate = rate;
+		const voice = voices.find((item) => item.voiceURI === voiceURI);
+		if (voice) utterance.voice = voice;
+		utterance.rate = nextRate;
 		utterance.onstart = () => {
 			if (activeUtteranceId.current === utteranceId) setIsSpeaking(true);
 		};
@@ -77,6 +83,16 @@ const ReadAloud = () => {
 		setIsPaused(false);
 		setMessage("");
 		synthesis.speak(utterance);
+	};
+
+	const handleVoiceChange = (voiceURI: string) => {
+		setSelectedVoiceURI(voiceURI);
+		if (isSpeaking) startReading(rate, voiceURI);
+	};
+
+	const handleRateChange = (nextRate: number) => {
+		setRate(nextRate);
+		if (isSpeaking) startReading(nextRate, selectedVoiceURI);
 	};
 
 	const togglePause = () => {
@@ -143,17 +159,22 @@ const ReadAloud = () => {
 			<div className="grid grid-cols-[minmax(0,1fr)_minmax(180px,.7fr)] gap-4 max-[620px]:grid-cols-1">
 				<div className="min-w-0">
 					<label className="mb-2 block text-xs font-semibold text-[#3c3d37]" htmlFor="read-aloud-voice">Voice</label>
-					<select
-						className="h-10 w-full cursor-pointer border border-line bg-surface px-3 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
-						id="read-aloud-voice"
-						value={selectedVoiceURI}
-						onChange={(event) => setSelectedVoiceURI(event.target.value)}
-						disabled={!isSupported || voices.length === 0 || isSpeaking}
-					>
-						<option value="">System default voice</option>
-						{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
-					</select>
-					<p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">Voices depend on what your browser and device provide.</p>
+					<div className="flex gap-2">
+						<select
+							className="h-10 min-w-0 flex-1 cursor-pointer border border-line bg-surface px-3 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							id="read-aloud-voice"
+							value={selectedVoiceURI}
+							onChange={(event) => handleVoiceChange(event.target.value)}
+							disabled={!isSupported}
+						>
+							<option value="">System default voice</option>
+							{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
+						</select>
+						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshSpeechSnapshot} disabled={!isSupported} title="Reload voices from your browser">
+							<RefreshCw size={14} aria-hidden="true" /><span className="max-[420px]:sr-only">Refresh</span>
+						</button>
+					</div>
+					<p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">{voices.length > 0 ? "Choose a voice provided by your browser or device." : "No extra voices are exposed right now; refresh or use the system default."}</p>
 				</div>
 				<div>
 					<div className="mb-2 flex items-center justify-between gap-3">
@@ -168,15 +189,16 @@ const ReadAloud = () => {
 						max="2"
 						step="0.1"
 						value={rate}
-						onChange={(event) => setRate(Number(event.target.value))}
+						onChange={(event) => handleRateChange(Number(event.target.value))}
 						aria-valuetext={`${rate.toFixed(1)} times normal speed`}
 					/>
 				</div>
 			</div>
+			<p className="-mt-3 mb-0 text-[11px] leading-[1.5] text-muted">Changing the voice or speed during playback restarts from the beginning with your new settings.</p>
 
 			<div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5 max-[520px]:items-stretch max-[520px]:flex-col">
 				<div className="flex flex-wrap gap-2 max-[520px]:grid max-[520px]:grid-cols-2">
-					<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 border border-forest bg-forest px-4 text-xs font-medium text-white transition-colors hover:bg-[#354d44] disabled:cursor-not-allowed disabled:border-[#b8b9b1] disabled:bg-[#b8b9b1]" type="button" onClick={startReading} disabled={!isSupported || !text.trim()}>
+					<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 border border-forest bg-forest px-4 text-xs font-medium text-white transition-colors hover:bg-[#354d44] disabled:cursor-not-allowed disabled:border-[#b8b9b1] disabled:bg-[#b8b9b1]" type="button" onClick={() => startReading()} disabled={!isSupported || !text.trim()}>
 						{isSpeaking && !isPaused ? <RotateCcw size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" fill="currentColor" />}
 						{isSpeaking && !isPaused ? "Start again" : "Read aloud"}
 					</button>
