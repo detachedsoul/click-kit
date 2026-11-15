@@ -92,6 +92,7 @@ import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-too
 import { RtfTool } from "@/features/converter-tools/rtf-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
+import { SubtitleEditorTool } from "@/features/converter-tools/subtitle-editor-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
 import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
 import { DocxTool } from "@/features/converter-tools/docx-tool";
@@ -326,6 +327,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"markdown-to-html": MarkdownToHtmlTool,
 	"rtf-to-text": RtfTool,
 	"subtitle-converter": SubtitleConverterTool,
+	"subtitle-editor": SubtitleEditorTool,
 	"contacts-converter": ContactsConverterTool,
 	"calendar-converter": CalendarConverterTool,
 	"docx-to-pdf": DocxPdfTool,
