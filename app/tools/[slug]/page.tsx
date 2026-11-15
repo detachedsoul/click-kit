@@ -33,6 +33,7 @@ import { ChmodTool } from "@/features/developer-tools/chmod-tool";
 import { IdToolkitTool } from "@/features/developer-tools/id-tool";
 import { CurlTool } from "@/features/developer-tools/curl-tool";
 import { ApiTesterTool } from "@/features/developer-tools/api-tester-tool";
+import { EmailPreviewTool } from "@/features/developer-tools/email-preview-tool";
 import { HttpStatusTool } from "@/features/developer-tools/http-status-tool";
 import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
 import { JsonZodTool } from "@/features/developer-tools/zod-tool";
@@ -228,6 +229,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"id-toolkit": IdToolkitTool,
 	"curl-converter": CurlTool,
 	"api-tester": ApiTesterTool,
+	"email-preview": EmailPreviewTool,
 	"http-status": HttpStatusTool,
 	"number-base": NumberBaseTool,
 	"json-zod": JsonZodTool,
