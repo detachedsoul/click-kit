@@ -37,15 +37,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
-- **changelog** — note Word title spacing fix ([cfcdac0](https://github.com/detachedsoul/click-kit/commit/cfcdac0))
-- **changelog** — record Word rendering fix ([241da4c](https://github.com/detachedsoul/click-kit/commit/241da4c))
-- **changelog** — regenerate release notes ([500a9f1](https://github.com/detachedsoul/click-kit/commit/500a9f1))
-- **changelog** — regenerate release notes ([014c65c](https://github.com/detachedsoul/click-kit/commit/014c65c))
-- **changelog** — regenerate release notes ([1142421](https://github.com/detachedsoul/click-kit/commit/1142421))
 - **changelog** — include the audio trimmer in today's release ([6865432](https://github.com/detachedsoul/click-kit/commit/6865432))
-- **changelog** — add the audio trimmer to today's notes ([d7acbf0](https://github.com/detachedsoul/click-kit/commit/d7acbf0))
-- **changelog** — fold the world clock into the notes ([8b5b43d](https://github.com/detachedsoul/click-kit/commit/8b5b43d))
-- **changelog** — fold the packing list into the notes ([3450d79](https://github.com/detachedsoul/click-kit/commit/3450d79))
 
 ## 20 November 2026
 
@@ -79,16 +71,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
-- **changelog** — fold the scanner into the notes ([ddaacd4](https://github.com/detachedsoul/click-kit/commit/ddaacd4))
-- **changelog** — fold the typing tester into the notes ([f7d8881](https://github.com/detachedsoul/click-kit/commit/f7d8881))
 - Install Vercel Speed Insights with docs ([197b610](https://github.com/detachedsoul/click-kit/commit/197b610))
 - Install Vercel Web Analytics ([3a89e26](https://github.com/detachedsoul/click-kit/commit/3a89e26))
-- **changelog** — fold the two converters into the notes ([5317a23](https://github.com/detachedsoul/click-kit/commit/5317a23))
-- **changelog** — fold the draggable marks into the notes ([5d6cd3f](https://github.com/detachedsoul/click-kit/commit/5d6cd3f))
-- **changelog** — fold the slider fix into the notes ([eeed74b](https://github.com/detachedsoul/click-kit/commit/eeed74b))
 - rewrite the readme as a description of the project ([e148002](https://github.com/detachedsoul/click-kit/commit/e148002))
-- **changelog** — fold the in-place restyling into the notes ([6224f01](https://github.com/detachedsoul/click-kit/commit/6224f01))
-- **changelog** — regenerate the release notes from history ([1b2dcbf](https://github.com/detachedsoul/click-kit/commit/1b2dcbf))
 - point the release notes at the rewritten commits ([e0223a6](https://github.com/detachedsoul/click-kit/commit/e0223a6))
 - fold the editor's typing change into the changelog ([f7b2566](https://github.com/detachedsoul/click-kit/commit/f7b2566))
 - fold the new tools and the editor rework into the changelog ([143d037](https://github.com/detachedsoul/click-kit/commit/143d037))
@@ -312,6 +297,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — enforce generated notes stay in sync ([220280b](https://github.com/detachedsoul/click-kit/commit/220280b))
 - **deps** — use current ESLint release ([3cf4348](https://github.com/detachedsoul/click-kit/commit/3cf4348))
 - **deps** — update packages to current compatible releases ([11c9e68](https://github.com/detachedsoul/click-kit/commit/11c9e68))
 - Initial commit ([ffd55be](https://github.com/detachedsoul/click-kit/commit/ffd55be))

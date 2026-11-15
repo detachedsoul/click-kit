@@ -198,75 +198,11 @@
           "group": "Maintenance",
           "entries": [
             {
-              "hash": "cfcdac0",
-              "date": "2026-11-21",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "note Word title spacing fix",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "241da4c",
-              "date": "2026-11-21",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "record Word rendering fix",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "500a9f1",
-              "date": "2026-11-21",
-              "type": "chore",
-              "scope": "changelog",
-              "summary": "regenerate release notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "014c65c",
-              "date": "2026-11-21",
-              "type": "chore",
-              "scope": "changelog",
-              "summary": "regenerate release notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "1142421",
-              "date": "2026-11-21",
-              "type": "chore",
-              "scope": "changelog",
-              "summary": "regenerate release notes",
-              "group": "Maintenance"
-            },
-            {
               "hash": "6865432",
               "date": "2026-11-21",
               "type": "test",
               "scope": "changelog",
               "summary": "include the audio trimmer in today's release",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "d7acbf0",
-              "date": "2026-11-21",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "add the audio trimmer to today's notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "8b5b43d",
-              "date": "2026-11-21",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the world clock into the notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "3450d79",
-              "date": "2026-11-21",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the packing list into the notes",
               "group": "Maintenance"
             }
           ]
@@ -447,22 +383,6 @@
           "group": "Maintenance",
           "entries": [
             {
-              "hash": "ddaacd4",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the scanner into the notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "f7d8881",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the typing tester into the notes",
-              "group": "Maintenance"
-            },
-            {
               "hash": "197b610",
               "date": "2026-11-20",
               "type": "chore",
@@ -479,51 +399,11 @@
               "group": "Maintenance"
             },
             {
-              "hash": "5317a23",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the two converters into the notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "5d6cd3f",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the draggable marks into the notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "eeed74b",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the slider fix into the notes",
-              "group": "Maintenance"
-            },
-            {
               "hash": "e148002",
               "date": "2026-11-20",
               "type": "docs",
               "scope": "",
               "summary": "rewrite the readme as a description of the project",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "6224f01",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "fold the in-place restyling into the notes",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "1b2dcbf",
-              "date": "2026-11-20",
-              "type": "docs",
-              "scope": "changelog",
-              "summary": "regenerate the release notes from history",
               "group": "Maintenance"
             },
             {
@@ -2000,6 +1880,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "220280b",
+              "date": "2026-11-15",
+              "type": "test",
+              "scope": "changelog",
+              "summary": "enforce generated notes stay in sync",
+              "group": "Maintenance"
+            },
             {
               "hash": "3cf4348",
               "date": "2026-11-15",
