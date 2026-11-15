@@ -1826,6 +1826,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "28842af",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add regex visual explainer",
+              "group": "Added"
+            },
+            {
+              "hash": "08972ec",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add html email previewer",
+              "group": "Added"
+            },
+            {
               "hash": "51ad7d8",
               "date": "2026-11-15",
               "type": "feat",
