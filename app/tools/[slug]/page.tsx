@@ -34,6 +34,7 @@ import { IdToolkitTool } from "@/features/developer-tools/id-tool";
 import { CurlTool } from "@/features/developer-tools/curl-tool";
 import { ApiTesterTool } from "@/features/developer-tools/api-tester-tool";
 import { RegexExplainerTool } from "@/features/developer-tools/regex-explainer-tool";
+import { CsvProfileTool } from "@/features/developer-tools/csv-profile-tool";
 import { EmailPreviewTool } from "@/features/developer-tools/email-preview-tool";
 import { HttpStatusTool } from "@/features/developer-tools/http-status-tool";
 import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
@@ -216,6 +217,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"env-validator": EnvValidatorTool,
 	"color-contrast": ColorContrastTool,
 	"csv-json": CsvJsonTool,
+	"csv-data-profiler": CsvProfileTool,
 	"jsonpath-tester": JsonPathTool,
 	"json-schema-validator": JsonSchemaValidatorTool,
 	"file-checksum": FileHashTool,
