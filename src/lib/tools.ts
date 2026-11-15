@@ -1,0 +1,72 @@
+import {
+	Binary,
+	Braces,
+	Calculator,
+	CaseSensitive,
+	Clock3,
+	Code2,
+	FileImage,
+	FileText,
+	Hash,
+	Image,
+	ListChecks,
+	LockKeyhole,
+	Percent,
+	Regex,
+	ScanQrCode,
+	Shuffle,
+	Timer,
+	Type,
+	WandSparkles,
+	Workflow,
+	Baby,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity";
+export type ToolStatus = "planned";
+
+export type Tool = {
+	id: string;
+	name: string;
+	description: string;
+	category: CategoryId;
+	slug: string;
+	keywords: string[];
+	icon: LucideIcon;
+	status: ToolStatus;
+};
+
+export const categories: { id: CategoryId; name: string; description: string; icon: LucideIcon }[] = [
+	{ id: "text", name: "Text & writing", description: "Tidy, transform, and understand your words.", icon: Type },
+	{ id: "calculators", name: "Calculators", description: "Quick answers for everyday numbers.", icon: Calculator },
+	{ id: "developer", name: "Developer tools", description: "Small, sharp helpers for working with code.", icon: Code2 },
+	{ id: "image", name: "Image & files", description: "Useful image tools, processed right in your browser.", icon: Image },
+	{ id: "productivity", name: "Productivity", description: "Simple tools to help you get into a good rhythm.", icon: ListChecks },
+];
+
+export const tools: Tool[] = [
+	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "planned" },
+	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "planned" },
+	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "planned" },
+	{ id: "text-diff", name: "Text difference checker", description: "Compare two passages and spot what changed.", category: "text", slug: "text-diff", keywords: ["compare", "diff", "changes"], icon: Workflow, status: "planned" },
+	{ id: "calculator", name: "Standard calculator", description: "A dependable calculator for everyday arithmetic.", category: "calculators", slug: "calculator", keywords: ["math", "addition", "divide"], icon: Calculator, status: "planned" },
+	{ id: "percentage-calculator", name: "Percentage calculator", description: "Work out percentages, increases, and reductions.", category: "calculators", slug: "percentage-calculator", keywords: ["percent", "discount", "increase"], icon: Percent, status: "planned" },
+	{ id: "age-calculator", name: "Age calculator", description: "Find an age or the time between two dates.", category: "calculators", slug: "age-calculator", keywords: ["birthday", "date", "years"], icon: Baby, status: "planned" },
+	{ id: "unit-converter", name: "Unit converter", description: "Convert common measurements with confidence.", category: "calculators", slug: "unit-converter", keywords: ["length", "weight", "temperature", "units"], icon: Workflow, status: "planned" },
+	{ id: "json-formatter", name: "JSON formatter", description: "Validate, format, and minify JSON in your browser.", category: "developer", slug: "json-formatter", keywords: ["beautify", "minify", "validate", "code"], icon: Braces, status: "planned" },
+	{ id: "json-typescript", name: "JSON to TypeScript", description: "Turn a JSON example into useful TypeScript types.", category: "developer", slug: "json-typescript", keywords: ["interface", "types", "code"], icon: Code2, status: "planned" },
+	{ id: "base64", name: "Base64 encoder & decoder", description: "Encode or decode text, including Unicode characters.", category: "developer", slug: "base64", keywords: ["encode", "decode", "unicode"], icon: Binary, status: "planned" },
+	{ id: "uuid-generator", name: "UUID generator", description: "Generate unique identifiers with browser-safe randomness.", category: "developer", slug: "uuid-generator", keywords: ["guid", "identifier", "random"], icon: Hash, status: "planned" },
+	{ id: "regex-tester", name: "Regex tester", description: "Try a regular expression and inspect its matches.", category: "developer", slug: "regex-tester", keywords: ["pattern", "regular expression", "matches"], icon: Regex, status: "planned" },
+	{ id: "timestamp-converter", name: "Timestamp converter", description: "Translate Unix timestamps to readable dates and back.", category: "developer", slug: "timestamp-converter", keywords: ["unix", "epoch", "date", "time"], icon: Clock3, status: "planned" },
+	{ id: "qr-generator", name: "QR code generator", description: "Create a QR code for a link or a short message.", category: "image", slug: "qr-generator", keywords: ["qr", "barcode", "link", "scan"], icon: ScanQrCode, status: "planned" },
+	{ id: "image-compressor", name: "Image compressor", description: "Reduce an image's file size before you share it.", category: "image", slug: "image-compressor", keywords: ["compress", "optimize", "photo"], icon: FileImage, status: "planned" },
+	{ id: "image-resizer", name: "Image resizer", description: "Resize an image to the dimensions you need.", category: "image", slug: "image-resizer", keywords: ["dimensions", "scale", "photo"], icon: Image, status: "planned" },
+	{ id: "password-generator", name: "Password generator", description: "Create a strong, random password on your device.", category: "productivity", slug: "password-generator", keywords: ["secure", "random", "privacy"], icon: LockKeyhole, status: "planned" },
+	{ id: "pomodoro-timer", name: "Pomodoro timer", description: "Focus for a while, then take a proper break.", category: "productivity", slug: "pomodoro-timer", keywords: ["focus", "countdown", "work"], icon: Timer, status: "planned" },
+	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "planned" },
+];
+
+export const getCategory = (id: CategoryId) => categories.find((category) => category.id === id)!;
+export const getTool = (slug: string) => tools.find((tool) => tool.slug === slug);
