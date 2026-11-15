@@ -75,7 +75,7 @@ export const CopyTextButton = ({ text }: { text: string }) => {
 
 	return (
 		<div className="flex items-center">
-			<button className="inline-flex min-h-[34px] items-center justify-center gap-[7px] border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#aaa69a] hover:text-ink disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={handleCopy} disabled={!text}>
+			<button className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#aaa69a] hover:text-ink disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={handleCopy} disabled={!text}>
 				<Icon size={14} aria-hidden="true" /> {label}
 			</button>
 			<span className="sr-only" role="status" aria-live="polite">

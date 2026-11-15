@@ -30,7 +30,7 @@ const CaseConverter = () => {
 				<legend className="mb-[9px] text-xs font-semibold text-[#3c3d37]">Convert to</legend>
 				<div className="flex flex-wrap gap-[7px]">
 					{caseOptions.map((option) => <button
-						className={`min-h-[37px] border border-line bg-surface px-[11px] text-[11px] text-[#5e5f58] transition-colors hover:border-[#aaa69a] hover:text-ink max-[520px]:px-2 max-[520px]:text-[10px] ${selectedCase === option.id ? "border-ink bg-ink text-white hover:bg-ink hover:text-white" : ""}`}
+						className={`min-h-[37px] cursor-pointer border px-[11px] text-[11px] transition-colors max-[520px]:px-2 max-[520px]:text-[10px] ${selectedCase === option.id ? "border-ink bg-ink text-white hover:bg-ink hover:text-white" : "border-line bg-surface text-[#5e5f58] hover:border-[#aaa69a] hover:text-ink"}`}
 						key={option.id}
 						type="button"
 						aria-pressed={selectedCase === option.id}

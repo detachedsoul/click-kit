@@ -61,7 +61,7 @@ const TextDiffChecker = () => {
 			</div>
 			<div className="flex items-center justify-between gap-[18px] max-[520px]:items-stretch max-[520px]:flex-col">
 				<p className="m-0 text-[11px] leading-[1.5] text-muted">Changes are matched by text chunks; line breaks and punctuation are included.</p>
-				<button className="inline-flex min-h-10 shrink-0 items-center justify-center gap-[9px] border border-forest bg-forest px-[14px] text-xs text-white transition-colors hover:bg-[#354d44] max-[520px]:w-full" type="button" onClick={compareTexts}>
+				<button className="inline-flex min-h-10 shrink-0 cursor-pointer items-center justify-center gap-[9px] border border-forest bg-forest px-[14px] text-xs text-white transition-colors hover:bg-[#354d44] max-[520px]:w-full" type="button" onClick={compareTexts}>
 					Compare passages <ArrowRight size={15} aria-hidden="true" />
 				</button>
 			</div>

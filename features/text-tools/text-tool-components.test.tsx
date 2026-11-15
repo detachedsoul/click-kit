@@ -42,7 +42,11 @@ describe("CaseConverter", () => {
 
 		await user.click(screen.getByRole("button", { name: "Title case" }));
 		expect(result.value).toBe("Hello World");
-		expect(screen.getByRole("button", { name: "Title case" }).getAttribute("aria-pressed")).toBe("true");
+		const selectedButton = screen.getByRole("button", { name: "Title case" });
+		expect(selectedButton.getAttribute("aria-pressed")).toBe("true");
+		expect(selectedButton.className).toContain("bg-ink");
+		expect(selectedButton.className).toContain("text-white");
+		expect(selectedButton.className).not.toContain("bg-surface");
 	});
 
 	it("copies the converted result and announces success", async () => {
