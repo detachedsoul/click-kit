@@ -62,6 +62,7 @@ import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import { BarcodeScanner } from "@/features/image-tools/barcode-scanner";
+import { DuplicateFileFinder } from "@/features/image-tools/duplicate-file-finder";
 import { CropTool } from "@/features/image-tools/crop-tool";
 import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
@@ -252,6 +253,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"text-wrapper": WrapTool,
 	"text-cipher": CipherTool,
 	"barcode-scanner": BarcodeScanner,
+	"duplicate-file-finder": DuplicateFileFinder,
 	"qr-generator": QrGeneratorTool,
 	"audio-trimmer": AudioTrimmer,
 	"audio-visualizer": AudioVisualizer,
