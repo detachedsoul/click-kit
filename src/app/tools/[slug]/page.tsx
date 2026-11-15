@@ -35,6 +35,7 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 	return <div className="shell">
 		<header className="page-top">
 			<nav className="breadcrumb" aria-label="Breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><Link href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
+			<div className="tool-page-kicker">{tool.status === "available" ? "Available now" : category.name}</div>
 			<h1>{tool.name}</h1><p>{tool.description}</p>
 		</header>
 		{tool.status === "available" && AvailableTool

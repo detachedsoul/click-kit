@@ -7,15 +7,21 @@ const HomePage = () => {
 	const featuredTools = ["word-counter", "json-formatter", "percentage-calculator", "password-generator", "case-converter", "qr-generator", "unit-converter", "pomodoro-timer"]
 		.map((id) => tools.find((tool) => tool.id === id)!)
 		.filter(Boolean);
+	const readyToolsCount = tools.filter((tool) => tool.status === "available").length;
 
 	return <>
 		<section className="shell hero" aria-labelledby="home-title">
-			<div>
+			<div className="hero-copy-column">
 				<div className="eyebrow">A little more useful, every day</div>
 				<h1 id="home-title">Good tools.<br /><span>Less fuss.</span></h1>
-				<p className="hero-copy">A considered collection of small tools for the things you do every day. No sign-up, no clutter — just get what you need and get on with it.</p>
+				<p className="hero-copy">Small, thoughtful browser tools for the digital chores in your day. No account, no detour — just the right tool, right when you need it.</p>
+				<Link className="hero-cta" href="/tools/word-counter">Try the word counter <ArrowRight size={16} aria-hidden="true" /></Link>
 			</div>
-			<aside className="hero-aside"><strong>Made to be useful.</strong><p>Practical helpers for your words, numbers, code, and everyday work — all in one quiet corner of the web.</p></aside>
+			<aside className="hero-aside" aria-label="ClickKit tools available now">
+				<div className="hero-aside-top"><span className="hero-live-dot" /> Ready to use today</div>
+				<div className="hero-aside-count"><strong>{String(readyToolsCount).padStart(2, "0")}</strong><span>tools ready now</span></div>
+				<p>Four quick ways to count, compare, clean, and reshape your words. More useful things are on the way.</p>
+			</aside>
 		</section>
 
 		<section className="section" id="tools" aria-labelledby="tools-title">
@@ -36,7 +42,7 @@ const HomePage = () => {
 						<h3>{category.name}</h3><p>{category.description}</p><span className="category-count">{String(count).padStart(2, "0")} tools</span>
 					</Link>;
 				})}</div>
-				<div style={{ marginTop: 25 }} className="privacy-note"><LockKeyhole size={17} aria-hidden="true" /><span><strong>Private by nature.</strong> Tools are designed to run in your browser. Your inputs stay on your device.</span></div>
+				<div className="privacy-note"><LockKeyhole size={17} aria-hidden="true" /><span><strong>Private by nature.</strong> Tools are designed to run in your browser. Your inputs stay on your device.</span></div>
 			</div>
 		</section>
 	</>;
