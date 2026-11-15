@@ -1826,6 +1826,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "51ad7d8",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add cors-safe api tester",
+              "group": "Added"
+            },
+            {
               "hash": "233d5e4",
               "date": "2026-11-15",
               "type": "feat",

@@ -12,6 +12,7 @@ describe("tool dates", () => {
 	});
 
 	it("knows when the newest tools arrived", () => {
+		expect(toolAddedOn("api-tester")).toBe("2026-11-15");
 		expect(toolAddedOn("meeting-planner")).toBeTruthy();
 		expect(toolAddedOn("packing-list")).toBe("2026-11-21");
 		expect(toolAddedOn("world-clock")).toBe("2026-11-21");

@@ -283,6 +283,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **developer** — add cors-safe api tester ([51ad7d8](https://github.com/detachedsoul/click-kit/commit/51ad7d8))
 - **converters** — add subtitle editor ([233d5e4](https://github.com/detachedsoul/click-kit/commit/233d5e4))
 - **text-tools** — add local read-aloud tool ([20c23b3](https://github.com/detachedsoul/click-kit/commit/20c23b3))
 - **text-tools** — implement four browser-based text utilities ([69edf6d](https://github.com/detachedsoul/click-kit/commit/69edf6d))
