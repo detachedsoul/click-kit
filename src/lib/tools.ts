@@ -24,7 +24,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity";
-export type ToolStatus = "planned";
+export type ToolStatus = "available" | "planned";
 
 export type Tool = {
 	id: string;
@@ -46,10 +46,10 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 ];
 
 export const tools: Tool[] = [
-	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "planned" },
-	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "planned" },
-	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "planned" },
-	{ id: "text-diff", name: "Text difference checker", description: "Compare two passages and spot what changed.", category: "text", slug: "text-diff", keywords: ["compare", "diff", "changes"], icon: Workflow, status: "planned" },
+	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "available" },
+	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "available" },
+	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "available" },
+	{ id: "text-diff", name: "Text difference checker", description: "Compare two passages and spot what changed.", category: "text", slug: "text-diff", keywords: ["compare", "diff", "changes"], icon: Workflow, status: "available" },
 	{ id: "calculator", name: "Standard calculator", description: "A dependable calculator for everyday arithmetic.", category: "calculators", slug: "calculator", keywords: ["math", "addition", "divide"], icon: Calculator, status: "planned" },
 	{ id: "percentage-calculator", name: "Percentage calculator", description: "Work out percentages, increases, and reductions.", category: "calculators", slug: "percentage-calculator", keywords: ["percent", "discount", "increase"], icon: Percent, status: "planned" },
 	{ id: "age-calculator", name: "Age calculator", description: "Find an age or the time between two dates.", category: "calculators", slug: "age-calculator", keywords: ["birthday", "date", "years"], icon: Baby, status: "planned" },

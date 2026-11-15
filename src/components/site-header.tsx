@@ -83,7 +83,7 @@ const SiteHeader = () => {
 						{results.length ? results.map((tool, index) => {
 							const category = categories.find((item) => item.id === tool.category);
 							return <Link className={`search-result${index === activeIndex ? " search-result-active" : ""}`} key={tool.id} id={`search-option-${tool.id}`} role="option" aria-selected={index === activeIndex} href={`/tools/${tool.slug}`} onClick={clearQuery}>
-								<span>{tool.name}</span><small>{category?.name}</small>
+								<span>{tool.name}</span><small>{tool.status === "available" ? "Ready to use" : category?.name}</small>
 							</Link>;
 						}) : <div className="search-result"><span>No matching tools</span><small>Try another term</small></div>}
 					</div>}
