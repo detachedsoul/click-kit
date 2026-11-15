@@ -198,6 +198,14 @@
           "group": "Maintenance",
           "entries": [
             {
+              "hash": "cfcdac0",
+              "date": "2026-11-21",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "note Word title spacing fix",
+              "group": "Maintenance"
+            },
+            {
               "hash": "241da4c",
               "date": "2026-11-21",
               "type": "docs",
@@ -1905,6 +1913,22 @@
         {
           "group": "Added",
           "entries": [
+            {
+              "hash": "5ed8890",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add multilingual image text OCR",
+              "group": "Added"
+            },
+            {
+              "hash": "83512f0",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add duplicate file finder",
+              "group": "Added"
+            },
             {
               "hash": "20c23b3",
               "date": "2026-11-15",

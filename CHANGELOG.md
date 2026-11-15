@@ -37,6 +37,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — note Word title spacing fix ([cfcdac0](https://github.com/detachedsoul/click-kit/commit/cfcdac0))
 - **changelog** — record Word rendering fix ([241da4c](https://github.com/detachedsoul/click-kit/commit/241da4c))
 - **changelog** — regenerate release notes ([500a9f1](https://github.com/detachedsoul/click-kit/commit/500a9f1))
 - **changelog** — regenerate release notes ([014c65c](https://github.com/detachedsoul/click-kit/commit/014c65c))
@@ -293,6 +294,8 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **image** — add multilingual image text OCR ([5ed8890](https://github.com/detachedsoul/click-kit/commit/5ed8890))
+- **image** — add duplicate file finder ([83512f0](https://github.com/detachedsoul/click-kit/commit/83512f0))
 - **text-tools** — add local read-aloud tool ([20c23b3](https://github.com/detachedsoul/click-kit/commit/20c23b3))
 - **text-tools** — implement four browser-based text utilities ([69edf6d](https://github.com/detachedsoul/click-kit/commit/69edf6d))
 - **shell** — establish ClickKit foundation and discovery ([528677d](https://github.com/detachedsoul/click-kit/commit/528677d))
