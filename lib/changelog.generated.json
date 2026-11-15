@@ -248,30 +248,6 @@
           "group": "Added",
           "entries": [
             {
-              "hash": "0036973",
-              "date": "2026-11-20",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add a barcode and QR scanner",
-              "group": "Added"
-            },
-            {
-              "hash": "bdcbc88",
-              "date": "2026-11-20",
-              "type": "feat",
-              "scope": "productivity",
-              "summary": "give the typing test a proper page of text",
-              "group": "Added"
-            },
-            {
-              "hash": "f47f954",
-              "date": "2026-11-20",
-              "type": "feat",
-              "scope": "productivity",
-              "summary": "add a typing speed tester",
-              "group": "Added"
-            },
-            {
               "hash": "0f46a2d",
               "date": "2026-11-20",
               "type": "feat",
@@ -358,6 +334,30 @@
               "scope": "pdf",
               "summary": "add a long-page stitcher and an overlay",
               "group": "Added"
+            },
+            {
+              "hash": "0036973",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a barcode and QR scanner",
+              "group": "Added"
+            },
+            {
+              "hash": "bdcbc88",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "give the typing test a proper page of text",
+              "group": "Added"
+            },
+            {
+              "hash": "f47f954",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a typing speed tester",
+              "group": "Added"
             }
           ]
         },
@@ -386,14 +386,6 @@
           "group": "Fixed",
           "entries": [
             {
-              "hash": "7ef1dab",
-              "date": "2026-11-20",
-              "type": "fix",
-              "scope": "productivity",
-              "summary": "make the typing tester say how it works",
-              "group": "Fixed"
-            },
-            {
               "hash": "91e11b6",
               "date": "2026-11-20",
               "type": "fix",
@@ -407,6 +399,14 @@
               "type": "fix",
               "scope": "pdf",
               "summary": "type notes straight onto the page and line up the mark buttons",
+              "group": "Fixed"
+            },
+            {
+              "hash": "7ef1dab",
+              "date": "2026-11-20",
+              "type": "fix",
+              "scope": "productivity",
+              "summary": "make the typing tester say how it works",
               "group": "Fixed"
             }
           ]
@@ -1826,19 +1826,11 @@
           "group": "Added",
           "entries": [
             {
-              "hash": "5ed8890",
+              "hash": "233d5e4",
               "date": "2026-11-15",
               "type": "feat",
-              "scope": "image",
-              "summary": "add multilingual image text OCR",
-              "group": "Added"
-            },
-            {
-              "hash": "83512f0",
-              "date": "2026-11-15",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add duplicate file finder",
+              "scope": "converters",
+              "summary": "add subtitle editor",
               "group": "Added"
             },
             {
@@ -1863,6 +1855,22 @@
               "type": "feat",
               "scope": "shell",
               "summary": "establish ClickKit foundation and discovery",
+              "group": "Added"
+            },
+            {
+              "hash": "5ed8890",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add multilingual image text OCR",
+              "group": "Added"
+            },
+            {
+              "hash": "83512f0",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add duplicate file finder",
               "group": "Added"
             }
           ]
@@ -1913,14 +1921,6 @@
           "group": "Maintenance",
           "entries": [
             {
-              "hash": "220280b",
-              "date": "2026-11-15",
-              "type": "test",
-              "scope": "changelog",
-              "summary": "enforce generated notes stay in sync",
-              "group": "Maintenance"
-            },
-            {
               "hash": "3cf4348",
               "date": "2026-11-15",
               "type": "chore",
@@ -1942,6 +1942,14 @@
               "type": "chore",
               "scope": "",
               "summary": "Initial commit",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "220280b",
+              "date": "2026-11-15",
+              "type": "test",
+              "scope": "changelog",
+              "summary": "enforce generated notes stay in sync",
               "group": "Maintenance"
             }
           ]
