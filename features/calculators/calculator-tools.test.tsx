@@ -7,6 +7,10 @@ import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import PercentageCalculator from "@/features/calculators/percentage-calculator";
 import StandardCalculator from "@/features/calculators/standard-calculator";
 import UnitConverter from "@/features/calculators/unit-converter";
+import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
+import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
+import GeometryCalculator from "@/features/calculators/geometry-calculator";
+import FuelEconomyCalculator from "@/features/calculators/fuel-economy-calculator";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -224,5 +228,38 @@ describe("UnitConverter", () => {
 		await user.click(screen.getByRole("button", { name: "Swap units" }));
 		expect((screen.getByLabelText("From") as HTMLSelectElement).value).toBe("foot");
 		expect((screen.getByLabelText("To") as HTMLSelectElement).value).toBe("meter");
+	});
+});
+
+
+describe("New calculator tools", () => {
+	it("estimates compound growth with monthly deposits", () => {
+		render(<CompoundInterestCalculator />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Starting amount" }), { target: { value: "1000" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Annual interest rate (%)" }), { target: { value: "0" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Investment term (years)" }), { target: { value: "1" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Monthly contribution" }), { target: { value: "100" } });
+		expect(screen.getByRole("region", { name: "Compound growth estimate" }).textContent).toContain("2,200");
+	});
+
+	it("applies discount before estimating tax", () => {
+		render(<SalesTaxCalculator />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Discount (%)" }), { target: { value: "10" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Tax rate (%)" }), { target: { value: "5" } });
+		expect(screen.getByRole("region", { name: "Price calculation" }).textContent).toContain("94.5");
+	});
+
+	it("calculates triangle area and perimeter", () => {
+		render(<GeometryCalculator />);
+		fireEvent.change(screen.getByLabelText("Shape"), { target: { value: "triangle" } });
+		expect(screen.getByRole("region", { name: "Geometry result" }).textContent).toContain("6");
+		expect(screen.getByRole("region", { name: "Geometry result" }).textContent).toContain("12");
+	});
+
+	it("converts fuel economy and estimates trip fuel", () => {
+		render(<FuelEconomyCalculator />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Fuel economy (km/L)" }), { target: { value: "10" } });
+		expect(screen.getByRole("region", { name: "Fuel economy result" }).textContent).toContain("10 L");
+		expect(screen.getByRole("region", { name: "Fuel economy result" }).textContent).toContain("23.5214583");
 	});
 });

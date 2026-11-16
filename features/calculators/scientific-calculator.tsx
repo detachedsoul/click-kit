@@ -26,6 +26,7 @@ const functionButtons = [
 	{ token: "abs(", label: "abs", description: "Insert absolute value function" },
 	{ token: "ln(", label: "ln", description: "Insert natural logarithm" },
 	{ token: "log(", label: "log", description: "Insert base-10 logarithm" },
+	{ token: "log10(", label: "log₁₀", description: "Insert base-10 logarithm" },
 	{ token: "log2(", label: "log₂", description: "Insert base-2 logarithm" },
 	{ token: "exp(", label: "eˣ", description: "Insert exponential function" },
 	{ token: "floor(", label: "floor", description: "Insert floor function" },
@@ -60,7 +61,12 @@ const advancedFunctionButtons = [
 	{ token: "mean(", label: "mean", description: "Insert mean function" },
 	{ token: "median(", label: "median", description: "Insert median function" },
 	{ token: "variance(", label: "variance", description: "Insert population variance function" },
+	{ token: "samplevariance(", label: "sample var", description: "Insert sample variance function" },
 	{ token: "stdev(", label: "stdev", description: "Insert population standard deviation function" },
+	{ token: "samplestdev(", label: "sample SD", description: "Insert sample standard deviation function" },
+	{ token: "wmean(", label: "weighted mean", description: "Insert weighted mean function" },
+	{ token: "gcd(", label: "GCD", description: "Insert greatest common divisor function" },
+	{ token: "lcm(", label: "LCM", description: "Insert least common multiple function" },
 	{ token: "pow(", label: "pow", description: "Insert power function" },
 	{ token: "root(", label: "root", description: "Insert nth-root function" },
 	{ token: "hypot(", label: "hypot", description: "Insert hypotenuse function" },
@@ -70,7 +76,7 @@ const advancedFunctionButtons = [
 	{ token: "comb(", label: "nCr", description: "Insert combination function" },
 ] as const;
 
-const multiArgumentFunctions = new Set(["min(", "max(", "sum(", "product(", "mean(", "median(", "variance(", "stdev(", "pow(", "root(", "hypot(", "atan2(", "clamp(", "perm(", "comb("]);
+const multiArgumentFunctions = new Set(["min(", "max(", "sum(", "product(", "mean(", "median(", "variance(", "stdev(", "samplevariance(", "samplestdev(", "wmean(", "gcd(", "lcm(", "pow(", "root(", "hypot(", "atan2(", "clamp(", "perm(", "comb("]);
 const functionUsage: Record<string, string> = {
 	"sin(": "Enter an angle in the parentheses; sin(30) = 0.5 when Degrees is selected.",
 	"cos(": "Enter an angle in the parentheses; cos(60) = 0.5 when Degrees is selected.",
@@ -83,11 +89,12 @@ const functionUsage: Record<string, string> = {
 	"abs(": "Enter a number to get its non-negative magnitude; abs(-5) = 5.",
 	"ln(": "Enter a number greater than zero for its natural logarithm; ln(e) = 1.",
 	"log(": "Enter a positive number for base-10 log, or log(value, base) for another base; log(100) = 2.",
+	"log10(": "Enter a positive number for its base-10 logarithm; log10(100) = 2.",
 	"log2(": "Enter a number greater than zero for its base-2 logarithm; log2(8) = 3.",
 	"exp(": "Enter an exponent to calculate e^x; exp(1) = e.",
 	"floor(": "Enter a number to round down; floor(2.8) = 2.",
 	"ceil(": "Enter a number to round up; ceil(2.1) = 3.",
-	"round(": "Enter a number to round to the nearest integer; halfway cases round away from zero.",
+	"round(": "Enter a number and optional decimal places; halfway cases round away from zero, as in round(1.005, 2) = 1.01.",
 	"asec(": "Enter a value with absolute magnitude at least 1; asec(2) = 60° in Degrees mode.",
 	"acsc(": "Enter a value with absolute magnitude at least 1; acsc(2) = 30° in Degrees mode.",
 	"acot(": "Enter a value; acot(1) = 45° in Degrees mode.",
@@ -114,7 +121,12 @@ const functionUsage: Record<string, string> = {
 	"mean(": "Enter comma-separated values for their arithmetic average; mean(1, 2, 3) = 2.",
 	"median(": "Enter comma-separated values to find the middle value; median(1, 9, 2) = 2.",
 	"variance(": "Enter comma-separated values for population variance; variance(1, 2, 3) = 2/3.",
+	"samplevariance(": "Enter at least two sample values; samplevariance(1, 2, 3) = 1.",
 	"stdev(": "Enter comma-separated values for population standard deviation; stdev(1, 2, 3) = sqrt(2/3).",
+	"samplestdev(": "Enter at least two sample values; samplestdev(1, 2, 3) = 1.",
+	"wmean(": "Enter value, weight pairs, such as wmean(80, 2, 90, 1) = 83.33. Weights must be nonnegative.",
+	"gcd(": "Enter two or more safe whole numbers; gcd(18, 24) = 6.",
+	"lcm(": "Enter two or more safe whole numbers; lcm(6, 8) = 24.",
 	"pow(": "Enter a base and exponent separated by a comma; pow(2, 3) = 8.",
 	"root(": "Enter a value and root index separated by a comma; root(27, 3) = 3.",
 	"hypot(": "Enter two or more side lengths separated by commas; hypot(3, 4) = 5.",
@@ -154,7 +166,9 @@ const operationGuideGroups = [
 	{ title: "Statistics and combinatorics", steps: [
 		"sum(a, b, ...) — add values (sum(1, 2, 3) = 6); product(a, b, ...) — multiply them (product(2, 3, 4) = 24).",
 		"mean(a, b, ...) — arithmetic average (mean(1, 2, 3) = 2); median(a, b, ...) — middle value after sorting (median(1, 9, 2) = 2).",
-		"variance(a, b, ...) and stdev(a, b, ...) — population variance and population standard deviation; for 1, 2, 3, variance = 2/3 and stdev = √(2/3).",
+		"variance(a, b, ...) and stdev(a, b, ...) — population variance and population standard deviation; samplevariance(a, b, ...) and samplestdev(a, b, ...) use the sample denominator and require at least two values.",
+		"wmean(value, weight, ...) — weighted average from value, weight pairs; weights must be nonnegative and have a positive sum.",
+		"gcd(a, b, ...) and lcm(a, b, ...) — greatest common divisor and least common multiple of safe whole numbers.",
 		"perm(n, r) (button nPr) — ordered arrangements (perm(5, 2) = 20); comb(n, r) (button nCr) — unordered selections (comb(5, 2) = 10). n and r must be whole numbers with 0 ≤ r ≤ n ≤ 1000.",
 	] },
 	{ title: "Constants and number bases", steps: [

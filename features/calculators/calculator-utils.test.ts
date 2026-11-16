@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, calculateDefiniteIntegral, convertMeasurement, evaluateScientificExpression, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
+import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, calculateDefiniteIntegral, convertMeasurement, evaluateScientificExpression, evaluateArithmeticExpression, calculateCompoundGrowth, calculateTaxAndDiscount, calculateGeometry, calculateFuelEconomy } from "@/features/calculators/calculator-utils";
 
 describe("standard calculator", () => {
 	it("respects operator precedence, parentheses, and unary signs", () => {
@@ -71,6 +71,23 @@ describe("additional calculators", () => {
 		expect(() => calculateTipSplit(80, 15, 0)).toThrow(/Group size/u);
 	});
 
+	it("estimates compound growth, discounts, tax, geometry, and fuel economy", () => {
+		const compoundResult = calculateCompoundGrowth(1000, 12, 1, 0);
+		expect(compoundResult.finalBalance).toBeCloseTo(1126.8250301319697, 10);
+		expect(compoundResult.interestEarned).toBeCloseTo(126.8250301319697, 10);
+		expect(compoundResult.totalContributions).toBe(1000);
+		expect(calculateCompoundGrowth(1000, 0, 1, 100)).toEqual({ finalBalance: 2200, totalContributions: 2200, interestEarned: 0 });
+		expect(calculateTaxAndDiscount(100, 10, 5)).toEqual({ discount: 10, discountedAmount: 90, tax: 4.5, total: 94.5 });
+		expect(calculateGeometry("triangle", 3, 4, 5)).toEqual({ area: 6, perimeter: 12 });
+		expect(calculateGeometry("circle", 1).area).toBeCloseTo(Math.PI, 12);
+		expect(calculateFuelEconomy(10, 100, "km-per-liter")).toMatchObject({ litersPer100Km: 10, kmPerLiter: 10, fuelForTripLiters: 10 });
+		expect(calculateFuelEconomy(30, 200, "us-mpg").fuelForTripLiters).toBeCloseTo(15.6809722, 6);
+		expect(() => calculateCompoundGrowth(100, 5, 1.1, 0)).toThrow(/whole number of months/u);
+		expect(() => calculateTaxAndDiscount(100, 101, 0)).toThrow(/between 0% and 100%/u);
+		expect(() => calculateGeometry("triangle", 1, 2, 3)).toThrow(/triangle inequality/u);
+		expect(() => calculateFuelEconomy(0, 100, "km-per-liter")).toThrow(/above zero/u);
+	});
+
 	it("calculates metric and imperial BMI and adult screening categories", () => {
 		expect(calculateBmi(65, 170).bmi).toBeCloseTo(22.49134948096886, 12);
 		expect(calculateBmi(65, 170).category).toBe("Healthy weight");
@@ -111,6 +128,10 @@ describe("additional calculators", () => {
 		expect(evaluateScientificExpression("sec(60) + csc(30) + cot(45)")).toBeCloseTo(5, 10);
 		expect(evaluateScientificExpression("mean(1, 2, 3) + median(1, 9, 2, 4) + variance(1, 2, 3) + stdev(1, 2, 3)")).toBeCloseTo(5 + 2 / 3 + Math.sqrt(2 / 3), 10);
 		expect(evaluateScientificExpression("round(-2.5)")).toBe(-3);
+		expect(evaluateScientificExpression("round(1.005, 2)")).toBe(1.01);
+		expect(evaluateScientificExpression("samplevariance(1, 2, 3) + samplestdev(1, 2, 3)")).toBe(2);
+		expect(evaluateScientificExpression("wmean(80, 2, 90, 1)")).toBeCloseTo(250 / 3, 12);
+		expect(evaluateScientificExpression("gcd(-18, 24, 30) + lcm(6, 8)")).toBe(30);
 		expect(evaluateScientificExpression("mean(1e308, 1e308) / median(1e308, 1e308)")).toBe(1);
 		expect(evaluateScientificExpression("comb(5, 2) + perm(5, 2) + deg(pi) + rad(180)")).toBeCloseTo(10 + 20 + 180 + Math.PI, 10);
 		expect(evaluateScientificExpression("c + g0")).toBeCloseTo(299792458 + 9.80665, 8);
@@ -144,6 +165,10 @@ describe("additional calculators", () => {
 		expect(() => evaluateScientificExpression("tan(90)")).toThrow(/undefined/u);
 		expect(() => evaluateScientificExpression("atan2(0, 0)")).toThrow(/both inputs/u);
 		expect(() => evaluateScientificExpression("min(2)")).toThrow(/at least 2 arguments/u);
+		expect(() => evaluateScientificExpression("samplevariance(4)")).toThrow(/at least 2 arguments/u);
+		expect(() => evaluateScientificExpression("wmean(3, -1, 4, 2)")).toThrow(/cannot be negative/u);
+		expect(() => evaluateScientificExpression("gcd(2.5, 5)")).toThrow(/whole-number/u);
+		expect(() => evaluateScientificExpression("round(2, 101)")).toThrow(/0 to 100/u);
 		expect(() => evaluateScientificExpression("2 + 2; alert(1)")).toThrow(/Unexpected character/u);
 		expect(() => evaluateScientificExpression("1".repeat(501))).toThrow(/500 characters/u);
 	});

@@ -298,7 +298,16 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 			case "exp": requireCount(1); return Math.exp(value);
 			case "floor": requireCount(1); return Math.floor(value);
 			case "ceil": requireCount(1); return Math.ceil(value);
-			case "round": requireCount(1); return Math.sign(value) * Math.floor(Math.abs(value) + 0.5);
+			case "round": {
+				requireCount(1, 2);
+				const decimalPlaces = second ?? 0;
+				if (!Number.isInteger(decimalPlaces) || decimalPlaces < 0 || decimalPlaces > 100) throw new Error("round decimal places must be a whole number from 0 to 100.");
+				if (decimalPlaces === 0) return Math.sign(value) * Math.floor(Math.abs(value) + 0.5);
+				const factor = 10 ** decimalPlaces;
+				const scaled = Math.abs(value) * factor;
+				if (!Number.isFinite(scaled)) return value;
+				return Math.sign(value) * Math.floor(scaled + 0.5 + Number.EPSILON * scaled) / factor;
+			}
 			case "sign": requireCount(1); return Math.sign(value);
 			case "inv": requireCount(1); if (value === 0) throw new Error("Zero has no reciprocal."); return 1 / value;
 			case "deg": requireCount(1); return value * 180 / Math.PI;
@@ -316,8 +325,11 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 				return sorted.length % 2 ? sorted[middle] : sorted[middle - 1] / 2 + sorted[middle] / 2;
 			}
 			case "variance":
-			case "stdev": {
-				requireCount(1, Number.MAX_SAFE_INTEGER);
+			case "stdev":
+			case "samplevariance":
+			case "samplestdev": {
+				const isSample = name === "samplevariance" || name === "samplestdev";
+				requireCount(isSample ? 2 : 1, Number.MAX_SAFE_INTEGER);
 				let average = 0;
 				let squaredDeviationSum = 0;
 				args.forEach((current, index) => {
@@ -326,8 +338,37 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 					average += delta / count;
 					squaredDeviationSum += delta * (current - average);
 				});
-				const variance = squaredDeviationSum / args.length;
-				return name === "variance" ? variance : Math.sqrt(variance);
+				const variance = squaredDeviationSum / (isSample ? args.length - 1 : args.length);
+				return name === "variance" || name === "samplevariance" ? variance : Math.sqrt(variance);
+			}
+			case "wmean": {
+				if (args.length < 4 || args.length % 2 !== 0) throw new Error("wmean expects value, weight pairs for at least two values.");
+				const pairs = Array.from({ length: args.length / 2 }, (_, index) => ({ value: args[index * 2], weight: args[index * 2 + 1] }));
+				if (pairs.some(({ weight }) => weight < 0)) throw new Error("Weighted mean weights cannot be negative.");
+				const maxWeight = Math.max(...pairs.map(({ weight }) => weight));
+				if (maxWeight === 0) throw new Error("Weighted mean needs a positive total weight.");
+				const scaledWeights = pairs.map(({ weight }) => weight / maxWeight);
+				const totalWeight = scaledWeights.reduce((total, weight) => total + weight, 0);
+				return pairs.reduce((average, { value }, index) => average + value * (scaledWeights[index] / totalWeight), 0);
+			}
+			case "gcd":
+			case "lcm": {
+				requireCount(2, Number.MAX_SAFE_INTEGER);
+				if (args.some((argument) => !Number.isSafeInteger(argument))) throw new Error(`${name} expects safe whole-number inputs.`);
+				const gcdPair = (left: number, right: number) => {
+					let a = Math.abs(left);
+					let b = Math.abs(right);
+					while (b !== 0) [a, b] = [b, a % b];
+					return a;
+				};
+				const result = args.reduce((current, argument) => {
+					if (name === "gcd") return gcdPair(current, argument);
+					if (current === 0 || argument === 0) return 0;
+					const next = Math.abs(current / gcdPair(current, argument) * argument);
+					if (!Number.isSafeInteger(next)) throw new Error("The least common multiple exceeds the safe integer range.");
+					return next;
+				}, args[0]);
+				return result;
 			}
 			case "perm":
 			case "comb": {
@@ -606,4 +647,84 @@ export const convertMeasurement = (value: number, category: UnitCategory, fromUn
 
 	const converted = value * (fromUnit.toBase ?? 1) / (toUnit.toBase ?? 1);
 	return normalizeCalculatorNumber(converted);
+};
+
+export const calculateCompoundGrowth = (principal: number, annualRatePercent: number, years: number, monthlyContribution: number) => {
+	if (![principal, annualRatePercent, years, monthlyContribution].every(Number.isFinite)) throw new Error("Enter valid finite numbers.");
+	if (principal < 0 || monthlyContribution < 0) throw new Error("Starting amount and monthly contribution cannot be negative.");
+	if (annualRatePercent < -100 || annualRatePercent > 1000) throw new Error("Annual rate must be between -100% and 1000%.");
+	const months = years * 12;
+	if (!Number.isInteger(months) || months < 1 || months > 1200) throw new Error("Choose a term that is a whole number of months, up to 100 years.");
+	const monthlyRate = annualRatePercent / 1200;
+	const growthFactor = (1 + monthlyRate) ** months;
+	const contributionGrowth = monthlyRate === 0 ? months : (growthFactor - 1) / monthlyRate;
+	const finalBalance = principal * growthFactor + monthlyContribution * contributionGrowth;
+	const totalContributions = principal + monthlyContribution * months;
+	return {
+		finalBalance: normalizeCalculatorNumber(finalBalance),
+		totalContributions: normalizeCalculatorNumber(totalContributions),
+		interestEarned: normalizeCalculatorNumber(finalBalance - totalContributions),
+	};
+};
+
+export const calculateTaxAndDiscount = (amount: number, discountPercent: number, taxPercent: number) => {
+	if (![amount, discountPercent, taxPercent].every(Number.isFinite)) throw new Error("Enter valid finite numbers.");
+	if (amount < 0) throw new Error("Amount cannot be negative.");
+	if (discountPercent < 0 || discountPercent > 100) throw new Error("Discount must be between 0% and 100%.");
+	if (taxPercent < 0 || taxPercent > 100) throw new Error("Tax rate must be between 0% and 100%.");
+	const discount = amount * discountPercent / 100;
+	const discountedAmount = amount - discount;
+	const tax = discountedAmount * taxPercent / 100;
+	return {
+		discount: normalizeCalculatorNumber(discount),
+		discountedAmount: normalizeCalculatorNumber(discountedAmount),
+		tax: normalizeCalculatorNumber(tax),
+		total: normalizeCalculatorNumber(discountedAmount + tax),
+	};
+};
+
+export type GeometryShape = "circle" | "rectangle" | "triangle";
+
+export const calculateGeometry = (shape: GeometryShape, firstDimension: number, secondDimension = 0, thirdDimension = 0) => {
+	if (![firstDimension, secondDimension, thirdDimension].every(Number.isFinite)) throw new Error("Enter valid finite dimensions.");
+	if (firstDimension <= 0) throw new Error("Dimensions must be greater than zero.");
+	if (shape === "circle") {
+		return { area: normalizeCalculatorNumber(Math.PI * firstDimension ** 2), perimeter: normalizeCalculatorNumber(2 * Math.PI * firstDimension) };
+	}
+	if (secondDimension <= 0) throw new Error("Dimensions must be greater than zero.");
+	if (shape === "rectangle") {
+		return { area: normalizeCalculatorNumber(firstDimension * secondDimension), perimeter: normalizeCalculatorNumber(2 * (firstDimension + secondDimension)) };
+	}
+	if (thirdDimension <= 0 || firstDimension + secondDimension <= thirdDimension || firstDimension + thirdDimension <= secondDimension || secondDimension + thirdDimension <= firstDimension) {
+		throw new Error("Triangle sides must be positive and satisfy the triangle inequality.");
+	}
+	const semiperimeter = (firstDimension + secondDimension + thirdDimension) / 2;
+	return {
+		area: normalizeCalculatorNumber(Math.sqrt(semiperimeter * (semiperimeter - firstDimension) * (semiperimeter - secondDimension) * (semiperimeter - thirdDimension))),
+		perimeter: normalizeCalculatorNumber(firstDimension + secondDimension + thirdDimension),
+	};
+};
+
+export type FuelEconomyUnit = "km-per-liter" | "liters-per-100-km" | "us-mpg" | "imperial-mpg";
+
+const fuelUnitLabels: Record<FuelEconomyUnit, string> = {
+	"km-per-liter": "km/L",
+	"liters-per-100-km": "L/100 km",
+	"us-mpg": "US mpg",
+	"imperial-mpg": "Imperial mpg",
+};
+
+export const calculateFuelEconomy = (efficiency: number, distanceKm: number, unit: FuelEconomyUnit) => {
+	if (![efficiency, distanceKm].every(Number.isFinite)) throw new Error("Enter valid finite numbers.");
+	if (efficiency <= 0 || distanceKm < 0) throw new Error("Efficiency must be above zero and distance cannot be negative.");
+	const litersPer100Km = unit === "liters-per-100-km" ? efficiency : unit === "km-per-liter" ? 100 / efficiency : unit === "us-mpg" ? 235.214583 / efficiency : 282.480936 / efficiency;
+	const kmPerLiter = 100 / litersPer100Km;
+	return {
+		litersPer100Km: normalizeCalculatorNumber(litersPer100Km),
+		kmPerLiter: normalizeCalculatorNumber(kmPerLiter),
+		usMpg: normalizeCalculatorNumber(235.214583 / litersPer100Km),
+		imperialMpg: normalizeCalculatorNumber(282.480936 / litersPer100Km),
+		fuelForTripLiters: normalizeCalculatorNumber(distanceKm * litersPer100Km / 100),
+		unitLabel: fuelUnitLabels[unit],
+	};
 };

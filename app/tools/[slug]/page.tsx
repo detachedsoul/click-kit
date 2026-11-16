@@ -13,6 +13,10 @@ import ScientificCalculator from "@/features/calculators/scientific-calculator";
 import LoanCalculator from "@/features/calculators/loan-calculator";
 import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import BmiCalculator from "@/features/calculators/bmi-calculator";
+import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
+import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
+import GeometryCalculator from "@/features/calculators/geometry-calculator";
+import FuelEconomyCalculator from "@/features/calculators/fuel-economy-calculator";
 import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
 import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
 import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
@@ -49,6 +53,10 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"loan-calculator": LoanCalculator,
 	"tip-split-calculator": TipSplitCalculator,
 	"bmi-calculator": BmiCalculator,
+	"compound-interest-calculator": CompoundInterestCalculator,
+	"sales-tax-calculator": SalesTaxCalculator,
+	"geometry-calculator": GeometryCalculator,
+	"fuel-economy-calculator": FuelEconomyCalculator,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
