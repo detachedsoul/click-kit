@@ -15,3 +15,5 @@ Tools are designed to be quick, clear, and private. Most work right in your brow
 - **Productivity** — make planning, focusing, and choosing a little easier.
 
 ClickKit is built around a simple idea: help you finish the task and get on with your day.
+
+Have an idea, spotted a problem, or want to help improve a tool? [Report an issue](https://github.com/detachedsoul/click-kit/issues/new), [share a suggestion](https://github.com/detachedsoul/click-kit/issues), or [open a pull request](https://github.com/detachedsoul/click-kit/compare).
