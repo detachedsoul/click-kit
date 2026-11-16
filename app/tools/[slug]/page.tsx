@@ -1,0 +1,72 @@
+import Link from "next/link";
+import Shell from "@/components/shell";
+import WordCounter from "@/features/text-tools/word-counter";
+import CaseConverter from "@/features/text-tools/case-converter";
+import TextCleaner from "@/features/text-tools/text-cleaner";
+import TextDiffChecker from "@/features/text-tools/text-diff-checker";
+import ReadAloud from "@/features/text-tools/read-aloud";
+import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
+import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
+import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
+import type { Metadata } from "next";
+import type { ComponentType } from "react";
+import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { categories, getTool, tools } from "@/lib/tools";
+
+const availableToolComponents: Record<string, ComponentType> = {
+	"word-counter": WordCounter,
+	"case-converter": CaseConverter,
+	"text-cleaner": TextCleaner,
+	"text-diff": TextDiffChecker,
+	"read-aloud": ReadAloud,
+	"find-replace": FindReplaceTool,
+	"sort-lines": LineSorterTool,
+	"slug-generator": SlugGeneratorTool,
+	"markdown-preview": MarkdownPreviewTool,
+	"readability-checker": ReadabilityCheckerTool,
+	"text-extractor": TextExtractorTool,
+	"markup-formatter": MarkupFormatterTool,
+	"markdown-table": MarkdownTableGeneratorTool,
+	"html-entities": HtmlEntityTool,
+	"url-encoder": UrlEncoderTool,
+	"unicode-inspector": UnicodeInspectorTool,
+	"lorem-generator": LoremGeneratorTool,
+	"text-reverser": TextReverserTool,
+};
+
+export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
+
+export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> => {
+	const { slug } = await params;
+	const tool = getTool(slug);
+	return tool ? { title: tool.name, description: tool.description } : {};
+};
+
+const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+	const { slug } = await params;
+	const tool = getTool(slug);
+	if (!tool) notFound();
+	const category = categories.find((item) => item.id === tool.category)!;
+	const Icon = tool.icon;
+	const AvailableTool = availableToolComponents[tool.slug];
+
+	return <Shell>
+		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
+			<nav className="flex items-center gap-[9px] text-[11px] text-[#777a70]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
+			<div className="mt-[26px] font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">{tool.status === "available" ? "Available now" : category.name}</div>
+			<h1 className="mb-2 mt-1.5 font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-[5px] max-[620px]:text-[clamp(48px,12vw,62px)]">{tool.name}</h1>
+			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{tool.description}</p>
+		</header>
+		{tool.status === "available" && AvailableTool
+			? <section className="mb-[90px] mt-1 border border-line border-t-[3px] border-t-forest bg-surface shadow-[0_18px_50px_#29291f0b] max-[620px]:mb-[66px]" aria-label={`${tool.name} tool`}><AvailableTool /></section>
+			: <section className="mx-auto mb-[110px] mt-[42px] max-w-[680px] border border-line bg-surface p-[45px_35px] text-center shadow-[0_16px_40px_#322c2009] max-[620px]:mb-[67px] max-[620px]:mt-8 max-[620px]:p-[35px_21px]" aria-labelledby="planned-title">
+				<Icon className="text-accent" size={27} strokeWidth={1.6} aria-hidden="true" />
+				<h2 id="planned-title" className="mb-2.5 mt-[18px] font-serif text-[32px] font-normal leading-[1.05] tracking-[-.02em]">A useful tool is taking shape.</h2>
+				<p className="mx-auto mb-[22px] max-w-[400px] text-[13px] leading-[1.65] text-muted">This tool is on the ClickKit roadmap. It will be marked available here only when it can do the job properly.</p>
+				<Link className="inline-flex items-center gap-2 bg-forest px-[14px] py-[11px] text-xs text-white hover:bg-[#354d44]" href={`/category/${category.id}`}><ArrowLeft size={14} /> Explore {category.name}</Link>
+			</section>}
+	</Shell>;
+};
+
+export default ToolPage;

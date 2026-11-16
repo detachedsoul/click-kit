@@ -19,12 +19,13 @@ import {
 	Type,
 	WandSparkles,
 	Workflow,
+	Volume2,
 	Baby,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity";
-export type ToolStatus = "planned";
+export type ToolStatus = "available" | "planned";
 
 export type Tool = {
 	id: string;
@@ -46,10 +47,24 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 ];
 
 export const tools: Tool[] = [
-	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "planned" },
-	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "planned" },
-	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "planned" },
-	{ id: "text-diff", name: "Text difference checker", description: "Compare two passages and spot what changed.", category: "text", slug: "text-diff", keywords: ["compare", "diff", "changes"], icon: Workflow, status: "planned" },
+	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "available" },
+	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "available" },
+	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "available" },
+	{ id: "text-diff", name: "Text difference checker", description: "Compare two passages and spot what changed.", category: "text", slug: "text-diff", keywords: ["compare", "diff", "changes"], icon: Workflow, status: "available" },
+	{ id: "read-aloud", name: "Read aloud", description: "Listen to pasted text with your device's built-in voices.", category: "text", slug: "read-aloud", keywords: ["text to speech", "listen", "voice", "audio", "speak"], icon: Volume2, status: "available" },
+	{ id: "find-replace", name: "Find & Replace", description: "Search text and replace matches, with optional regular expressions.", category: "text", slug: "find-replace", keywords: ["search", "replace", "regex", "substitute"], icon: Regex, status: "available" },
+	{ id: "sort-lines", name: "Sort & clean lines", description: "Sort a list and optionally remove duplicate or blank lines.", category: "text", slug: "sort-lines", keywords: ["alphabetize", "deduplicate", "list", "lines"], icon: ListChecks, status: "available" },
+	{ id: "slug-generator", name: "Slug generator", description: "Turn a title into a clean, URL-friendly slug.", category: "text", slug: "slug-generator", keywords: ["url", "permalink", "title", "kebab case"], icon: Hash, status: "available" },
+	{ id: "markdown-preview", name: "Markdown preview", description: "Write Markdown and preview a safe rendered version side by side.", category: "text", slug: "markdown-preview", keywords: ["md", "preview", "write", "format"], icon: FileText, status: "available" },
+	{ id: "readability-checker", name: "Readability checker", description: "Estimate English reading difficulty from sentence and word length.", category: "text", slug: "readability-checker", keywords: ["reading level", "flesch", "grade", "writing"], icon: Type, status: "available" },
+	{ id: "text-extractor", name: "Text extractor", description: "Find email addresses, links, phone-like numbers, or hashtags in text.", category: "text", slug: "text-extractor", keywords: ["extract", "email", "url", "phone", "hashtag"], icon: Workflow, status: "available" },
+	{ id: "markup-formatter", name: "HTML & XML formatter", description: "Indent HTML snippets and validate and format well-formed XML locally.", category: "text", slug: "markup-formatter", keywords: ["html", "xml", "pretty print", "markup"], icon: Braces, status: "available" },
+	{ id: "markdown-table", name: "Markdown table generator", description: "Convert tab- or comma-separated rows into a Markdown table.", category: "text", slug: "markdown-table", keywords: ["table", "csv", "markdown", "rows"], icon: Workflow, status: "available" },
+	{ id: "html-entities", name: "HTML entity encoder & decoder", description: "Encode reserved characters or decode common HTML entities.", category: "text", slug: "html-entities", keywords: ["escape", "decode", "symbols", "html"], icon: Code2, status: "available" },
+	{ id: "url-encoder", name: "URL component encoder & decoder", description: "Encode or decode text for safe use inside a URL component.", category: "text", slug: "url-encoder", keywords: ["percent encoding", "uri", "decode", "url"], icon: Hash, status: "available" },
+	{ id: "unicode-inspector", name: "Unicode inspector", description: "Inspect the Unicode code points that make up your text and symbols.", category: "text", slug: "unicode-inspector", keywords: ["emoji", "code point", "character", "unicode"], icon: Binary, status: "available" },
+	{ id: "lorem-generator", name: "Lorem Ipsum generator", description: "Create placeholder paragraphs with a chosen length.", category: "text", slug: "lorem-generator", keywords: ["placeholder", "dummy", "sample", "latin"], icon: WandSparkles, status: "available" },
+	{ id: "text-reverser", name: "Text reverser", description: "Reverse characters while keeping combined emoji and accents intact.", category: "text", slug: "text-reverser", keywords: ["backwards", "reverse", "mirror"], icon: Shuffle, status: "available" },
 	{ id: "calculator", name: "Standard calculator", description: "A dependable calculator for everyday arithmetic.", category: "calculators", slug: "calculator", keywords: ["math", "addition", "divide"], icon: Calculator, status: "planned" },
 	{ id: "percentage-calculator", name: "Percentage calculator", description: "Work out percentages, increases, and reductions.", category: "calculators", slug: "percentage-calculator", keywords: ["percent", "discount", "increase"], icon: Percent, status: "planned" },
 	{ id: "age-calculator", name: "Age calculator", description: "Find an age or the time between two dates.", category: "calculators", slug: "age-calculator", keywords: ["birthday", "date", "years"], icon: Baby, status: "planned" },
