@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { calculatePercentage, type PercentageMode } from "@/features/calculators/calculator-utils";
-import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
 
 const modeOptions: { id: PercentageMode; label: string }[] = [
 	{ id: "of", label: "What is a percentage of a number?" },
@@ -16,7 +16,7 @@ const PercentageCalculator = () => {
 	const [firstValue, setFirstValue] = useState("");
 	const [secondValue, setSecondValue] = useState("");
 	const calculation = useMemo(() => {
-		if (firstValue.trim() === "" || secondValue.trim() === "") return null;
+		if (!isCalculatorNumberComplete(firstValue) || !isCalculatorNumberComplete(secondValue)) return null;
 		try {
 			return { ...calculatePercentage(mode, Number(firstValue), Number(secondValue)), error: "" };
 		} catch (error) {

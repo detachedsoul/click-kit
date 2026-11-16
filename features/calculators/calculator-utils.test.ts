@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, convertMeasurement, evaluateScientificExpression, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
+import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, calculateDefiniteIntegral, convertMeasurement, evaluateScientificExpression, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
 
 describe("standard calculator", () => {
 	it("respects operator precedence, parentheses, and unary signs", () => {
@@ -110,11 +110,30 @@ describe("additional calculators", () => {
 		expect(evaluateScientificExpression("cosh(0) + floor(2.9) + ceil(2.1) + round(2.4) + abs(-1) + inv(2) + exp(0) + cbrt(8) + atan2(1, 0)")).toBeCloseTo(102.5, 10);
 		expect(evaluateScientificExpression("sec(60) + csc(30) + cot(45)")).toBeCloseTo(5, 10);
 		expect(evaluateScientificExpression("mean(1, 2, 3) + median(1, 9, 2, 4) + variance(1, 2, 3) + stdev(1, 2, 3)")).toBeCloseTo(5 + 2 / 3 + Math.sqrt(2 / 3), 10);
+		expect(evaluateScientificExpression("round(-2.5)")).toBe(-3);
+		expect(evaluateScientificExpression("mean(1e308, 1e308) / median(1e308, 1e308)")).toBe(1);
 		expect(evaluateScientificExpression("comb(5, 2) + perm(5, 2) + deg(pi) + rad(180)")).toBeCloseTo(10 + 20 + 180 + Math.PI, 10);
 		expect(evaluateScientificExpression("c + g0")).toBeCloseTo(299792458 + 9.80665, 8);
 		expect(evaluateScientificExpression("h")).toBe(6.62607015e-34);
 		expect(evaluateScientificExpression("kb")).toBe(1.380649e-23);
 		expect(evaluateScientificExpression("na")).toBe(6.02214076e23);
+	});
+
+	it("approximates definite integrals with validated bounds and radians", () => {
+		expect(calculateDefiniteIntegral("x^2", 0, 1)).toBeCloseTo(1 / 3, 8);
+		expect(calculateDefiniteIntegral("2x", -3, 4)).toBeCloseTo(7, 8);
+		expect(calculateDefiniteIntegral("sin(x)", 0, Math.PI)).toBeCloseTo(2, 8);
+		expect(calculateDefiniteIntegral("exp(-x^2)", -1, 1)).toBeCloseTo(1.49364826562485, 8);
+		expect(calculateDefiniteIntegral("x^2", 1, 0)).toBeCloseTo(-1 / 3, 8);
+		expect(calculateDefiniteIntegral("3", 0, 2)).toBe(6);
+		expect(calculateDefiniteIntegral("ans * x", 0, 2, "radians", 3)).toBeCloseTo(6, 8);
+	});
+
+	it("reports invalid or non-finite integration expressions clearly", () => {
+		expect(() => calculateDefiniteIntegral("x", Number.NaN, 1)).toThrow(/finite lower and upper bounds/u);
+		expect(() => calculateDefiniteIntegral("x +", 0, 1)).toThrow(/character/u);
+		expect(() => calculateDefiniteIntegral("1 / x", -1, 1)).toThrow(/divide by zero/u);
+		expect(() => evaluateScientificExpression("x")).toThrow(/Unknown constant/u);
 	});
 
 	it("rejects invalid scientific syntax, domains, and unsafe input", () => {

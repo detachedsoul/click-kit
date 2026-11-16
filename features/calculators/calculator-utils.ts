@@ -156,10 +156,11 @@ export const evaluateArithmeticExpression = (expression: string) => {
 	return normalizeCalculatorNumber(result);
 };
 
-export const evaluateScientificExpression = (expression: string, angleUnit: "degrees" | "radians" = "degrees", ans = 0) => {
+export const evaluateScientificExpression = (expression: string, angleUnit: "degrees" | "radians" = "degrees", ans = 0, x?: number) => {
 	if (!expression.trim()) throw new Error("Enter a calculation first.");
 	if (expression.length > 500) throw new Error("Keep calculations under 500 characters.");
 	if (!Number.isFinite(ans)) throw new Error("The previous answer is not a finite number.");
+	if (x !== undefined && !Number.isFinite(x)) throw new Error("The integration variable must be finite.");
 
 	let position = 0;
 	let nestingDepth = 0;
@@ -297,7 +298,7 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 			case "exp": requireCount(1); return Math.exp(value);
 			case "floor": requireCount(1); return Math.floor(value);
 			case "ceil": requireCount(1); return Math.ceil(value);
-			case "round": requireCount(1); return Math.round(value);
+			case "round": requireCount(1); return Math.sign(value) * Math.floor(Math.abs(value) + 0.5);
 			case "sign": requireCount(1); return Math.sign(value);
 			case "inv": requireCount(1); if (value === 0) throw new Error("Zero has no reciprocal."); return 1 / value;
 			case "deg": requireCount(1); return value * 180 / Math.PI;
@@ -305,18 +306,27 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 			case "pow": requireCount(2); return value ** second;
 			case "sum": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total + current, 0);
 			case "product": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total * current, 1);
-			case "mean": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total + current, 0) / args.length;
+			case "mean":
+				requireCount(1, Number.MAX_SAFE_INTEGER);
+				return args.reduce((total, current) => total + current / args.length, 0);
 			case "median": {
 				requireCount(1, Number.MAX_SAFE_INTEGER);
 				const sorted = [...args].sort((left, right) => left - right);
 				const middle = Math.floor(sorted.length / 2);
-				return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+				return sorted.length % 2 ? sorted[middle] : sorted[middle - 1] / 2 + sorted[middle] / 2;
 			}
 			case "variance":
 			case "stdev": {
 				requireCount(1, Number.MAX_SAFE_INTEGER);
-				const average = args.reduce((total, current) => total + current, 0) / args.length;
-				const variance = args.reduce((total, current) => total + (current - average) ** 2, 0) / args.length;
+				let average = 0;
+				let squaredDeviationSum = 0;
+				args.forEach((current, index) => {
+					const count = index + 1;
+					const delta = current - average;
+					average += delta / count;
+					squaredDeviationSum += delta * (current - average);
+				});
+				const variance = squaredDeviationSum / args.length;
 				return name === "variance" ? variance : Math.sqrt(variance);
 			}
 			case "perm":
@@ -369,7 +379,7 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 		position += identifier.length;
 		skipSpaces();
 		if (expression[position] !== "(") {
-			const constants: Record<string, number> = { pi: Math.PI, e: Math.E, tau: Math.PI * 2, phi: (1 + Math.sqrt(5)) / 2, ans, c: 299792458, g0: 9.80665, h: 6.62607015e-34, kb: 1.380649e-23, na: 6.02214076e23 };
+			const constants: Record<string, number> = { pi: Math.PI, e: Math.E, tau: Math.PI * 2, phi: (1 + Math.sqrt(5)) / 2, ans, c: 299792458, g0: 9.80665, h: 6.62607015e-34, kb: 1.380649e-23, na: 6.02214076e23, ...(x === undefined ? {} : { x }) };
 			if (!(identifier in constants)) throw new Error(`Unknown constant “${identifier}”.`);
 			return constants[identifier];
 		}
@@ -398,6 +408,50 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 	skipSpaces();
 	if (position < expression.length) throw new Error(`Unexpected character near position ${position + 1}.`);
 	return normalizeCalculatorNumber(result);
+};
+
+export const calculateDefiniteIntegral = (expression: string, lowerBound: number, upperBound: number, angleUnit: "degrees" | "radians" = "radians", ans = 0) => {
+	if (!Number.isFinite(lowerBound) || !Number.isFinite(upperBound)) throw new Error("Enter finite lower and upper bounds.");
+	if (!Number.isFinite(upperBound - lowerBound)) throw new Error("The integration interval is too large.");
+
+	let evaluationCount = 0;
+	const evaluate = (x: number) => {
+		evaluationCount += 1;
+		if (evaluationCount > 20000) throw new Error("Integration reached its evaluation limit. Try a smoother function or a smaller interval.");
+		return evaluateScientificExpression(expression, angleUnit, ans, x);
+	};
+	if (lowerBound === upperBound) {
+		evaluate(lowerBound);
+		return 0;
+	}
+
+	const midpoint = lowerBound + (upperBound - lowerBound) / 2;
+	const atLower = evaluate(lowerBound);
+	const atMidpoint = evaluate(midpoint);
+	const atUpper = evaluate(upperBound);
+	const initialEstimate = (upperBound - lowerBound) / 6 * (atLower + 4 * atMidpoint + atUpper);
+	if (!Number.isFinite(initialEstimate)) throw new Error("The integral is not finite on this interval.");
+	const tolerance = 1e-9 * Math.max(1, Math.abs(initialEstimate));
+
+	const adaptiveSimpson = (start: number, end: number, startValue: number, middleValue: number, endValue: number, estimate: number, localTolerance: number, remainingDepth: number): number => {
+		const center = start + (end - start) / 2;
+		const leftCenter = start + (center - start) / 2;
+		const rightCenter = center + (end - center) / 2;
+		if (leftCenter === start || rightCenter === end) return estimate;
+		const leftCenterValue = evaluate(leftCenter);
+		const rightCenterValue = evaluate(rightCenter);
+		const leftEstimate = (center - start) / 6 * (startValue + 4 * leftCenterValue + middleValue);
+		const rightEstimate = (end - center) / 6 * (middleValue + 4 * rightCenterValue + endValue);
+		const refinedEstimate = leftEstimate + rightEstimate;
+		if (!Number.isFinite(refinedEstimate)) throw new Error("The integral is not finite on this interval.");
+		const estimateDifference = refinedEstimate - estimate;
+		if (Math.abs(estimateDifference) <= 15 * localTolerance) return refinedEstimate + estimateDifference / 15;
+		if (remainingDepth === 0) throw new Error("Integration could not converge. Try a smoother function or a smaller interval.");
+		return adaptiveSimpson(start, center, startValue, leftCenterValue, middleValue, leftEstimate, localTolerance / 2, remainingDepth - 1)
+			+ adaptiveSimpson(center, end, middleValue, rightCenterValue, endValue, rightEstimate, localTolerance / 2, remainingDepth - 1);
+	};
+
+	return normalizeCalculatorNumber(adaptiveSimpson(lowerBound, upperBound, atLower, atMidpoint, atUpper, initialEstimate, tolerance, 18));
 };
 
 export const calculatePercentage = (mode: PercentageMode, firstValue: number, secondValue: number): PercentageResult => {

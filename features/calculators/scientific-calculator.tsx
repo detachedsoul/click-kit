@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import { evaluateScientificExpression } from "@/features/calculators/calculator-utils";
-import { formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { calculateDefiniteIntegral, evaluateScientificExpression } from "@/features/calculators/calculator-utils";
+import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
 
 type AngleUnit = "degrees" | "radians";
 type OutputBase = "decimal" | "binary" | "octal" | "hexadecimal";
@@ -72,6 +72,50 @@ const advancedFunctionButtons = [
 
 const multiArgumentFunctions = new Set(["min(", "max(", "sum(", "product(", "mean(", "median(", "variance(", "stdev(", "pow(", "root(", "hypot(", "atan2(", "clamp(", "perm(", "comb("]);
 
+const operationGuideGroups = [
+	{ title: "Trigonometry and angles", steps: [
+		"sin(x) — sine; sin(30) = 0.5 in Degrees.", "cos(x) — cosine; cos(60) = 0.5 in Degrees.", "tan(x) — tangent; tan(45) = 1 in Degrees; undefined at odd multiples of 90°.",
+		"sec(x), csc(x), cot(x) — reciprocal cosine, sine, and tangent; sec(60) = 2, csc(30) = 2, cot(45) = 1 in Degrees.",
+		"asin(x), acos(x), atan(x) — inverse trig; asin(0.5) = 30°, acos(0.5) = 60°, atan(1) = 45° in Degrees.",
+		"asec(x), acsc(x), acot(x) — inverse reciprocal trig; asec(2) = 60°, acsc(2) = 30°, acot(1) = 45° in Degrees.",
+		"atan2(y, x) — angle of the point (x, y), returned in the selected angle unit; atan2(1, 1) = 45° in Degrees.",
+		"deg(x), rad(x) — convert radians to degrees, or degrees to radians, regardless of the angle selector.",
+	] },
+	{ title: "Hyperbolic functions", steps: [
+		"sinh(x), cosh(x), tanh(x) — hyperbolic sine, cosine, and tangent; sinh(0) = 0, cosh(0) = 1, tanh(0) = 0.",
+		"sech(x), csch(x), coth(x) — reciprocal hyperbolic functions; sech(0) = 1 (csch and coth are undefined at zero).",
+		"asinh(x), acosh(x), atanh(x) — inverse hyperbolic functions. Angles are not involved; asinh(sinh(1)) = 1.",
+	] },
+	{ title: "Powers, roots, and logs", steps: [
+		"x^y or pow(x, y) — raise x to power y; enter 2^3 for 8.",
+		"sqrt(x), cbrt(x), root(x, n) — square root (sqrt(9) = 3), cube root (cbrt(-8) = -2), or nth root (root(27, 3) = 3).",
+		"!(postfix) — factorial; 5! = 120 and only whole numbers from 0 through 170 are supported.",
+		"ln(x) — natural log (ln(e) = 1); log(x) or log10(x) — base-10 log (log(100) = 2); log2(x) — base-2 log; log(x, b) — log base b.",
+		"exp(x) — e raised to x; inv(x) — reciprocal 1/x; abs(x) — absolute value.",
+	] },
+	{ title: "Rounding and comparisons", steps: [
+		"floor(x) — round down (floor(2.8) = 2); ceil(x) — round up (ceil(2.1) = 3); round(x) — nearest integer (round(2.4) = 2); sign(x) — -1, 0, or 1.",
+		"min(a, b, ...) and max(a, b, ...) — smallest or largest supplied value; min(2, 5, 1) = 1.",
+		"clamp(x, low, high) — keep x within the inclusive range; clamp(12, 0, 10) = 10.",
+		"hypot(a, b, ...) — square root of the sum of squares; hypot(3, 4) = 5.",
+	] },
+	{ title: "Statistics and combinatorics", steps: [
+		"sum(a, b, ...) — add values (sum(1, 2, 3) = 6); product(a, b, ...) — multiply them (product(2, 3, 4) = 24).",
+		"mean(a, b, ...) — arithmetic average (mean(1, 2, 3) = 2); median(a, b, ...) — middle value after sorting (median(1, 9, 2) = 2).",
+		"variance(a, b, ...) and stdev(a, b, ...) — population variance and population standard deviation; for 1, 2, 3, variance = 2/3 and stdev = √(2/3).",
+		"perm(n, r) (button nPr) — ordered arrangements (perm(5, 2) = 20); comb(n, r) (button nCr) — unordered selections (comb(5, 2) = 10). n and r must be whole numbers with 0 ≤ r ≤ n ≤ 1000.",
+	] },
+	{ title: "Constants and number bases", steps: [
+		"pi, tau, e, phi, ans — π, 2π, Euler’s number, the golden ratio, and the last submitted answer.",
+		"c, g0, h, kb, na — speed of light, standard gravity, Planck, Boltzmann, and Avogadro constants in SI units.",
+		"The Number base selector shows decimal, binary, octal, or hexadecimal for safe whole-number results; fractions remain shown in decimal.",
+	] },
+	{ title: "Memory and history", steps: [
+		"M+ adds the current live result to calculator memory; MR replaces the expression with the stored value; MC clears memory.",
+		"Calculate saves the expression and result in Recent calculations. Select a history row to reuse its result; Clear history removes the list.",
+	] },
+
+] as const;
 
 const keypadTokens = [
 	...(["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"] as const).map((digit) => ({ token: digit, label: digit, description: `Digit ${digit}` })),
@@ -104,8 +148,14 @@ const ScientificCalculator = () => {
 	const [outputBase, setOutputBase] = useState<OutputBase>("decimal");
 	const [lastAnswer, setLastAnswer] = useState(0);
 	const [memory, setMemory] = useState(0);
+	const [memoryIsSet, setMemoryIsSet] = useState(false);
 	const [history, setHistory] = useState<HistoryEntry[]>([]);
 	const [error, setError] = useState("");
+	const [integrand, setIntegrand] = useState("");
+	const [integralLowerBound, setIntegralLowerBound] = useState("");
+	const [integralUpperBound, setIntegralUpperBound] = useState("");
+	const [integralResult, setIntegralResult] = useState<number | null>(null);
+	const [integralError, setIntegralError] = useState("");
 	const calculation = useMemo(() => {
 		if (!expression.trim()) return null;
 		try {
@@ -125,6 +175,25 @@ const ScientificCalculator = () => {
 			updateExpression(multiArgumentFunctions.has(token) ? `${token}${expression},` : `${token}${expression})`);
 		} else insertToken(token);
 	};
+	const resetIntegralResult = () => {
+		setIntegralResult(null);
+		setIntegralError("");
+	};
+	const integrate = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		if (!integrand.trim() || integralLowerBound.trim() === "" || integralUpperBound.trim() === "") {
+			setIntegralResult(null);
+			setIntegralError("Enter an integrand and both bounds.");
+			return;
+		}
+		try {
+			setIntegralResult(calculateDefiniteIntegral(integrand, Number(integralLowerBound), Number(integralUpperBound), angleUnit, lastAnswer));
+			setIntegralError("");
+		} catch (integrationError) {
+			setIntegralResult(null);
+			setIntegralError(integrationError instanceof Error ? integrationError.message : "Could not estimate this integral.");
+		}
+	};
 	const evaluate = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (!calculation || calculation.result === null) {
@@ -136,6 +205,16 @@ const ScientificCalculator = () => {
 		setError("");
 	};
 	const currentResult = calculation?.result ?? null;
+	const addCurrentResultToMemory = () => {
+		if (currentResult === null) return;
+		const nextMemory = memory + currentResult;
+		if (!Number.isFinite(nextMemory)) {
+			setError("That value would exceed the calculator memory range.");
+			return;
+		}
+		setMemory(nextMemory);
+		setMemoryIsSet(true);
+	};
 
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
@@ -144,7 +223,7 @@ const ScientificCalculator = () => {
 					<input className="mt-2 block h-12 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-base font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-expression" inputMode="text" onChange={(event) => updateExpression(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="Try sin(30) + 2^3" value={expression} />
 				</label>
 				<label className="block min-w-[145px] text-xs font-semibold text-[#3c3d37]" htmlFor="scientific-angle-unit">Angles
-					<select className="mt-2 block h-12 w-full cursor-pointer border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-angle-unit" value={angleUnit} onChange={(event) => { setAngleUnit(event.target.value as AngleUnit); setError(""); }}>
+					<select className="mt-2 block h-12 w-full cursor-pointer border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-angle-unit" value={angleUnit} onChange={(event) => { setAngleUnit(event.target.value as AngleUnit); setError(""); resetIntegralResult(); }}>
 						<option value="degrees">Degrees</option>
 						<option value="radians">Radians</option>
 					</select>
@@ -164,14 +243,26 @@ const ScientificCalculator = () => {
 					{advancedFunctionButtons.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-surface px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertFunction(token)} type="button">{label}</button>)}
 				</div>
 			</details>
+			<details className="border border-line bg-[#faf9f5] px-4 py-3">
+				<summary className="cursor-pointer text-xs font-semibold text-[#50534c] outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">Operation guide and examples</summary>
+				<div className="mt-3 flex flex-col gap-3 text-[11px] leading-relaxed text-[#60635b]">
+					<p className="m-0"><strong className="text-ink">How to use:</strong> type an expression or start with a function button. If the current expression is valid, a one-input function wraps it automatically. For multi-input functions, the button starts the function and adds a comma after your expression; enter the next value, add any further comma-separated values, then close with ). Press Calculate to save the result to history and Ans.</p>
+					<p className="m-0">Use * for multiplication, / for division, % for remainder, ^ for powers, ! after a number for factorial, and parentheses to group. Multiplication can also be implied, as in 2pi or 2(3 + 4). The angle selector affects trig and inverse-trig functions; it does not affect hyperbolic functions.</p>
+					{operationGuideGroups.map((group) => <details className="border-t border-line pt-2" key={group.title}>
+						<summary className="cursor-pointer font-semibold text-forest outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">{group.title}</summary>
+						<ul className="mb-1 mt-2 flex flex-col gap-1.5 pl-5">{group.steps.map((step) => <li key={step}>{step}</li>)}</ul>
+					</details>)}
+				</div>
+			</details>
 			<div className="grid grid-cols-5 gap-2 max-[520px]:grid-cols-3" role="group" aria-label="Scientific keypad">
 				{keypadTokens.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertToken(token)} type="button">{label}</button>)}
 				<button aria-label="Delete last character" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={() => updateExpression(expression.slice(0, -1))} type="button">DEL</button>
 				<button className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={() => updateExpression("")} type="button">Clear</button>
-				<button aria-label="Add current result to memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50" disabled={currentResult === null} onClick={() => { if (currentResult !== null) setMemory((currentMemory) => currentMemory + currentResult); }} type="button">M+</button>
-				<button aria-label="Recall memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={() => updateExpression(String(memory))} type="button">MR</button>
-				<button aria-label="Clear memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={() => setMemory(0)} type="button">MC</button>
+				<button aria-label="Add current result to memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50" disabled={currentResult === null} onClick={addCurrentResultToMemory} type="button">M+</button>
+				<button aria-label="Recall memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50" disabled={!memoryIsSet} onClick={() => updateExpression(String(memory))} type="button">MR</button>
+				<button aria-label="Clear memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50" disabled={!memoryIsSet} onClick={() => { setMemory(0); setMemoryIsSet(false); }} type="button">MC</button>
 			</div>
+			{memoryIsSet && <p className="m-0 text-[10px] text-muted">Stored memory: {formatCalculatorDisplay(memory)}</p>}
 			{(error || calculation?.error) && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{error || calculation?.error}</p>}
 			<form className="flex flex-col gap-4" onSubmit={evaluate}>
 				<section className="border-l-2 border-accent bg-[#f5f3eb] p-5" aria-label="Scientific calculator result" aria-live="polite">
@@ -184,6 +275,25 @@ const ScientificCalculator = () => {
 				</section>
 				<button className="min-h-11 cursor-pointer self-end bg-forest px-6 text-sm font-semibold text-white transition-colors hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" type="submit">Calculate =</button>
 			</form>
+			<details className="border border-line bg-[#faf9f5] px-4 py-3">
+				<summary className="cursor-pointer text-xs font-semibold text-[#50534c] outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">Numerical integration (definite integral)</summary>
+				<div className="mt-3 flex flex-col gap-4">
+					<p className="m-0 text-[11px] leading-relaxed text-[#60635b]">Estimate the area under a continuous function between two bounds. Enter the integrand using x (for example, x^2 or sin(x)), add the lower and upper bounds, choose angle units above if needed, then calculate. This uses adaptive Simpson’s numerical method; it does not find a symbolic antiderivative.</p>
+					<form className="flex flex-col gap-4" onSubmit={integrate}>
+						<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="integral-expression">Integrand f(x)
+							<input className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="integral-expression" inputMode="text" onChange={(event) => { setIntegrand(event.target.value); resetIntegralResult(); }} placeholder="x^2 + sin(x)" value={integrand} />
+						</label>
+						<div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">
+							<CalculatorNumberField id="integral-lower-bound" label="Lower bound" value={integralLowerBound} onChange={(value) => { setIntegralLowerBound(value); resetIntegralResult(); }} placeholder="0" />
+							<CalculatorNumberField id="integral-upper-bound" label="Upper bound" value={integralUpperBound} onChange={(value) => { setIntegralUpperBound(value); resetIntegralResult(); }} placeholder="1" />
+						</div>
+						<button className="min-h-11 cursor-pointer self-start bg-forest px-5 text-xs font-semibold text-white transition-colors hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" type="submit">Calculate definite integral</button>
+					</form>
+					{integralError && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{integralError}</p>}
+					{integralResult !== null && <section className="border-l-2 border-accent bg-[#f5f3eb] p-4" aria-label="Numerical integral result" aria-live="polite"><p className="m-0 font-mono text-[10px] uppercase tracking-[.08em] text-muted">Approximate definite integral</p><p className="mb-0 mt-2 break-words font-serif text-2xl text-forest">{formatCalculatorDisplay(integralResult)}</p></section>}
+					<p className="m-0 text-[10px] leading-relaxed text-muted">Results are approximate. Discontinuities, singularities, or very oscillatory functions may not converge; use a suitable interval and verify critical results independently. Reversing the bounds reverses the sign.</p>
+				</div>
+			</details>
 			{history.length > 0 && <section className="border-t border-line pt-4" aria-labelledby="scientific-history-title">
 				<div className="mb-3 flex items-center justify-between gap-4">
 					<h2 className="m-0 font-mono text-[10px] font-semibold uppercase tracking-[.08em] text-muted" id="scientific-history-title">Recent calculations</h2>

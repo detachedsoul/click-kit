@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { convertMeasurement, unitCategories, type UnitCategory } from "@/features/calculators/calculator-utils";
-import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
 
 const UnitConverter = () => {
 	const [category, setCategory] = useState<UnitCategory>("length");
@@ -13,7 +13,7 @@ const UnitConverter = () => {
 	const fromUnit = currentCategory.units.find((unit) => unit.id === fromUnitId)!;
 	const toUnit = currentCategory.units.find((unit) => unit.id === toUnitId)!;
 	const conversion = useMemo(() => {
-		if (value.trim() === "") return { result: null, error: "" };
+		if (!isCalculatorNumberComplete(value)) return { result: null, error: "" };
 		try {
 			return { result: convertMeasurement(Number(value), category, fromUnitId, toUnitId), error: "" };
 		} catch (error) {

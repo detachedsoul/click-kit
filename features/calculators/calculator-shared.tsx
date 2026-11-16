@@ -6,6 +6,8 @@ export const formatCalculatorDisplay = (value: number) => new Intl.NumberFormat(
 	maximumSignificantDigits: 14,
 }).format(Object.is(value, -0) ? 0 : value);
 
+export const isCalculatorNumberComplete = (value: string) => /^-?(?:\d+(?:\.\d*)?|\.\d+)$/u.test(value);
+
 const normalizeEditableNumber = (value: string) => {
 	const withoutSeparators = value.replaceAll(",", "");
 	const isNegative = withoutSeparators.startsWith("-");

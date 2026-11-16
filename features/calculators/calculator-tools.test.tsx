@@ -88,6 +88,30 @@ describe("ScientificCalculator", () => {
 		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("3");
 	});
 
+	it("adds, recalls, and clears calculator memory", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		const expression = screen.getByRole("textbox", { name: "Calculation" });
+		await user.type(expression, "2+3");
+		await user.click(screen.getByRole("button", { name: "Add current result to memory" }));
+		await user.click(screen.getByRole("button", { name: "Clear" }));
+		await user.click(screen.getByRole("button", { name: "Recall memory" }));
+		expect((expression as HTMLInputElement).value).toBe("5");
+		await user.click(screen.getByRole("button", { name: "Clear memory" }));
+		expect((screen.getByRole("button", { name: "Recall memory" }) as HTMLButtonElement).disabled).toBe(true);
+	});
+
+	it("approximates a definite integral from the expandable calculus panel", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		await user.click(screen.getByText("Numerical integration (definite integral)"));
+		await user.type(screen.getByRole("textbox", { name: "Integrand f(x)" }), "x^2");
+		await user.type(screen.getByRole("textbox", { name: "Lower bound" }), "0");
+		await user.type(screen.getByRole("textbox", { name: "Upper bound" }), "1");
+		await user.click(screen.getByRole("button", { name: "Calculate definite integral" }));
+		expect(screen.getByRole("region", { name: "Numerical integral result" }).textContent).toContain("0.33333333333333");
+	});
+
 	it("shows binary output for safe whole-number results", async () => {
 		const user = userEvent.setup();
 		render(<ScientificCalculator />);
@@ -155,6 +179,9 @@ describe("UnitConverter", () => {
 		await user.keyboard("{Backspace}");
 		expect(valueField.value).toBe("123,567");
 		expect(valueField.selectionStart).toBe(3);
+		await user.clear(valueField);
+		await user.type(valueField, "-12345.67");
+		expect(valueField.value).toBe("-12,345.67");
 	});
 
 	it("converts a value in a selected measurement category", () => {

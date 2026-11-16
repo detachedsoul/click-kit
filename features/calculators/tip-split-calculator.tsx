@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { calculateTipSplit } from "@/features/calculators/calculator-utils";
-import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
 
 const TipSplitCalculator = () => {
 	const [billAmount, setBillAmount] = useState("");
 	const [tipPercent, setTipPercent] = useState("15");
 	const [people, setPeople] = useState("2");
 	const calculation = useMemo(() => {
-		if (billAmount.trim() === "") return null;
+		if (![billAmount, tipPercent, people].every(isCalculatorNumberComplete)) return null;
 		try {
 			return { ...calculateTipSplit(Number(billAmount), Number(tipPercent), Number(people)), error: "" };
 		} catch (error) {

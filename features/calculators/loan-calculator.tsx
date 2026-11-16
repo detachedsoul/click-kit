@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { calculateLoanPayment } from "@/features/calculators/calculator-utils";
-import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
 
 const LoanCalculator = () => {
 	const [principal, setPrincipal] = useState("");
 	const [annualRate, setAnnualRate] = useState("");
 	const [termMonths, setTermMonths] = useState("");
 	const calculation = useMemo(() => {
-		if ([principal, annualRate, termMonths].some((value) => value.trim() === "")) return null;
+		if (![principal, annualRate, termMonths].every(isCalculatorNumberComplete)) return null;
 		try {
 			return { ...calculateLoanPayment(Number(principal), Number(annualRate), Number(termMonths)), error: "" };
 		} catch (error) {

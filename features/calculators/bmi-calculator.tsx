@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { calculateBmi } from "@/features/calculators/calculator-utils";
-import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
+import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
 
 const BmiCalculator = () => {
 	const [units, setUnits] = useState<"metric" | "imperial">("metric");
 	const [weight, setWeight] = useState("");
 	const [height, setHeight] = useState("");
 	const calculation = useMemo(() => {
-		if (weight.trim() === "" || height.trim() === "") return null;
+		if (!isCalculatorNumberComplete(weight) || !isCalculatorNumberComplete(height)) return null;
 		try {
 			return { ...calculateBmi(Number(weight), Number(height), units), error: "" };
 		} catch (error) {
