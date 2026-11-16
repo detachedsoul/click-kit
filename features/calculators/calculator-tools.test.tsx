@@ -43,6 +43,14 @@ describe("StandardCalculator", () => {
 });
 
 describe("PercentageCalculator", () => {
+	it("reserves matching right-side space and uses an inset custom caret", () => {
+		render(<PercentageCalculator />);
+		const select = screen.getByLabelText("Calculate");
+		expect(select.className).toContain("pr-10");
+		expect(select.className).toContain("appearance-none");
+		expect(select.parentElement?.querySelector("svg")?.getAttribute("class")).toContain("right-3");
+	});
+
 	it("shows a live percentage-of result", () => {
 		render(<PercentageCalculator />);
 		fireEvent.change(screen.getByRole("textbox", { name: "Percentage" }), { target: { value: "15" } });

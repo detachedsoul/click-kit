@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectField } from "@/components/select-field";
+
 import { useMemo, useState } from "react";
 import { calculateGeometry, type GeometryShape } from "@/features/calculators/calculator-utils";
 import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
@@ -28,9 +30,9 @@ const GeometryCalculator = () => {
 
 	return <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 		<label className="block max-w-[420px] text-xs font-semibold text-[#3c3d37]" htmlFor="geometry-shape">Shape
-			<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="geometry-shape" value={shape} onChange={(event) => setShape(event.target.value as GeometryShape)}>
+			<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="geometry-shape" value={shape} onChange={(event) => setShape(event.target.value as GeometryShape)}>
 				{shapeOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-			</select>
+			</SelectField>
 		</label>
 		<div className="grid grid-cols-3 gap-4 max-[620px]:grid-cols-1">
 			<CalculatorNumberField id="geometry-first" label={labels[0]} value={first} onChange={setFirst} />

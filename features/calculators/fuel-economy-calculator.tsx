@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectField } from "@/components/select-field";
+
 import { useMemo, useState } from "react";
 import { calculateFuelEconomy, type FuelEconomyUnit } from "@/features/calculators/calculator-utils";
 import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
@@ -27,9 +29,9 @@ const FuelEconomyCalculator = () => {
 	return <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 		<div className="grid grid-cols-2 gap-4 max-[620px]:grid-cols-1">
 			<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="fuel-economy-unit">Fuel economy unit
-				<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="fuel-economy-unit" value={unit} onChange={(event) => setUnit(event.target.value as FuelEconomyUnit)}>
+				<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="fuel-economy-unit" value={unit} onChange={(event) => setUnit(event.target.value as FuelEconomyUnit)}>
 					{economyUnits.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-				</select>
+				</SelectField>
 			</label>
 			<CalculatorNumberField id="fuel-efficiency" label={`Fuel economy (${economyUnits.find((option) => option.id === unit)?.label.split(" (").at(-1)?.replace(")", "") ?? "unit"})`} value={efficiency} onChange={setEfficiency} placeholder="12" />
 		</div>

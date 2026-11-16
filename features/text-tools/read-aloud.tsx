@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectField } from "@/components/select-field";
+
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LockKeyhole, Pause, Play, RotateCcw, Square, Volume2, RefreshCw } from "lucide-react";
 import { countGraphemes } from "@/features/text-tools/text-utils";
@@ -276,8 +278,8 @@ const ReadAloud = () => {
 				<div className="min-w-0">
 					<label className="mb-2 block text-xs font-semibold text-[#3c3d37]" htmlFor="read-aloud-voice">Voice</label>
 					<div className="flex gap-2">
-						<select
-							className="h-10 min-w-0 flex-1 cursor-pointer border border-line bg-surface pl-3 pr-8 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+						<SelectField
+							containerClassName="relative min-w-0 flex-1" className="h-10 min-w-0 w-full cursor-pointer border border-line bg-surface pl-3 pr-10 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 							id="read-aloud-voice"
 							value={selectedVoiceURI}
 							onChange={(event) => handleVoiceChange(event.target.value)}
@@ -287,7 +289,7 @@ const ReadAloud = () => {
 							{voiceUnavailable && <option value={selectedVoiceURI} disabled>{selectedVoiceName || "Selected voice"} · unavailable</option>}
 							<option value="">System default voice</option>
 							{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
-						</select>
+						</SelectField>
 						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshVoices} disabled={!isSupported || isPreviewing} title="Reload voices from your browser">
 							<RefreshCw size={14} aria-hidden="true" /><span className="max-[420px]:sr-only">Refresh</span>
 						</button>

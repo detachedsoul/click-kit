@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectField } from "@/components/select-field";
+
 import { useMemo, useState } from "react";
 import { convertMeasurement, unitCategories, type UnitCategory } from "@/features/calculators/calculator-utils";
 import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
@@ -31,24 +33,24 @@ const UnitConverter = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<label className="block max-w-[420px] text-xs font-semibold text-[#3c3d37]" htmlFor="unit-category">Measurement
-				<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-category" value={category} onChange={(event) => changeCategory(event.target.value as UnitCategory)}>
+				<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-category" value={category} onChange={(event) => changeCategory(event.target.value as UnitCategory)}>
 					{unitCategories.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-				</select>
+				</SelectField>
 			</label>
 			<div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-3 max-[620px]:grid-cols-1">
 				<div className="flex min-w-0 flex-col gap-4">
 					<CalculatorNumberField id="unit-value" label="Value" value={value} onChange={setValue} placeholder="Enter a value" />
 					<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="unit-from">From
-						<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-from" value={fromUnitId} onChange={(event) => setFromUnitId(event.target.value)}>
+						<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-from" value={fromUnitId} onChange={(event) => setFromUnitId(event.target.value)}>
 							{currentCategory.units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.symbol})</option>)}
-						</select>
+						</SelectField>
 					</label>
 				</div>
 				<button className="mb-1 min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:justify-self-center" type="button" onClick={() => { setFromUnitId(toUnitId); setToUnitId(fromUnitId); }}>Swap units</button>
 				<label className="block min-w-0 text-xs font-semibold text-[#3c3d37]" htmlFor="unit-to">To
-					<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-to" value={toUnitId} onChange={(event) => setToUnitId(event.target.value)}>
+					<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="unit-to" value={toUnitId} onChange={(event) => setToUnitId(event.target.value)}>
 						{currentCategory.units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.symbol})</option>)}
-					</select>
+					</SelectField>
 				</label>
 			</div>
 			{conversion.error && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{conversion.error}</p>}

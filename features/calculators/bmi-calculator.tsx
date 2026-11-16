@@ -1,5 +1,7 @@
 "use client";
 
+import { SelectField } from "@/components/select-field";
+
 import { useMemo, useState } from "react";
 import { calculateBmi } from "@/features/calculators/calculator-utils";
 import { CalculatorNumberField, formatCalculatorDisplay, isCalculatorNumberComplete } from "@/features/calculators/calculator-shared";
@@ -26,10 +28,10 @@ const BmiCalculator = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<label className="block max-w-[360px] text-xs font-semibold text-[#3c3d37]" htmlFor="bmi-units">Units
-				<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="bmi-units" value={units} onChange={(event) => changeUnits(event.target.value as "metric" | "imperial")}>
+				<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="bmi-units" value={units} onChange={(event) => changeUnits(event.target.value as "metric" | "imperial")}>
 					<option value="metric">Metric (cm, kg)</option>
 					<option value="imperial">Imperial (in, lb)</option>
-				</select>
+				</SelectField>
 			</label>
 			<div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">
 				<CalculatorNumberField id="bmi-height" label={units === "metric" ? "Height (cm)" : "Height (inches)"} value={height} onChange={setHeight} placeholder={units === "metric" ? "170" : "67"} />
