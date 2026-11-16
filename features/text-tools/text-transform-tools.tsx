@@ -8,20 +8,38 @@ import { createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities,
 const ToolLayout = ({ children }: { children: React.ReactNode }) => <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">{children}</div>;
 const ResultPanel = ({ label, value }: { label: string; value: string }) => <section className="flex flex-col gap-[11px] border-t border-line pt-[18px]"><div className="flex items-center justify-between gap-3"><h2 className="m-0 text-sm font-semibold tracking-[-.02em]">{label}</h2><CopyTextButton text={value} /></div><TextAreaField id={`${label.toLowerCase().replace(/[^a-z0-9]+/gu, "-")}-result`} label="Result" value={value} onChange={() => undefined} placeholder="Your result will appear here." rows={7} readOnly /></section>;
 
+type FindReplaceSegment = { text: string; isMatch: boolean; matchIndex?: number };
+
 type FindReplaceInputProps = {
 	text: string;
 	onChange: (value: string) => void;
-	segments: { text: string; isMatch: boolean }[];
+	segments: FindReplaceSegment[];
+	matchCount: number;
+	activeMatchIndex: number;
+	onActiveMatchChange: (index: number) => void;
 };
 
-const FindReplaceInput = ({ text, onChange, segments }: FindReplaceInputProps) => {
+const FindReplaceInput = ({ text, onChange, segments, matchCount, activeMatchIndex, onActiveMatchChange }: FindReplaceInputProps) => {
 	const highlightLayerRef = useRef<HTMLPreElement>(null);
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 	const placeholder = "Paste or type the text to update…";
+	const navigateMatch = (direction: -1 | 1) => {
+		if (matchCount === 0) return;
+		const nextIndex = (activeMatchIndex + direction + matchCount) % matchCount;
+		onActiveMatchChange(nextIndex);
+		const matchElement = highlightLayerRef.current?.querySelector<HTMLElement>(`[data-match-index="${nextIndex}"]`);
+		matchElement?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+		if (textAreaRef.current && highlightLayerRef.current) {
+			textAreaRef.current.scrollTop = highlightLayerRef.current.scrollTop;
+			textAreaRef.current.scrollLeft = highlightLayerRef.current.scrollLeft;
+		}
+	};
 	return <div className="min-w-0">
 		<div className="mb-2 flex items-baseline justify-between gap-3"><label className="text-xs font-semibold text-[#3c3d37]" htmlFor="find-replace-input">Text</label><span className="font-mono text-[10px] text-[#92928a]">{countGraphemes(text).toLocaleString()} characters</span></div>
 		<div className="relative min-h-[182px] max-[520px]:min-h-[150px]">
-			<pre ref={highlightLayerRef} className="pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words border border-[#d9d7cd] bg-surface px-4 py-[15px] pr-[30px] text-sm leading-[1.72] text-ink max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:pr-[25px] max-[520px]:text-xs" aria-hidden="true">{text ? segments.map((segment, index) => segment.isMatch ? <mark className="bg-[#f2d797] text-ink underline decoration-[#9e6f17] decoration-2 underline-offset-2" key={`${index}-${segment.text}`}>{segment.text}</mark> : <span key={`${index}-${segment.text}`}>{segment.text}</span>) : <span className="text-[#96958c]">{placeholder}</span>}</pre>
+			<pre ref={highlightLayerRef} className="pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words border border-[#d9d7cd] bg-surface px-4 py-[15px] pr-[30px] text-sm leading-[1.72] text-ink max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:pr-[25px] max-[520px]:text-xs" aria-hidden="true">{text ? segments.map((segment, index) => segment.isMatch ? <mark className={segment.matchIndex === activeMatchIndex ? "bg-[#efc86e] text-ink underline decoration-[#72500f] decoration-2 underline-offset-2 ring-1 ring-[#72500f]" : "bg-[#f2d797] text-ink underline decoration-[#9e6f17] decoration-2 underline-offset-2"} data-active-match={segment.matchIndex === activeMatchIndex} data-match-index={segment.matchIndex} key={`${index}-${segment.text}`}>{segment.text}</mark> : <span key={`${index}-${segment.text}`}>{segment.text}</span>) : <span className="text-[#96958c]">{placeholder}</span>}</pre>
 			<textarea
+				ref={textAreaRef}
 				id="find-replace-input"
 				className="relative z-10 block min-h-[182px] w-full resize-y border border-[#d9d7cd] bg-transparent px-4 py-[15px] pr-[30px] text-sm leading-[1.72] text-transparent caret-ink outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] selection:bg-accent/20 selection:text-transparent focus:border-accent focus:outline-accent placeholder:text-transparent max-[520px]:min-h-[150px] max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:pr-[25px] max-[520px]:text-xs"
 				value={text}
@@ -36,6 +54,7 @@ const FindReplaceInput = ({ text, onChange, segments }: FindReplaceInputProps) =
 				}}
 			/>
 		</div>
+		<div className="mt-2 flex flex-wrap items-center justify-between gap-2"><span className="text-[11px] text-muted" aria-live="polite">{matchCount > 0 ? `Match ${activeMatchIndex + 1} of ${matchCount}` : "No matches"}</span><div className="flex gap-2" role="group" aria-label="Search match navigation"><button className="min-h-8 cursor-pointer border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={() => navigateMatch(-1)} disabled={matchCount === 0} aria-label="Previous match">Previous</button><button className="min-h-8 cursor-pointer border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={() => navigateMatch(1)} disabled={matchCount === 0} aria-label="Next match">Next</button></div></div>
 		<p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">Matches are highlighted in the text above as you type.</p>
 	</div>;
 };
@@ -47,6 +66,7 @@ const FindReplaceTool = () => {
 	const [useRegex, setUseRegex] = useState(false);
 	const [caseSensitive, setCaseSensitive] = useState(false);
 	const [wholeWord, setWholeWord] = useState(false);
+	const [activeMatchIndex, setActiveMatchIndex] = useState(0);
 	const result = useMemo(() => {
 		try {
 			return { ...findAndReplaceText(text, search, replacement, { useRegex, caseSensitive, wholeWord }), error: "" };
@@ -61,10 +81,15 @@ const FindReplaceTool = () => {
 			return [{ text, isMatch: false }];
 		}
 	}, [text, search, useRegex, caseSensitive, wholeWord]);
+	const indexedSegments = useMemo(() => {
+		let matchIndex = 0;
+		return highlightedSegments.map((segment) => segment.isMatch ? { ...segment, matchIndex: matchIndex++ } : segment);
+	}, [highlightedSegments]);
+	const currentMatchIndex = result.matches > 0 ? Math.min(activeMatchIndex, result.matches - 1) : 0;
 	return <ToolLayout>
-		<FindReplaceInput text={text} onChange={setText} segments={highlightedSegments} />
-		<div className="grid grid-cols-2 gap-3 max-[520px]:grid-cols-1"><label className="text-xs font-semibold text-[#3c3d37]">Find<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={search} onChange={(event) => setSearch(event.target.value)} /></label><label className="text-xs font-semibold text-[#3c3d37]">Replace with<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={replacement} onChange={(event) => setReplacement(event.target.value)} /></label></div>
-		<fieldset className="flex flex-wrap gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Match options</legend>{[{ label: "Regular expression", value: useRegex, change: setUseRegex }, { label: "Match case", value: caseSensitive, change: setCaseSensitive }, { label: "Whole word", value: wholeWord, change: setWholeWord }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.label}><input className="size-4 accent-accent-dark" type="checkbox" checked={option.value} onChange={(event) => option.change(event.target.checked)} />{option.label}</label>)}</fieldset>
+		<div className="grid grid-cols-2 gap-3 max-[520px]:grid-cols-1"><label className="text-xs font-semibold text-[#3c3d37]">Find<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={search} onChange={(event) => { setSearch(event.target.value); setActiveMatchIndex(0); }} /></label><label className="text-xs font-semibold text-[#3c3d37]">Replace with<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={replacement} onChange={(event) => setReplacement(event.target.value)} /></label></div>
+		<fieldset className="flex flex-wrap gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Match options</legend>{[{ label: "Regular expression", value: useRegex, change: setUseRegex }, { label: "Match case", value: caseSensitive, change: setCaseSensitive }, { label: "Whole word", value: wholeWord, change: setWholeWord }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.label}><input className="size-4 accent-accent-dark" type="checkbox" checked={option.value} onChange={(event) => { option.change(event.target.checked); setActiveMatchIndex(0); }} />{option.label}</label>)}</fieldset>
+		<FindReplaceInput text={text} onChange={(value) => { setText(value); setActiveMatchIndex(0); }} segments={indexedSegments} matchCount={result.matches} activeMatchIndex={currentMatchIndex} onActiveMatchChange={setActiveMatchIndex} />
 		<p className="m-0 text-xs text-muted" role="status">{result.error || `${result.matches} match${result.matches === 1 ? "" : "es"} found. Replacement preview is below.`}</p>
 		<ResultPanel label="Updated text" value={result.text} />
 	</ToolLayout>;

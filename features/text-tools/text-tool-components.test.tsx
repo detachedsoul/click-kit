@@ -234,11 +234,20 @@ describe("TextDiffChecker", () => {
 });
 
 describe("additional text tools", () => {
-	it("highlights matches in the editable text and replaces them", () => {
+	it("highlights matches, navigates between them, and previews replacements", async () => {
+		const user = userEvent.setup();
 		const { container } = render(<FindReplaceTool />);
-		fireEvent.change(screen.getByRole("textbox", { name: "Text" }), { target: { value: "red red" } });
 		fireEvent.change(screen.getByLabelText("Find"), { target: { value: "red" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Text" }), { target: { value: "red red" } });
 		expect(Array.from(container.querySelectorAll("mark"), (match) => match.textContent)).toEqual(["red", "red"]);
+		expect(screen.getByText("Match 1 of 2")).toBeTruthy();
+		await user.click(screen.getByRole("button", { name: "Next match" }));
+		expect(screen.getByText("Match 2 of 2")).toBeTruthy();
+		expect(container.querySelector('mark[data-active-match="true"]')?.getAttribute("data-match-index")).toBe("1");
+		await user.click(screen.getByRole("button", { name: "Next match" }));
+		expect(screen.getByText("Match 1 of 2")).toBeTruthy();
+		await user.click(screen.getByRole("button", { name: "Previous match" }));
+		expect(screen.getByText("Match 2 of 2")).toBeTruthy();
 		fireEvent.change(screen.getByLabelText("Replace with"), { target: { value: "blue" } });
 		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("blue blue");
 		expect(screen.getByText("2 matches found. Replacement preview is below.").textContent).toBe("2 matches found. Replacement preview is below.");
