@@ -14,6 +14,8 @@ import LoanCalculator from "@/features/calculators/loan-calculator";
 import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import BmiCalculator from "@/features/calculators/bmi-calculator";
 import { Base64Tool, JsonFormatterTool, JsonTypeScriptTool, RegexTesterTool, TimestampConverterTool, UuidGeneratorTool } from "@/features/developer-tools/developer-tool-components";
+import { ColorConverterTool, HashGeneratorTool, JsonSchemaTool, JwtDecoderTool, SqlFormatterTool, UrlInspectorTool } from "@/features/developer-tools/additional-developer-tools";
+import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
 import GeometryCalculator from "@/features/calculators/geometry-calculator";
@@ -60,6 +62,18 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"uuid-generator": UuidGeneratorTool,
 	"regex-tester": RegexTesterTool,
 	"timestamp-converter": TimestampConverterTool,
+	"url-inspector": UrlInspectorTool,
+	"hash-generator": HashGeneratorTool,
+	"sql-formatter": SqlFormatterTool,
+	"color-converter": ColorConverterTool,
+	"jwt-decoder": JwtDecoderTool,
+	"json-schema": JsonSchemaTool,
+	"qr-generator": QrGeneratorTool,
+	"image-compressor": ImageCompressorTool,
+	"image-resizer": ImageResizerTool,
+	"password-generator": PasswordGeneratorTool,
+	"pomodoro-timer": PomodoroTimerTool,
+	"random-picker": RandomPickerTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
 	"geometry-calculator": GeometryCalculator,
