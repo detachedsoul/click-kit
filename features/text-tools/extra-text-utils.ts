@@ -14,12 +14,32 @@ export type ReadabilityStats = {
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 
-export const findAndReplaceText = (text: string, search: string, replacement: string, options: FindReplaceOptions) => {
-	if (!search) return { text, matches: 0 };
+const createSearchExpression = (search: string, options: FindReplaceOptions) => {
 	let source = options.useRegex ? search : escapeRegExp(search);
 	if (options.wholeWord) source = `(?<![\\p{L}\\p{N}_])(?:${source})(?![\\p{L}\\p{N}_])`;
-	const flags = options.caseSensitive ? "gu" : "giu";
-	const expression = new RegExp(source, flags);
+	return new RegExp(source, options.caseSensitive ? "gu" : "giu");
+};
+
+export const splitTextMatches = (text: string, search: string, options: FindReplaceOptions) => {
+	if (!text || !search) return [{ text, isMatch: false }];
+	const expression = createSearchExpression(search, options);
+	const segments: { text: string; isMatch: boolean }[] = [];
+	let previousEnd = 0;
+	for (const match of text.matchAll(expression)) {
+		const start = match.index ?? 0;
+		const matchedText = match[0];
+		if (matchedText.length === 0 || start < previousEnd) continue;
+		if (start > previousEnd) segments.push({ text: text.slice(previousEnd, start), isMatch: false });
+		segments.push({ text: matchedText, isMatch: true });
+		previousEnd = start + matchedText.length;
+	}
+	if (previousEnd < text.length) segments.push({ text: text.slice(previousEnd), isMatch: false });
+	return segments.length ? segments : [{ text, isMatch: false }];
+};
+
+export const findAndReplaceText = (text: string, search: string, replacement: string, options: FindReplaceOptions) => {
+	if (!search) return { text, matches: 0 };
+	const expression = createSearchExpression(search, options);
 	const matches = [...text.matchAll(expression)].length;
 	return { text: text.replace(expression, replacement), matches };
 };

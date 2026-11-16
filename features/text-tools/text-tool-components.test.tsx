@@ -234,13 +234,14 @@ describe("TextDiffChecker", () => {
 });
 
 describe("additional text tools", () => {
-	it("finds and replaces text with match counts", () => {
-		render(<FindReplaceTool />);
+	it("highlights matches in the editable text and replaces them", () => {
+		const { container } = render(<FindReplaceTool />);
 		fireEvent.change(screen.getByRole("textbox", { name: "Text" }), { target: { value: "red red" } });
 		fireEvent.change(screen.getByLabelText("Find"), { target: { value: "red" } });
+		expect(Array.from(container.querySelectorAll("mark"), (match) => match.textContent)).toEqual(["red", "red"]);
 		fireEvent.change(screen.getByLabelText("Replace with"), { target: { value: "blue" } });
 		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("blue blue");
-		expect(screen.getByText("2 matches replaced.").textContent).toBe("2 matches replaced.");
+		expect(screen.getByText("2 matches found. Replacement preview is below.").textContent).toBe("2 matches found. Replacement preview is below.");
 	});
 
 	it("sorts lines and removes duplicates", () => {

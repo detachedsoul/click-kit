@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { analyzeReadability, createMarkdownTable, createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities, encodeUrlComponent, extractTextItems, findAndReplaceText, formatMarkup, formatTextDocument, generateLoremIpsum, inspectUnicodeText, renderSafeMarkdown, reverseGraphemes, sortTextLines } from "@/features/text-tools/extra-text-utils";
+import { analyzeReadability, createMarkdownTable, createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities, encodeUrlComponent, extractTextItems, findAndReplaceText, formatMarkup, formatTextDocument, generateLoremIpsum, inspectUnicodeText, renderSafeMarkdown, reverseGraphemes, sortTextLines, splitTextMatches } from "@/features/text-tools/extra-text-utils";
 
 describe("extra text utilities", () => {
 	it("finds and replaces literal and whole-word text safely", () => {
 		expect(findAndReplaceText("cat scatter cat", "cat", "dog", { useRegex: false, caseSensitive: true, wholeWord: true })).toEqual({ text: "dog scatter dog", matches: 2 });
+	});
+
+	it("splits text into highlighted whole-word matches and ordinary text", () => {
+		expect(splitTextMatches("Cat catalog CAT", "cat", { useRegex: false, caseSensitive: false, wholeWord: true })).toEqual([
+			{ text: "Cat", isMatch: true },
+			{ text: " catalog ", isMatch: false },
+			{ text: "CAT", isMatch: true },
+		]);
 	});
 
 	it("supports regular expression groups and reports invalid expressions", () => {

@@ -1,11 +1,44 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
-import { createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities, encodeUrlComponent, findAndReplaceText, generateLoremIpsum, inspectUnicodeText, reverseGraphemes, sortTextLines } from "@/features/text-tools/extra-text-utils";
+import { countGraphemes } from "@/features/text-tools/text-utils";
+import { createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities, encodeUrlComponent, findAndReplaceText, generateLoremIpsum, inspectUnicodeText, reverseGraphemes, sortTextLines, splitTextMatches } from "@/features/text-tools/extra-text-utils";
 
 const ToolLayout = ({ children }: { children: React.ReactNode }) => <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">{children}</div>;
 const ResultPanel = ({ label, value }: { label: string; value: string }) => <section className="flex flex-col gap-[11px] border-t border-line pt-[18px]"><div className="flex items-center justify-between gap-3"><h2 className="m-0 text-sm font-semibold tracking-[-.02em]">{label}</h2><CopyTextButton text={value} /></div><TextAreaField id={`${label.toLowerCase().replace(/[^a-z0-9]+/gu, "-")}-result`} label="Result" value={value} onChange={() => undefined} placeholder="Your result will appear here." rows={7} readOnly /></section>;
+
+type FindReplaceInputProps = {
+	text: string;
+	onChange: (value: string) => void;
+	segments: { text: string; isMatch: boolean }[];
+};
+
+const FindReplaceInput = ({ text, onChange, segments }: FindReplaceInputProps) => {
+	const highlightLayerRef = useRef<HTMLPreElement>(null);
+	const placeholder = "Paste or type the text to update…";
+	return <div className="min-w-0">
+		<div className="mb-2 flex items-baseline justify-between gap-3"><label className="text-xs font-semibold text-[#3c3d37]" htmlFor="find-replace-input">Text</label><span className="font-mono text-[10px] text-[#92928a]">{countGraphemes(text).toLocaleString()} characters</span></div>
+		<div className="relative min-h-[182px] max-[520px]:min-h-[150px]">
+			<pre ref={highlightLayerRef} className="pointer-events-none absolute inset-0 m-0 overflow-hidden whitespace-pre-wrap break-words border border-[#d9d7cd] bg-surface px-4 py-[15px] pr-[30px] text-sm leading-[1.72] text-ink max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:pr-[25px] max-[520px]:text-xs" aria-hidden="true">{text ? segments.map((segment, index) => segment.isMatch ? <mark className="bg-[#f2d797] text-ink underline decoration-[#9e6f17] decoration-2 underline-offset-2" key={`${index}-${segment.text}`}>{segment.text}</mark> : <span key={`${index}-${segment.text}`}>{segment.text}</span>) : <span className="text-[#96958c]">{placeholder}</span>}</pre>
+			<textarea
+				id="find-replace-input"
+				className="relative z-10 block min-h-[182px] w-full resize-y border border-[#d9d7cd] bg-transparent px-4 py-[15px] pr-[30px] text-sm leading-[1.72] text-transparent caret-ink outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] selection:bg-accent/20 selection:text-transparent focus:border-accent focus:outline-accent placeholder:text-transparent max-[520px]:min-h-[150px] max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:pr-[25px] max-[520px]:text-xs"
+				value={text}
+				onChange={(event) => onChange(event.target.value)}
+				placeholder=""
+				rows={9}
+				onScroll={(event) => {
+					if (highlightLayerRef.current) {
+						highlightLayerRef.current.scrollTop = event.currentTarget.scrollTop;
+						highlightLayerRef.current.scrollLeft = event.currentTarget.scrollLeft;
+					}
+				}}
+			/>
+		</div>
+		<p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">Matches are highlighted in the text above as you type.</p>
+	</div>;
+};
 
 const FindReplaceTool = () => {
 	const [text, setText] = useState("");
@@ -21,11 +54,18 @@ const FindReplaceTool = () => {
 			return { text, matches: 0, error: error instanceof Error ? error.message : "Invalid search pattern." };
 		}
 	}, [text, search, replacement, useRegex, caseSensitive, wholeWord]);
+	const highlightedSegments = useMemo(() => {
+		try {
+			return splitTextMatches(text, search, { useRegex, caseSensitive, wholeWord });
+		} catch {
+			return [{ text, isMatch: false }];
+		}
+	}, [text, search, useRegex, caseSensitive, wholeWord]);
 	return <ToolLayout>
-		<TextAreaField id="find-replace-input" label="Text" value={text} onChange={setText} placeholder="Paste or type the text to update…" />
+		<FindReplaceInput text={text} onChange={setText} segments={highlightedSegments} />
 		<div className="grid grid-cols-2 gap-3 max-[520px]:grid-cols-1"><label className="text-xs font-semibold text-[#3c3d37]">Find<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={search} onChange={(event) => setSearch(event.target.value)} /></label><label className="text-xs font-semibold text-[#3c3d37]">Replace with<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={replacement} onChange={(event) => setReplacement(event.target.value)} /></label></div>
 		<fieldset className="flex flex-wrap gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Match options</legend>{[{ label: "Regular expression", value: useRegex, change: setUseRegex }, { label: "Match case", value: caseSensitive, change: setCaseSensitive }, { label: "Whole word", value: wholeWord, change: setWholeWord }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.label}><input className="size-4 accent-accent-dark" type="checkbox" checked={option.value} onChange={(event) => option.change(event.target.checked)} />{option.label}</label>)}</fieldset>
-		<p className="m-0 text-xs text-muted" role="status">{result.error || `${result.matches} match${result.matches === 1 ? "" : "es"} replaced.`}</p>
+		<p className="m-0 text-xs text-muted" role="status">{result.error || `${result.matches} match${result.matches === 1 ? "" : "es"} found. Replacement preview is below.`}</p>
 		<ResultPanel label="Updated text" value={result.text} />
 	</ToolLayout>;
 };
