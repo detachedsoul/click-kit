@@ -37,12 +37,15 @@ const subscribeToSpeech = (onStoreChange: () => void) => {
 const ReadAloud = () => {
 	const [text, setText] = useState("");
 	const [selectedVoiceURI, setSelectedVoiceURI] = useState("");
+	const [selectedVoiceName, setSelectedVoiceName] = useState("");
 	const [rate, setRate] = useState(1);
 	const [isSpeaking, setIsSpeaking] = useState(false);
 	const [isPaused, setIsPaused] = useState(false);
 	const [message, setMessage] = useState("");
 	const activeUtteranceId = useRef(0);
 	const { supported: isSupported, voices } = useSyncExternalStore(subscribeToSpeech, getSpeechSnapshot, getServerSpeechSnapshot);
+	const selectedVoice = voices.find((voice) => voice.voiceURI === selectedVoiceURI);
+	const voiceUnavailable = selectedVoiceURI !== "" && !selectedVoice;
 
 	useEffect(() => {
 		if (!isSupported) return;
@@ -56,12 +59,16 @@ const ReadAloud = () => {
 		if (!text.trim() || !isSupported) return;
 		const synthesis = window.speechSynthesis;
 		if (!synthesis) return;
+		const voice = voices.find((item) => item.voiceURI === voiceURI);
+		if (voiceURI && !voice) {
+			setMessage("The selected voice/language is no longer available. Refresh voices or choose System default.");
+			return;
+		}
 
 		activeUtteranceId.current += 1;
 		const utteranceId = activeUtteranceId.current;
 		synthesis.cancel();
 		const utterance = new SpeechSynthesisUtterance(text);
-		const voice = voices.find((item) => item.voiceURI === voiceURI);
 		if (voice) utterance.voice = voice;
 		utterance.rate = nextRate;
 		utterance.onstart = () => {
@@ -86,7 +93,10 @@ const ReadAloud = () => {
 	};
 
 	const handleVoiceChange = (voiceURI: string) => {
+		const voice = voices.find((item) => item.voiceURI === voiceURI);
 		setSelectedVoiceURI(voiceURI);
+		setSelectedVoiceName(voice ? `${voice.name} · ${voice.lang}` : "");
+		setMessage("");
 		if (isSpeaking) startReading(rate, voiceURI);
 	};
 
@@ -165,8 +175,10 @@ const ReadAloud = () => {
 							id="read-aloud-voice"
 							value={selectedVoiceURI}
 							onChange={(event) => handleVoiceChange(event.target.value)}
+							aria-invalid={voiceUnavailable}
 							disabled={!isSupported}
 						>
+							{voiceUnavailable && <option value={selectedVoiceURI} disabled>{selectedVoiceName || "Selected voice"} · unavailable</option>}
 							<option value="">System default voice</option>
 							{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
 						</select>
@@ -174,7 +186,9 @@ const ReadAloud = () => {
 							<RefreshCw size={14} aria-hidden="true" /><span className="max-[420px]:sr-only">Refresh</span>
 						</button>
 					</div>
-					<p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">{voices.length > 0 ? "Choose a voice provided by your browser or device." : "No extra voices are exposed right now; refresh or use the system default."}</p>
+					{voiceUnavailable
+						? <p className="mb-0 mt-[7px] border-l-2 border-[#b78b42] bg-[#f8f2e2] px-2.5 py-2 text-[11px] leading-[1.5] text-[#61502b]" role="alert">The selected voice/language is unavailable. Refresh the list or choose System default.</p>
+						: <p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">{voices.length > 0 ? "Choose a voice provided by your browser or device." : "No extra voices are exposed right now; refresh or use the system default."}</p>}
 				</div>
 				<div>
 					<div className="mb-2 flex items-center justify-between gap-3">

@@ -129,7 +129,8 @@ describe("ReadAloud", () => {
 			default: false,
 			localService: true,
 		};
-		const { speechSynthesis, utterances } = mockSpeechSynthesis([browserVoice]);
+		const availableVoices = [browserVoice];
+		const { speechSynthesis, utterances } = mockSpeechSynthesis(availableVoices);
 		render(<ReadAloud />);
 		fireEvent.change(screen.getByRole("textbox", { name: "Text to read aloud" }), {
 			target: { value: "A sentence to hear." },
@@ -159,6 +160,18 @@ describe("ReadAloud", () => {
 		expect(speechSynthesis.resume).toHaveBeenCalledOnce();
 		await user.click(screen.getByRole("button", { name: "Stop" }));
 		expect(speechSynthesis.cancel).toHaveBeenCalled();
+
+		availableVoices.splice(0, 1);
+		await user.click(screen.getByRole("button", { name: "Refresh" }));
+		expect(screen.getByRole("alert").textContent).toContain("selected voice/language is unavailable");
+		await user.click(screen.getByRole("button", { name: "Read aloud" }));
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
+		expect(screen.getByText(/no longer available/)).toBeTruthy();
+
+		await user.selectOptions(voiceSelect, "");
+		await user.click(screen.getByRole("button", { name: "Read aloud" }));
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(4);
+		expect(utterances[3].voice).toBeNull();
 	});
 });
 
