@@ -1,3 +1,4 @@
+import { webcrypto } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
 	convertColor,
@@ -6,6 +7,7 @@ import {
 	hashText,
 	inspectUrl,
 	jsonToSchema,
+	verifyJwtSignature,
 } from "@/features/developer-tools/additional-developer-utils";
 
 describe("URL inspector", () => {
@@ -102,8 +104,14 @@ describe("JSON Schema generator", () => {
 });
 
 describe("JWT decoder", () => {
+	const subtle = webcrypto.subtle as unknown as SubtleCrypto;
 	const encode = (value: unknown) =>
 		btoa(JSON.stringify(value)).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/u, "");
+	const encodeBytes = (value: Uint8Array) =>
+		btoa(String.fromCharCode(...value))
+			.replaceAll("+", "-")
+			.replaceAll("/", "_")
+			.replace(/=+$/u, "");
 
 	it("decodes Base64URL header and payload without trusting signature", () => {
 		const result = decodeJwt(
@@ -118,5 +126,119 @@ describe("JWT decoder", () => {
 	it("rejects invalid token structure and non-object JWT segments", () => {
 		expect(() => decodeJwt(`${encode("not an object")}.${encode({})}.signature`)).toThrow(/must be a JSON object/u);
 		expect(() => decodeJwt("a.b")).toThrow(/three-part JWT/u);
+	});
+
+	it("verifies HMAC signatures and rejects wrong secrets, changed payloads, and algorithm mismatch", async () => {
+		const secret = "local test secret";
+		const header = encode({ alg: "HS256", typ: "JWT" });
+		const payload = encode({ sub: "user-1" });
+		const signingInput = `${header}.${payload}`;
+		const signature = await webcrypto.subtle.sign(
+			{ name: "HMAC", hash: "SHA-256" },
+			await webcrypto.subtle.importKey(
+				"raw",
+				new TextEncoder().encode(secret),
+				{ name: "HMAC", hash: "SHA-256" },
+				false,
+				["sign"],
+			),
+			new TextEncoder().encode(signingInput),
+		);
+		const token = `${signingInput}.${encodeBytes(new Uint8Array(signature))}`;
+		await expect(verifyJwtSignature(token, secret, "HS256", subtle)).resolves.toBe(true);
+		await expect(verifyJwtSignature(token, "wrong secret", "HS256", subtle)).resolves.toBe(false);
+		await expect(
+			verifyJwtSignature(
+				`${header}.${encode({ sub: "changed" })}.${encodeBytes(new Uint8Array(signature))}`,
+				secret,
+				"HS256",
+				subtle,
+			),
+		).resolves.toBe(false);
+		await expect(verifyJwtSignature(token, secret, "RS256", subtle)).rejects.toThrow(/must match/u);
+		await expect(
+			verifyJwtSignature(
+				`${encode({ alg: "HS256", crit: ["exp"] })}.${payload}.${encodeBytes(new Uint8Array(signature))}`,
+				secret,
+				"HS256",
+				subtle,
+			),
+		).rejects.toThrow(/critical extensions/u);
+		await expect(verifyJwtSignature(token, "", "HS256", subtle)).rejects.toThrow(/shared secret/u);
+	});
+
+	it("supports HS384 and HS512 JWTs", async () => {
+		for (const [algorithm, hash] of [
+			["HS384", "SHA-384"],
+			["HS512", "SHA-512"],
+		] as const) {
+			const secret = "another local secret";
+			const signingInput = `${encode({ alg: algorithm })}.${encode({ sub: "test" })}`;
+			const key = await webcrypto.subtle.importKey(
+				"raw",
+				new TextEncoder().encode(secret),
+				{ name: "HMAC", hash },
+				false,
+				["sign"],
+			);
+			const signature = await webcrypto.subtle.sign("HMAC", key, new TextEncoder().encode(signingInput));
+			const token = `${signingInput}.${encodeBytes(new Uint8Array(signature))}`;
+			await expect(verifyJwtSignature(token, secret, algorithm, subtle)).resolves.toBe(true);
+		}
+	});
+
+	it("verifies RSA signatures with an SPKI PEM public key and rejects malformed PEM", async () => {
+		const keyPair = await webcrypto.subtle.generateKey(
+			{
+				name: "RSASSA-PKCS1-v1_5",
+				modulusLength: 2048,
+				publicExponent: new Uint8Array([1, 0, 1]),
+				hash: "SHA-256",
+			},
+			true,
+			["sign", "verify"],
+		);
+		const signingInput = `${encode({ alg: "RS256", typ: "JWT" })}.${encode({ aud: "click-kit" })}`;
+		const signature = await webcrypto.subtle.sign(
+			"RSASSA-PKCS1-v1_5",
+			keyPair.privateKey,
+			new TextEncoder().encode(signingInput),
+		);
+		const publicKey = new Uint8Array(await webcrypto.subtle.exportKey("spki", keyPair.publicKey));
+		const pemBody =
+			btoa(String.fromCharCode(...publicKey))
+				.match(/.{1,64}/gu)
+				?.join("\n") ?? "";
+		const pem = `-----BEGIN PUBLIC KEY-----\n${pemBody}\n-----END PUBLIC KEY-----`;
+		const token = `${signingInput}.${encodeBytes(new Uint8Array(signature))}`;
+		await expect(verifyJwtSignature(token, pem, "RS256", subtle)).resolves.toBe(true);
+		await expect(verifyJwtSignature(token, "not a PEM key", "RS256", subtle)).rejects.toThrow(/PEM/u);
+	});
+
+	it("supports RS384 and RS512 JWT signatures", async () => {
+		for (const [algorithm, hash] of [
+			["RS384", "SHA-384"],
+			["RS512", "SHA-512"],
+		] as const) {
+			const keyPair = await webcrypto.subtle.generateKey(
+				{ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash },
+				true,
+				["sign", "verify"],
+			);
+			const signingInput = `${encode({ alg: algorithm })}.${encode({ sub: "rsa-test" })}`;
+			const signature = await webcrypto.subtle.sign(
+				"RSASSA-PKCS1-v1_5",
+				keyPair.privateKey,
+				new TextEncoder().encode(signingInput),
+			);
+			const publicKey = new Uint8Array(await webcrypto.subtle.exportKey("spki", keyPair.publicKey));
+			const pemBody =
+				btoa(String.fromCharCode(...publicKey))
+					.match(/.{1,64}/gu)
+					?.join("\n") ?? "";
+			const pem = `-----BEGIN PUBLIC KEY-----\n${pemBody}\n-----END PUBLIC KEY-----`;
+			const token = `${signingInput}.${encodeBytes(new Uint8Array(signature))}`;
+			await expect(verifyJwtSignature(token, pem, algorithm, subtle)).resolves.toBe(true);
+		}
 	});
 });

@@ -1,9 +1,10 @@
 import type { SqlLanguage } from "sql-formatter";
-import { decodeBase64 } from "@/features/developer-tools/developer-utils";
+import { decodeBase64, decodeBase64Bytes } from "@/features/developer-tools/developer-utils";
 
 export type HashAlgorithm = "SHA-256" | "SHA-384" | "SHA-512";
 export type ColorValue = { hex: string; rgb: string; hsl: string; alpha: number };
 export type JwtPayload = Record<string, unknown>;
+export type JwtVerificationAlgorithm = "HS256" | "HS384" | "HS512" | "RS256" | "RS384" | "RS512";
 type RgbaTuple = [red: number, green: number, blue: number, alpha: number];
 
 type UrlQueryEntry = { name: string; value: string };
@@ -278,4 +279,96 @@ export const decodeJwt = (token: string) => {
 		typeof expiration === "number" && Number.isFinite(expiration) ? new Date(expiration * 1000) : null;
 	const expiresAt = expirationDate && Number.isFinite(expirationDate.getTime()) ? expirationDate.toISOString() : null;
 	return { header, payload, expiresAt, signaturePresent: parts[2].length > 0 };
+};
+
+const jwtAlgorithms: Record<
+	JwtVerificationAlgorithm,
+	{ name: "HMAC" | "RSASSA-PKCS1-v1_5"; hash: "SHA-256" | "SHA-384" | "SHA-512" }
+> = {
+	HS256: { name: "HMAC", hash: "SHA-256" },
+	HS384: { name: "HMAC", hash: "SHA-384" },
+	HS512: { name: "HMAC", hash: "SHA-512" },
+	RS256: { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+	RS384: { name: "RSASSA-PKCS1-v1_5", hash: "SHA-384" },
+	RS512: { name: "RSASSA-PKCS1-v1_5", hash: "SHA-512" },
+};
+
+const toArrayBuffer = (bytes: Uint8Array): ArrayBuffer => {
+	const copy = new Uint8Array(bytes.byteLength);
+	copy.set(bytes);
+	return copy.buffer;
+};
+
+const decodeSpkiPublicKey = (pem: string) => {
+	const match = pem.trim().match(/^-----BEGIN PUBLIC KEY-----\s+([A-Z\d+/=\s]+?)\s+-----END PUBLIC KEY-----$/iu);
+	if (!match) throw new Error("Paste an RSA SubjectPublicKeyInfo public key in PEM format.");
+	return decodeBase64Bytes(match[1].replace(/\s/gu, "")).bytes;
+};
+
+export const verifyJwtSignature = async (
+	token: string,
+	key: string,
+	algorithm: JwtVerificationAlgorithm,
+	subtle: SubtleCrypto | null = globalThis.crypto?.subtle,
+) => {
+	if (!subtle) throw new Error("Secure signature verification is not available in this browser context.");
+	if (token.length > maximumInputLength) throw new Error("Keep JWTs under one million characters.");
+	if (key.length > 16_384) throw new Error("Keep the verification key under 16,384 characters.");
+	if (!Object.hasOwn(jwtAlgorithms, algorithm)) throw new Error("Choose a supported JWT verification algorithm.");
+	if (!key.trim())
+		throw new Error(
+			algorithm.startsWith("HS")
+				? "Enter the shared secret to verify this JWT."
+				: "Paste the RSA public key to verify this JWT.",
+		);
+	const parts = token.trim().split(".");
+	if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2])
+		throw new Error("Verification requires a signed three-part JWT.");
+	const decoded = decodeJwt(token);
+	if (decoded.header.alg !== algorithm)
+		throw new Error(`Token algorithm must match the selected ${algorithm} verifier.`);
+	if (decoded.header.b64 === false || decoded.header.crit !== undefined)
+		throw new Error("JWTs with unencoded payloads or critical extensions are not supported.");
+	const signature = toArrayBuffer(decodeBase64Bytes(parts[2]).bytes);
+	const algorithmDetails = jwtAlgorithms[algorithm];
+	const spkiKey = algorithmDetails.name === "RSASSA-PKCS1-v1_5" ? toArrayBuffer(decodeSpkiPublicKey(key)) : null;
+	const input = new TextEncoder().encode(`${parts[0]}.${parts[1]}`);
+	let cryptoKey: CryptoKey;
+	try {
+		cryptoKey =
+			algorithmDetails.name === "HMAC"
+				? await subtle.importKey(
+						"raw",
+						new TextEncoder().encode(key),
+						{ name: "HMAC", hash: algorithmDetails.hash },
+						false,
+						["verify"],
+					)
+				: await subtle.importKey(
+						"spki",
+						spkiKey ?? new ArrayBuffer(0),
+						{ name: algorithmDetails.name, hash: algorithmDetails.hash },
+						false,
+						["verify"],
+					);
+	} catch {
+		throw new Error(
+			algorithmDetails.name === "HMAC"
+				? "Could not prepare the HMAC secret for verification."
+				: "Could not import this RSA public key.",
+		);
+	}
+	if (
+		algorithmDetails.name === "RSASSA-PKCS1-v1_5" &&
+		"modulusLength" in cryptoKey.algorithm &&
+		typeof cryptoKey.algorithm.modulusLength === "number" &&
+		cryptoKey.algorithm.modulusLength < 2048
+	) {
+		throw new Error("RSA verification requires a public key with at least 2,048 bits.");
+	}
+	try {
+		return await subtle.verify({ name: algorithmDetails.name }, cryptoKey, signature, input);
+	} catch {
+		throw new Error("Could not verify this JWT signature. Check the algorithm and key format.");
+	}
 };

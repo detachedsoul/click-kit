@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { SelectField } from "@/components/select-field";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
 import {
@@ -10,7 +10,9 @@ import {
 	hashText,
 	inspectUrl,
 	jsonToSchema,
+	verifyJwtSignature,
 	type HashAlgorithm,
+	type JwtVerificationAlgorithm,
 } from "@/features/developer-tools/additional-developer-utils";
 import type { SqlLanguage } from "sql-formatter";
 
@@ -369,8 +371,16 @@ export const ColorConverterTool = () => {
 export const JwtDecoderTool = () => {
 	const [token, setToken] = useState("");
 	const [decoded, setDecoded] = useState<ReturnType<typeof decodeJwt> | null>(null);
+	const [algorithm, setAlgorithm] = useState<JwtVerificationAlgorithm>("HS256");
+	const [key, setKey] = useState("");
+	const [verification, setVerification] = useState<boolean | null>(null);
 	const [error, setError] = useState("");
+	const [verificationError, setVerificationError] = useState("");
+	const verificationRequest = useRef(0);
 	const decode = () => {
+		verificationRequest.current += 1;
+		setVerification(null);
+		setVerificationError("");
 		try {
 			setDecoded(decodeJwt(token));
 			setError("");
@@ -379,38 +389,151 @@ export const JwtDecoderTool = () => {
 			setError(caughtError instanceof Error ? caughtError.message : "Could not decode this token.");
 		}
 	};
+	const verify = async () => {
+		const request = ++verificationRequest.current;
+		setVerification(null);
+		setVerificationError("");
+		try {
+			const nextDecoded = decodeJwt(token);
+			const isVerified = await verifyJwtSignature(token, key, algorithm);
+			if (request !== verificationRequest.current) return;
+			setDecoded(nextDecoded);
+			setVerification(isVerified);
+			setError("");
+		} catch (caughtError) {
+			if (request !== verificationRequest.current) return;
+			setDecoded(null);
+			setVerificationError(caughtError instanceof Error ? caughtError.message : "Could not verify this JWT.");
+		}
+	};
+	const isHmac = algorithm.startsWith("HS");
 	return (
 		<ToolLayout>
 			<p
 				className="m-0 border-l-2 border-[#b78b42] bg-[#f8f2e2] px-3 py-2.5 text-xs leading-relaxed text-[#61502b]"
 				role="note"
 			>
-				<strong>Decode only, never verify.</strong> This tool reads the header and payload locally. It does not
-				verify the signature, issuer, audience, or claims. Do not treat decoded data as trusted.
+				Decoding only reveals untrusted content. This tool can verify HS256/384/512 signatures with a shared
+				secret or RS256/384/512 signatures with an RSA public key, entirely in your browser. Signature
+				verification does not validate the issuer, audience, expiration, revocation, or whether you should trust
+				the key. Never paste a production secret into a device or browser you do not trust.
 			</p>
 			<TextAreaField
 				id="jwt-input"
 				label="Three-part JWT"
 				value={token}
 				onChange={(value) => {
+					verificationRequest.current += 1;
 					setToken(value);
 					setDecoded(null);
+					setVerification(null);
 					setError("");
+					setVerificationError("");
 				}}
 				placeholder="Paste a JWT with header.payload.signature…"
 				rows={6}
-				hint="A token can contain sensitive information. Decoding is local; nothing is sent to a server."
+				hint="A token can contain sensitive information. Decoding and verification happen locally; nothing is uploaded."
 			/>
-			<button
-				className="min-h-10 cursor-pointer self-start bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-				type="button"
-				onClick={decode}
-			>
-				Decode token
-			</button>
+			<div className="grid grid-cols-[minmax(0,0.55fr)_minmax(0,1fr)] gap-4 max-[620px]:grid-cols-1">
+				<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="jwt-algorithm">
+					Signature algorithm
+					<SelectField
+						id="jwt-algorithm"
+						aria-label="Signature algorithm"
+						value={algorithm}
+						onChange={(event) => {
+							verificationRequest.current += 1;
+							setAlgorithm(event.target.value as JwtVerificationAlgorithm);
+							setVerification(null);
+							setVerificationError("");
+						}}
+						className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 pr-9 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+						containerClassName="mt-2"
+					>
+						{(["HS256", "HS384", "HS512", "RS256", "RS384", "RS512"] as const).map((item) => (
+							<option key={item} value={item}>
+								{item}
+							</option>
+						))}
+					</SelectField>
+				</label>
+				<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="jwt-verification-key">
+					{isHmac ? "Shared secret" : "RSA public key (PEM)"}
+					{isHmac ? (
+						<input
+							id="jwt-verification-key"
+							type="password"
+							autoComplete="off"
+							value={key}
+							onChange={(event) => {
+								verificationRequest.current += 1;
+								setKey(event.target.value);
+								setVerification(null);
+								setVerificationError("");
+							}}
+							className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							placeholder="Enter the exact shared secret"
+						/>
+					) : (
+						<textarea
+							id="jwt-verification-key"
+							value={key}
+							onChange={(event) => {
+								verificationRequest.current += 1;
+								setKey(event.target.value);
+								setVerification(null);
+								setVerificationError("");
+							}}
+							className="mt-2 block min-h-11 w-full resize-y border border-[#d9d7cd] bg-surface px-3 py-2 text-xs font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							placeholder="-----BEGIN PUBLIC KEY-----"
+							rows={3}
+						/>
+					)}
+				</label>
+			</div>
+			<p className="m-0 -mt-2 text-[11px] leading-relaxed text-muted">
+				{isHmac
+					? "Use the exact UTF-8 shared secret used to sign the token."
+					: "Use an RSA SubjectPublicKeyInfo public key in PEM format, not a private key."}
+			</p>
+			<div className="flex flex-wrap gap-2">
+				<button
+					className="min-h-10 cursor-pointer self-start bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+					type="button"
+					onClick={decode}
+				>
+					Decode token
+				</button>
+				<button
+					className="min-h-10 cursor-pointer self-start border border-forest px-4 text-xs font-medium text-forest hover:bg-[#eff2ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+					type="button"
+					onClick={() => void verify()}
+				>
+					Verify signature
+				</button>
+			</div>
 			{error && (
 				<p className="m-0 break-words text-xs text-[#8a3f30]" role="alert">
 					{error}
+				</p>
+			)}
+			{verificationError && (
+				<p className="m-0 break-words text-xs text-[#8a3f30]" role="alert">
+					{verificationError}
+				</p>
+			)}
+			{verification !== null && (
+				<p
+					className={`m-0 border-l-2 px-3 py-2 text-xs font-semibold ${
+						verification
+							? "border-[#3d7659] bg-[#eef4ed] text-[#315e43]"
+							: "border-[#a53f35] bg-[#f8efed] text-[#8a3028]"
+					}`}
+					role="status"
+				>
+					{verification
+						? "Signature verified for the selected algorithm and key."
+						: "Signature is invalid for the selected algorithm and key."}
 				</p>
 			)}
 			{decoded && (
@@ -437,14 +560,19 @@ export const JwtDecoderTool = () => {
 						)}
 					</section>
 					<p className="m-0 text-xs text-muted" role="status">
-						Signature segment {decoded.signaturePresent ? "is present but not checked" : "is empty"}.
+						Signature segment {decoded.signaturePresent ? "is present" : "is empty"}
+						{verification === true
+							? " and cryptographically verified"
+							: verification === false
+								? " and invalid"
+								: " (not checked)"}
+						.
 					</p>
 				</div>
 			)}
 		</ToolLayout>
 	);
 };
-
 export const JsonSchemaTool = () => {
 	const [source, setSource] = useState(
 		'{\n  "name": "Ari",\n  "active": true,\n  "roles": ["editor", "reviewer"],\n  "profile": { "score": 12 }\n}',
