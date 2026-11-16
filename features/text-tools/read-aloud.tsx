@@ -10,6 +10,7 @@ type SpeechSnapshot = {
 };
 
 const emptySpeechSnapshot: SpeechSnapshot = { supported: false, voices: [] };
+const maximumSpeechSegmentLength = 1600;
 let speechSnapshot = emptySpeechSnapshot;
 
 const speechSubscribers = new Set<() => void>();
@@ -34,6 +35,27 @@ const subscribeToSpeech = (onStoreChange: () => void) => {
 	};
 };
 
+const splitLongSpeechSegment = (segment: string) => {
+	const chunks: string[] = [];
+	let remainingText = segment;
+	while (remainingText.length > maximumSpeechSegmentLength) {
+		const wordBoundary = remainingText.lastIndexOf(" ", maximumSpeechSegmentLength);
+		const chunkEnd = wordBoundary > maximumSpeechSegmentLength / 2 ? wordBoundary + 1 : maximumSpeechSegmentLength;
+		chunks.push(remainingText.slice(0, chunkEnd));
+		remainingText = remainingText.slice(chunkEnd);
+	}
+	if (remainingText) chunks.push(remainingText);
+	return chunks;
+};
+
+const splitSpeechText = (text: string) => {
+	if (!text) return [];
+	const sentences = typeof Intl.Segmenter === "undefined"
+		? [text]
+		: Array.from(new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(text), ({ segment }) => segment);
+	return sentences.flatMap(splitLongSpeechSegment);
+};
+
 const ReadAloud = () => {
 	const [text, setText] = useState("");
 	const [selectedVoiceURI, setSelectedVoiceURI] = useState("");
@@ -43,7 +65,9 @@ const ReadAloud = () => {
 	const [isPaused, setIsPaused] = useState(false);
 	const [message, setMessage] = useState("");
 	const activeUtteranceId = useRef(0);
+	const speechChunks = useRef<string[]>([]);
 	const { supported: isSupported, voices } = useSyncExternalStore(subscribeToSpeech, getSpeechSnapshot, getServerSpeechSnapshot);
+	const speechSettings = useRef({ rate, voiceURI: selectedVoiceURI, voices });
 	const selectedVoice = voices.find((voice) => voice.voiceURI === selectedVoiceURI);
 	const voiceUnavailable = selectedVoiceURI !== "" && !selectedVoice;
 
@@ -55,27 +79,44 @@ const ReadAloud = () => {
 		};
 	}, [isSupported]);
 
-	const startReading = (nextRate = rate, voiceURI = selectedVoiceURI) => {
-		if (!text.trim() || !isSupported) return;
+	useEffect(() => {
+		speechSettings.current = { rate, voiceURI: selectedVoiceURI, voices };
+	}, [rate, selectedVoiceURI, voices]);
+
+	const speakSegment = (segmentIndex: number, utteranceId: number) => {
+		if (activeUtteranceId.current !== utteranceId) return;
 		const synthesis = window.speechSynthesis;
 		if (!synthesis) return;
-		const voice = voices.find((item) => item.voiceURI === voiceURI);
-		if (voiceURI && !voice) {
+		const textSegment = speechChunks.current[segmentIndex];
+		if (!textSegment) {
+			setIsSpeaking(false);
+			setIsPaused(false);
+			return;
+		}
+
+		const currentSettings = speechSettings.current;
+		const voice = currentSettings.voices.find((item) => item.voiceURI === currentSettings.voiceURI);
+		if (currentSettings.voiceURI && !voice) {
+			setIsSpeaking(false);
+			setIsPaused(false);
 			setMessage("The selected voice/language is no longer available. Refresh voices or choose System default.");
 			return;
 		}
 
-		activeUtteranceId.current += 1;
-		const utteranceId = activeUtteranceId.current;
-		synthesis.cancel();
-		const utterance = new SpeechSynthesisUtterance(text);
+		const utterance = new SpeechSynthesisUtterance(textSegment);
 		if (voice) utterance.voice = voice;
-		utterance.rate = nextRate;
+		utterance.rate = currentSettings.rate;
 		utterance.onstart = () => {
-			if (activeUtteranceId.current === utteranceId) setIsSpeaking(true);
+			if (activeUtteranceId.current !== utteranceId) return;
+			setIsSpeaking(true);
+			setMessage("");
 		};
 		utterance.onend = () => {
 			if (activeUtteranceId.current !== utteranceId) return;
+			if (segmentIndex + 1 < speechChunks.current.length) {
+				speakSegment(segmentIndex + 1, utteranceId);
+				return;
+			}
 			setIsSpeaking(false);
 			setIsPaused(false);
 		};
@@ -85,24 +126,46 @@ const ReadAloud = () => {
 			setIsPaused(false);
 			setMessage("Playback stopped unexpectedly. Try again.");
 		};
+		synthesis.speak(utterance);
+	};
 
+	const startReading = () => {
+		if (!text.trim() || !isSupported) return;
+		const synthesis = window.speechSynthesis;
+		if (!synthesis) return;
+		if (selectedVoiceURI && !voices.some((voice) => voice.voiceURI === selectedVoiceURI)) {
+			setMessage("The selected voice/language is no longer available. Refresh voices or choose System default.");
+			return;
+		}
+
+		speechChunks.current = splitSpeechText(text);
+		activeUtteranceId.current += 1;
+		const utteranceId = activeUtteranceId.current;
+		synthesis.cancel();
 		setIsSpeaking(true);
 		setIsPaused(false);
 		setMessage("");
-		synthesis.speak(utterance);
+		speakSegment(0, utteranceId);
 	};
 
 	const handleVoiceChange = (voiceURI: string) => {
 		const voice = voices.find((item) => item.voiceURI === voiceURI);
+		speechSettings.current = { ...speechSettings.current, voiceURI, voices };
 		setSelectedVoiceURI(voiceURI);
 		setSelectedVoiceName(voice ? `${voice.name} · ${voice.lang}` : "");
-		setMessage("");
-		if (isSpeaking) startReading(rate, voiceURI);
+		setMessage(isSpeaking ? "Your new voice will be used at the next speech segment." : "");
 	};
 
 	const handleRateChange = (nextRate: number) => {
+		speechSettings.current = { ...speechSettings.current, rate: nextRate };
 		setRate(nextRate);
-		if (isSpeaking) startReading(nextRate, selectedVoiceURI);
+		setMessage(isSpeaking ? "Your new speed will be used at the next speech segment." : "");
+	};
+
+	const refreshVoices = () => {
+		refreshSpeechSnapshot();
+		const currentVoices = window.speechSynthesis?.getVoices();
+		if (currentVoices) speechSettings.current = { ...speechSettings.current, voices: currentVoices };
 	};
 
 	const togglePause = () => {
@@ -182,7 +245,7 @@ const ReadAloud = () => {
 							<option value="">System default voice</option>
 							{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
 						</select>
-						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshSpeechSnapshot} disabled={!isSupported} title="Reload voices from your browser">
+						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshVoices} disabled={!isSupported} title="Reload voices from your browser">
 							<RefreshCw size={14} aria-hidden="true" /><span className="max-[420px]:sr-only">Refresh</span>
 						</button>
 					</div>
@@ -208,7 +271,7 @@ const ReadAloud = () => {
 					/>
 				</div>
 			</div>
-			<p className="-mt-3 mb-0 text-[11px] leading-[1.5] text-muted">Changing the voice or speed during playback restarts from the beginning with your new settings.</p>
+			<p className="-mt-3 mb-0 text-[11px] leading-[1.5] text-muted">Changing voice or speed won’t interrupt the current segment; the new setting takes effect at the next segment.</p>
 
 			<div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5 max-[520px]:items-stretch max-[520px]:flex-col">
 				<div className="flex flex-wrap gap-2 max-[520px]:grid max-[520px]:grid-cols-2">

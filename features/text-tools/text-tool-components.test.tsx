@@ -7,14 +7,8 @@ import ReadAloud from "@/features/text-tools/read-aloud";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-type TestUtterance = {
-	text: string;
-	voice: SpeechSynthesisVoice | null;
-	rate: number;
-};
-
 const mockSpeechSynthesis = (voices: SpeechSynthesisVoice[] = []) => {
-	const utterances: TestUtterance[] = [];
+	const utterances: SpeechSynthesisUtterance[] = [];
 	const speechSynthesis = {
 		getVoices: vi.fn(() => voices),
 		addEventListener: vi.fn(),
@@ -133,7 +127,7 @@ describe("ReadAloud", () => {
 		const { speechSynthesis, utterances } = mockSpeechSynthesis(availableVoices);
 		render(<ReadAloud />);
 		fireEvent.change(screen.getByRole("textbox", { name: "Text to read aloud" }), {
-			target: { value: "A sentence to hear." },
+			target: { value: "A sentence to hear. Another one to hear." },
 		});
 
 		const voiceSelect = screen.getByRole("combobox", { name: "Voice" }) as HTMLSelectElement;
@@ -142,17 +136,19 @@ describe("ReadAloud", () => {
 		expect(readButton.className).toContain("cursor-pointer");
 		await user.click(readButton);
 		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
-		expect(utterances[0].text).toBe("A sentence to hear.");
+		expect(utterances[0].text).toBe("A sentence to hear. ");
 		expect(utterances[0].rate).toBe(1);
 		expect(screen.getByText("Reading your text…")).toBeTruthy();
 
 		await user.selectOptions(voiceSelect, "browser-en");
-		expect(speechSynthesis.speak).toHaveBeenCalledTimes(2);
-		expect(utterances[1].voice).toBe(browserVoice);
+		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
 		fireEvent.change(screen.getByRole("slider", { name: "Speaking speed" }), { target: { value: "1.4" } });
-		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
-		expect(utterances[2].rate).toBe(1.4);
-		expect(utterances[2].voice).toBe(browserVoice);
+		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
+		expect(screen.getByText(/next speech segment/)).toBeTruthy();
+		utterances[0].onend?.(new Event("end") as SpeechSynthesisEvent);
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(2);
+		expect(utterances[1].rate).toBe(1.4);
+		expect(utterances[1].voice).toBe(browserVoice);
 
 		await user.click(screen.getByRole("button", { name: "Pause" }));
 		expect(speechSynthesis.pause).toHaveBeenCalledOnce();
@@ -165,13 +161,13 @@ describe("ReadAloud", () => {
 		await user.click(screen.getByRole("button", { name: "Refresh" }));
 		expect(screen.getByRole("alert").textContent).toContain("selected voice/language is unavailable");
 		await user.click(screen.getByRole("button", { name: "Read aloud" }));
-		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(2);
 		expect(screen.getByText(/no longer available/)).toBeTruthy();
 
 		await user.selectOptions(voiceSelect, "");
 		await user.click(screen.getByRole("button", { name: "Read aloud" }));
-		expect(speechSynthesis.speak).toHaveBeenCalledTimes(4);
-		expect(utterances[3].voice).toBeNull();
+		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
+		expect(utterances[2].voice).toBeNull();
 	});
 });
 
