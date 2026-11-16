@@ -32,8 +32,8 @@ const BmiCalculator = () => {
 				</select>
 			</label>
 			<div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">
-				<CalculatorNumberField id="bmi-height" label={units === "metric" ? "Height (cm)" : "Height (inches)"} value={height} onChange={setHeight} placeholder={units === "metric" ? "170" : "67"} min={0} />
-				<CalculatorNumberField id="bmi-weight" label={units === "metric" ? "Weight (kg)" : "Weight (lb)"} value={weight} onChange={setWeight} placeholder={units === "metric" ? "65" : "145"} min={0} />
+				<CalculatorNumberField id="bmi-height" label={units === "metric" ? "Height (cm)" : "Height (inches)"} value={height} onChange={setHeight} placeholder={units === "metric" ? "170" : "67"} />
+				<CalculatorNumberField id="bmi-weight" label={units === "metric" ? "Weight (kg)" : "Weight (lb)"} value={weight} onChange={setWeight} placeholder={units === "metric" ? "65" : "145"} />
 			</div>
 			{calculation?.error && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{calculation.error}</p>}
 			<section className="border-l-2 border-accent bg-[#f5f3eb] p-5" aria-label="BMI result" aria-live="polite">

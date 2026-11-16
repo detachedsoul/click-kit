@@ -20,9 +20,9 @@ const LoanCalculator = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<div className="grid grid-cols-3 gap-4 max-[620px]:grid-cols-1">
-				<CalculatorNumberField id="loan-principal" label="Loan amount" value={principal} onChange={setPrincipal} placeholder="25,000" min={0} />
-				<CalculatorNumberField id="loan-rate" label="Annual interest rate (%)" value={annualRate} onChange={setAnnualRate} placeholder="6.5" min={0} />
-				<CalculatorNumberField id="loan-term" label="Loan term (months)" value={termMonths} onChange={setTermMonths} placeholder="60" min={1} />
+				<CalculatorNumberField id="loan-principal" label="Loan amount" value={principal} onChange={setPrincipal} placeholder="25,000" />
+				<CalculatorNumberField id="loan-rate" label="Annual interest rate (%)" value={annualRate} onChange={setAnnualRate} placeholder="6.5" />
+				<CalculatorNumberField id="loan-term" label="Loan term (months)" value={termMonths} onChange={setTermMonths} placeholder="60" />
 			</div>
 			{calculation?.error && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{calculation.error}</p>}
 			<section className="border-l-2 border-accent bg-[#f5f3eb] p-5" aria-label="Loan payment estimate" aria-live="polite">

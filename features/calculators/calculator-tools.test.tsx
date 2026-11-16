@@ -41,8 +41,8 @@ describe("StandardCalculator", () => {
 describe("PercentageCalculator", () => {
 	it("shows a live percentage-of result", () => {
 		render(<PercentageCalculator />);
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Percentage" }), { target: { value: "15" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Number" }), { target: { value: "200" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Percentage" }), { target: { value: "15" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Number" }), { target: { value: "200" } });
 		expect(screen.getByRole("region", { name: "Percentage result" }).textContent).toContain("30");
 		expect(screen.getByRole("region", { name: "Percentage result" }).textContent).toContain("15% of 200 is 30");
 	});
@@ -50,10 +50,10 @@ describe("PercentageCalculator", () => {
 	it("calculates percentage change and reports an undefined zero baseline", () => {
 		render(<PercentageCalculator />);
 		fireEvent.change(screen.getByLabelText("Calculate"), { target: { value: "change" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Starting value" }), { target: { value: "80" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Ending value" }), { target: { value: "100" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Starting value" }), { target: { value: "80" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Ending value" }), { target: { value: "100" } });
 		expect(screen.getByRole("region", { name: "Percentage result" }).textContent).toContain("25%");
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Starting value" }), { target: { value: "0" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Starting value" }), { target: { value: "0" } });
 		expect(screen.getByRole("alert").textContent).toContain("undefined");
 	});
 });
@@ -113,9 +113,9 @@ describe("ScientificCalculator", () => {
 describe("LoanCalculator", () => {
 	it("shows estimated monthly payments and total interest", () => {
 		render(<LoanCalculator />);
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Loan amount" }), { target: { value: "12000" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Annual interest rate (%)" }), { target: { value: "0" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Loan term (months)" }), { target: { value: "12" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Loan amount" }), { target: { value: "12000" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Annual interest rate (%)" }), { target: { value: "0" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Loan term (months)" }), { target: { value: "12" } });
 		const result = screen.getByRole("region", { name: "Loan payment estimate" });
 		expect(result.textContent).toContain("1,000");
 		expect(result.textContent).toContain("Total interest: 0");
@@ -125,7 +125,7 @@ describe("LoanCalculator", () => {
 describe("TipSplitCalculator", () => {
 	it("splits the bill and tip evenly", () => {
 		render(<TipSplitCalculator />);
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Bill amount" }), { target: { value: "80" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Bill amount" }), { target: { value: "80" } });
 		const result = screen.getByRole("region", { name: "Bill split result" });
 		expect(result.textContent).toContain("46");
 		expect(result.textContent).toContain("Tip total: 12");
@@ -135,8 +135,8 @@ describe("TipSplitCalculator", () => {
 describe("BmiCalculator", () => {
 	it("shows BMI with an adult screening category", () => {
 		render(<BmiCalculator />);
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Height (cm)" }), { target: { value: "170" } });
-		fireEvent.change(screen.getByRole("spinbutton", { name: "Weight (kg)" }), { target: { value: "65" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Height (cm)" }), { target: { value: "170" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "Weight (kg)" }), { target: { value: "65" } });
 		const result = screen.getByRole("region", { name: "BMI result" });
 		expect(result.textContent).toContain("22.491");
 		expect(result.textContent).toContain("Healthy weight");
@@ -144,6 +144,19 @@ describe("BmiCalculator", () => {
 });
 
 describe("UnitConverter", () => {
+	it("groups large numeric input while keeping the cursor stable for edits", async () => {
+		const user = userEvent.setup();
+		render(<UnitConverter />);
+		const valueField = screen.getByRole("textbox", { name: "Value" }) as HTMLInputElement;
+		await user.clear(valueField);
+		await user.type(valueField, "1234567");
+		expect(valueField.value).toBe("1,234,567");
+		valueField.setSelectionRange(5, 5);
+		await user.keyboard("{Backspace}");
+		expect(valueField.value).toBe("123,567");
+		expect(valueField.selectionStart).toBe(3);
+	});
+
 	it("converts a value in a selected measurement category", () => {
 		render(<UnitConverter />);
 		const result = screen.getByRole("region", { name: "Conversion result" });
