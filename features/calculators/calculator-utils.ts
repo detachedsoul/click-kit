@@ -344,8 +344,8 @@ export const evaluateScientificExpression = (expression: string, angleUnit: "deg
 				if (value < 0 && Number.isInteger(second) && Math.abs(second) % 2 === 1) return -((-value) ** (1 / second));
 				if (value < 0) throw new Error("An even or non-integer root needs a number that is zero or greater.");
 				return value ** (1 / second);
-			case "min": requireCount(1, Number.MAX_SAFE_INTEGER); return Math.min(...args);
-			case "max": requireCount(1, Number.MAX_SAFE_INTEGER); return Math.max(...args);
+			case "min": requireCount(2, Number.MAX_SAFE_INTEGER); return Math.min(...args);
+			case "max": requireCount(2, Number.MAX_SAFE_INTEGER); return Math.max(...args);
 			case "hypot": requireCount(2, Number.MAX_SAFE_INTEGER); return Math.hypot(...args);
 			case "clamp":
 				requireCount(3);

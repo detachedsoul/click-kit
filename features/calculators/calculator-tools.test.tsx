@@ -80,6 +80,17 @@ describe("AgeCalculator", () => {
 });
 
 describe("ScientificCalculator", () => {
+	it("puts the cursor inside empty function parentheses and explains the input", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		const expression = screen.getByRole("textbox", { name: "Calculation" }) as HTMLInputElement;
+		await user.click(screen.getByRole("button", { name: "Insert square root function" }));
+		expect(expression.value).toBe("sqrt()");
+		expect(expression.selectionStart).toBe(5);
+		expect(screen.getByRole("status").textContent).toContain("Enter a number that is zero or greater");
+		expect(screen.queryByRole("alert")).toBeNull();
+	});
+
 	it("evaluates arithmetic and applies a scientific function", async () => {
 		const user = userEvent.setup();
 		render(<ScientificCalculator />);
@@ -110,6 +121,18 @@ describe("ScientificCalculator", () => {
 		await user.type(screen.getByRole("textbox", { name: "Upper bound" }), "1");
 		await user.click(screen.getByRole("button", { name: "Calculate definite integral" }));
 		expect(screen.getByRole("region", { name: "Numerical integral result" }).textContent).toContain("0.33333333333333");
+		expect(screen.getByRole("heading", { name: "Recent calculations" })).toBeTruthy();
+	});
+
+	it("provides two argument slots for an advanced function", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		await user.click(screen.getByText("More functions: hyperbolic, statistics, and combinatorics"));
+		const expression = screen.getByRole("textbox", { name: "Calculation" }) as HTMLInputElement;
+		await user.click(screen.getByRole("button", { name: "Insert power function" }));
+		expect(expression.value).toBe("pow(, )");
+		expect(expression.selectionStart).toBe(4);
+		expect(screen.getByRole("status").textContent).toContain("base and exponent separated by a comma");
 	});
 
 	it("shows binary output for safe whole-number results", async () => {

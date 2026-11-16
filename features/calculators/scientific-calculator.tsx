@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { calculateDefiniteIntegral, evaluateScientificExpression } from "@/features/calculators/calculator-utils";
 import { CalculatorNumberField, formatCalculatorDisplay } from "@/features/calculators/calculator-shared";
 
@@ -71,6 +71,58 @@ const advancedFunctionButtons = [
 ] as const;
 
 const multiArgumentFunctions = new Set(["min(", "max(", "sum(", "product(", "mean(", "median(", "variance(", "stdev(", "pow(", "root(", "hypot(", "atan2(", "clamp(", "perm(", "comb("]);
+const functionUsage: Record<string, string> = {
+	"sin(": "Enter an angle in the parentheses; sin(30) = 0.5 when Degrees is selected.",
+	"cos(": "Enter an angle in the parentheses; cos(60) = 0.5 when Degrees is selected.",
+	"tan(": "Enter an angle in the parentheses; tan(45) = 1 when Degrees is selected.",
+	"asin(": "Enter a value from -1 to 1; asin(0.5) returns 30° in Degrees mode.",
+	"acos(": "Enter a value from -1 to 1; acos(0.5) returns 60° in Degrees mode.",
+	"atan(": "Enter a value; atan(1) returns 45° in Degrees mode.",
+	"sqrt(": "Enter a number that is zero or greater; sqrt(9) = 3.",
+	"cbrt(": "Enter any real number; cbrt(-8) = -2.",
+	"abs(": "Enter a number to get its non-negative magnitude; abs(-5) = 5.",
+	"ln(": "Enter a number greater than zero for its natural logarithm; ln(e) = 1.",
+	"log(": "Enter a positive number for base-10 log, or log(value, base) for another base; log(100) = 2.",
+	"log2(": "Enter a number greater than zero for its base-2 logarithm; log2(8) = 3.",
+	"exp(": "Enter an exponent to calculate e^x; exp(1) = e.",
+	"floor(": "Enter a number to round down; floor(2.8) = 2.",
+	"ceil(": "Enter a number to round up; ceil(2.1) = 3.",
+	"round(": "Enter a number to round to the nearest integer; halfway cases round away from zero.",
+	"asec(": "Enter a value with absolute magnitude at least 1; asec(2) = 60° in Degrees mode.",
+	"acsc(": "Enter a value with absolute magnitude at least 1; acsc(2) = 30° in Degrees mode.",
+	"acot(": "Enter a value; acot(1) = 45° in Degrees mode.",
+	"sec(": "Enter an angle where cosine is nonzero; sec(60) = 2 in Degrees mode.",
+	"csc(": "Enter an angle where sine is nonzero; csc(30) = 2 in Degrees mode.",
+	"cot(": "Enter an angle where sine is nonzero; cot(45) = 1 in Degrees mode.",
+	"sinh(": "Enter a real number for hyperbolic sine; sinh(0) = 0.",
+	"cosh(": "Enter a real number for hyperbolic cosine; cosh(0) = 1.",
+	"tanh(": "Enter a real number for hyperbolic tangent; tanh(0) = 0.",
+	"sech(": "Enter a real number for hyperbolic secant; sech(0) = 1.",
+	"csch(": "Enter a nonzero real number for hyperbolic cosecant.",
+	"coth(": "Enter a nonzero real number for hyperbolic cotangent.",
+	"asinh(": "Enter a real number for inverse hyperbolic sine; angles are not involved.",
+	"acosh(": "Enter a number greater than or equal to 1 for inverse hyperbolic cosine.",
+	"atanh(": "Enter a number strictly between -1 and 1 for inverse hyperbolic tangent.",
+	"deg(": "Enter radians to convert them to degrees; deg(pi) = 180.",
+	"rad(": "Enter degrees to convert them to radians; rad(180) = pi.",
+	"sign(": "Enter a number to return -1, 0, or 1 according to its sign.",
+	"inv(": "Enter a nonzero number to calculate its reciprocal; inv(4) = 0.25.",
+	"min(": "Enter two or more comma-separated values; min(2, 5, 1) = 1.",
+	"max(": "Enter two or more comma-separated values; max(2, 5, 1) = 5.",
+	"sum(": "Enter comma-separated values to add; sum(1, 2, 3) = 6.",
+	"product(": "Enter comma-separated values to multiply; product(2, 3, 4) = 24.",
+	"mean(": "Enter comma-separated values for their arithmetic average; mean(1, 2, 3) = 2.",
+	"median(": "Enter comma-separated values to find the middle value; median(1, 9, 2) = 2.",
+	"variance(": "Enter comma-separated values for population variance; variance(1, 2, 3) = 2/3.",
+	"stdev(": "Enter comma-separated values for population standard deviation; stdev(1, 2, 3) = sqrt(2/3).",
+	"pow(": "Enter a base and exponent separated by a comma; pow(2, 3) = 8.",
+	"root(": "Enter a value and root index separated by a comma; root(27, 3) = 3.",
+	"hypot(": "Enter two or more side lengths separated by commas; hypot(3, 4) = 5.",
+	"atan2(": "Enter y first and x second; atan2(1, 1) = 45° in Degrees mode.",
+	"clamp(": "Enter value, minimum, maximum; clamp(12, 0, 10) = 10.",
+	"perm(": "Enter whole-number n and r with 0 ≤ r ≤ n ≤ 1000; perm(5, 2) = 20.",
+	"comb(": "Enter whole-number n and r with 0 ≤ r ≤ n ≤ 1000; comb(5, 2) = 10.",
+};
 
 const operationGuideGroups = [
 	{ title: "Trigonometry and angles", steps: [
@@ -94,7 +146,7 @@ const operationGuideGroups = [
 		"exp(x) — e raised to x; inv(x) — reciprocal 1/x; abs(x) — absolute value.",
 	] },
 	{ title: "Rounding and comparisons", steps: [
-		"floor(x) — round down (floor(2.8) = 2); ceil(x) — round up (ceil(2.1) = 3); round(x) — nearest integer (round(2.4) = 2); sign(x) — -1, 0, or 1.",
+		"floor(x) — round down (floor(2.8) = 2); ceil(x) — round up (ceil(2.1) = 3); round(x) — nearest integer, with ties away from zero (round(2.4) = 2, round(-2.5) = -3); sign(x) — -1, 0, or 1.",
 		"min(a, b, ...) and max(a, b, ...) — smallest or largest supplied value; min(2, 5, 1) = 1.",
 		"clamp(x, low, high) — keep x within the inclusive range; clamp(12, 0, 10) = 10.",
 		"hypot(a, b, ...) — square root of the sum of squares; hypot(3, 4) = 5.",
@@ -144,6 +196,9 @@ const keypadTokens = [
 
 const ScientificCalculator = () => {
 	const [expression, setExpression] = useState("");
+	const [selectedFunctionHint, setSelectedFunctionHint] = useState("");
+	const expressionInputRef = useRef<HTMLInputElement>(null);
+	const pendingExpressionCaret = useRef<number | null>(null);
 	const [angleUnit, setAngleUnit] = useState<AngleUnit>("degrees");
 	const [outputBase, setOutputBase] = useState<OutputBase>("decimal");
 	const [lastAnswer, setLastAnswer] = useState(0);
@@ -165,15 +220,33 @@ const ScientificCalculator = () => {
 		}
 	}, [expression, angleUnit, lastAnswer]);
 
+	useLayoutEffect(() => {
+		if (pendingExpressionCaret.current === null || !expressionInputRef.current) return;
+		expressionInputRef.current.focus();
+		expressionInputRef.current.setSelectionRange(pendingExpressionCaret.current, pendingExpressionCaret.current);
+		pendingExpressionCaret.current = null;
+	}, [expression]);
+
 	const updateExpression = (value: string) => {
 		setExpression(value);
 		setError("");
+		pendingExpressionCaret.current = null;
+		if (calculation?.result !== null && calculation?.result !== undefined || !value.trim()) setSelectedFunctionHint("");
 	};
 	const insertToken = (token: string) => updateExpression(`${expression}${token}`);
 	const insertFunction = (token: string) => {
-		if (expression.trim() && calculation?.result !== null && calculation?.result !== undefined) {
-			updateExpression(multiArgumentFunctions.has(token) ? `${token}${expression},` : `${token}${expression})`);
-		} else insertToken(token);
+		const hasValidExpression = expression.trim() !== "" && calculation?.result !== null && calculation?.result !== undefined;
+		const isMultiArgument = multiArgumentFunctions.has(token);
+		const nextExpression = hasValidExpression
+			? isMultiArgument ? `${token}${expression}, )` : `${token}${expression})`
+			: isMultiArgument ? `${token}, )` : `${token})`;
+		pendingExpressionCaret.current = hasValidExpression
+			? isMultiArgument ? `${token}${expression}, `.length : nextExpression.length
+			: token.length;
+		setExpression(nextExpression);
+		setError("");
+		const usage = functionUsage[token] ?? "Enter the required value or values inside the parentheses, then calculate.";
+		setSelectedFunctionHint(hasValidExpression && isMultiArgument ? `${usage} Your current expression fills the first argument; complete the remaining slot(s) after the comma.` : usage);
 	};
 	const resetIntegralResult = () => {
 		setIntegralResult(null);
@@ -187,8 +260,11 @@ const ScientificCalculator = () => {
 			return;
 		}
 		try {
-			setIntegralResult(calculateDefiniteIntegral(integrand, Number(integralLowerBound), Number(integralUpperBound), angleUnit, lastAnswer));
+			const result = calculateDefiniteIntegral(integrand, Number(integralLowerBound), Number(integralUpperBound), angleUnit, lastAnswer);
+			setIntegralResult(result);
 			setIntegralError("");
+			setLastAnswer(result);
+			setHistory((previousHistory) => [{ expression: `Integral of ${integrand} from ${integralLowerBound} to ${integralUpperBound}`, result }, ...previousHistory].slice(0, 8));
 		} catch (integrationError) {
 			setIntegralResult(null);
 			setIntegralError(integrationError instanceof Error ? integrationError.message : "Could not estimate this integral.");
@@ -205,6 +281,8 @@ const ScientificCalculator = () => {
 		setError("");
 	};
 	const currentResult = calculation?.result ?? null;
+	const incompleteFunctionError = selectedFunctionHint && calculation?.error && /expects (?:\d+|at least \d+|\d+ to \d+) arguments?|Check the calculation|closing parenthesis|Unexpected character/u.test(calculation.error);
+	const visibleError = error || (incompleteFunctionError ? "" : calculation?.error ?? "");
 	const addCurrentResultToMemory = () => {
 		if (currentResult === null) return;
 		const nextMemory = memory + currentResult;
@@ -220,7 +298,7 @@ const ScientificCalculator = () => {
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<div className="flex flex-wrap items-end justify-between gap-4">
 				<label className="block min-w-[220px] flex-1 text-xs font-semibold text-[#3c3d37]" htmlFor="scientific-expression">Calculation
-					<input className="mt-2 block h-12 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-base font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-expression" inputMode="text" onChange={(event) => updateExpression(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="Try sin(30) + 2^3" value={expression} />
+					<input className="mt-2 block h-12 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-base font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-expression" inputMode="text" onChange={(event) => updateExpression(event.target.value)} ref={expressionInputRef} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="Try sin(30) + 2^3" value={expression} />
 				</label>
 				<label className="block min-w-[145px] text-xs font-semibold text-[#3c3d37]" htmlFor="scientific-angle-unit">Angles
 					<select className="mt-2 block h-12 w-full cursor-pointer border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-angle-unit" value={angleUnit} onChange={(event) => { setAngleUnit(event.target.value as AngleUnit); setError(""); resetIntegralResult(); }}>
@@ -234,19 +312,20 @@ const ScientificCalculator = () => {
 					</select>
 				</label>
 			</div>
+			{selectedFunctionHint && <p className="m-0 border-l-2 border-accent bg-[#f5f3eb] px-3 py-2 text-[11px] leading-relaxed text-[#50534c]" role="status" aria-live="polite">{selectedFunctionHint}</p>}
 			<div className="flex flex-wrap gap-2" role="group" aria-label="Scientific functions">
-				{functionButtons.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertFunction(token)} type="button">{label}</button>)}
+				{functionButtons.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertFunction(token)} title={functionUsage[token]} type="button">{label}</button>)}
 			</div>
 			<details className="border border-line bg-[#faf9f5] px-4 py-3">
 				<summary className="cursor-pointer text-xs font-semibold text-[#50534c] outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">More functions: hyperbolic, statistics, and combinatorics</summary>
 				<div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Advanced scientific functions">
-					{advancedFunctionButtons.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-surface px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertFunction(token)} type="button">{label}</button>)}
+					{advancedFunctionButtons.map(({ token, label, description }) => <button aria-label={description} className="min-h-10 cursor-pointer border border-line bg-surface px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" key={token} onClick={() => insertFunction(token)} title={functionUsage[token]} type="button">{label}</button>)}
 				</div>
 			</details>
 			<details className="border border-line bg-[#faf9f5] px-4 py-3">
 				<summary className="cursor-pointer text-xs font-semibold text-[#50534c] outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">Operation guide and examples</summary>
 				<div className="mt-3 flex flex-col gap-3 text-[11px] leading-relaxed text-[#60635b]">
-					<p className="m-0"><strong className="text-ink">How to use:</strong> type an expression or start with a function button. If the current expression is valid, a one-input function wraps it automatically. For multi-input functions, the button starts the function and adds a comma after your expression; enter the next value, add any further comma-separated values, then close with ). Press Calculate to save the result to history and Ans.</p>
+					<p className="m-0"><strong className="text-ink">How to use:</strong> type an expression or choose a function. With an empty or incomplete expression, a function inserts its parentheses and places the cursor in the first input slot. If a valid expression is already entered, a one-input function wraps it; a multi-input function uses it as the first argument and places the cursor in the next slot. For a blank multi-input function, enter the first value, move right past the comma, and enter the rest. Each function button shows a short usage hint when selected. Press Calculate to save a result to history and Ans.</p>
 					<p className="m-0">Use * for multiplication, / for division, % for remainder, ^ for powers, ! after a number for factorial, and parentheses to group. Multiplication can also be implied, as in 2pi or 2(3 + 4). The angle selector affects trig and inverse-trig functions; it does not affect hyperbolic functions.</p>
 					{operationGuideGroups.map((group) => <details className="border-t border-line pt-2" key={group.title}>
 						<summary className="cursor-pointer font-semibold text-forest outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">{group.title}</summary>
@@ -263,7 +342,7 @@ const ScientificCalculator = () => {
 				<button aria-label="Clear memory" className="min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50" disabled={!memoryIsSet} onClick={() => { setMemory(0); setMemoryIsSet(false); }} type="button">MC</button>
 			</div>
 			{memoryIsSet && <p className="m-0 text-[10px] text-muted">Stored memory: {formatCalculatorDisplay(memory)}</p>}
-			{(error || calculation?.error) && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{error || calculation?.error}</p>}
+			{visibleError && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{visibleError}</p>}
 			<form className="flex flex-col gap-4" onSubmit={evaluate}>
 				<section className="border-l-2 border-accent bg-[#f5f3eb] p-5" aria-label="Scientific calculator result" aria-live="polite">
 					<div className="flex items-center justify-between gap-3">
@@ -278,7 +357,7 @@ const ScientificCalculator = () => {
 			<details className="border border-line bg-[#faf9f5] px-4 py-3">
 				<summary className="cursor-pointer text-xs font-semibold text-[#50534c] outline-2 outline-offset-2 outline-transparent focus-visible:outline-accent">Numerical integration (definite integral)</summary>
 				<div className="mt-3 flex flex-col gap-4">
-					<p className="m-0 text-[11px] leading-relaxed text-[#60635b]">Estimate the area under a continuous function between two bounds. Enter the integrand using x (for example, x^2 or sin(x)), add the lower and upper bounds, choose angle units above if needed, then calculate. This uses adaptive Simpson’s numerical method; it does not find a symbolic antiderivative.</p>
+					<p className="m-0 text-[11px] leading-relaxed text-[#60635b]">Estimate the area under a continuous function between two bounds. Enter the integrand using x (for example, x^2 or sin(x)), add the lower and upper bounds, choose angle units above if needed, then calculate. This uses adaptive Simpson’s numerical method; it does not find a symbolic antiderivative. The result is saved to Ans and Recent calculations.</p>
 					<form className="flex flex-col gap-4" onSubmit={integrate}>
 						<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="integral-expression">Integrand f(x)
 							<input className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="integral-expression" inputMode="text" onChange={(event) => { setIntegrand(event.target.value); resetIntegralResult(); }} placeholder="x^2 + sin(x)" value={integrand} />

@@ -143,6 +143,7 @@ describe("additional calculators", () => {
 		expect(() => evaluateScientificExpression("unknown(3)")).toThrow(/Unknown function/u);
 		expect(() => evaluateScientificExpression("tan(90)")).toThrow(/undefined/u);
 		expect(() => evaluateScientificExpression("atan2(0, 0)")).toThrow(/both inputs/u);
+		expect(() => evaluateScientificExpression("min(2)")).toThrow(/at least 2 arguments/u);
 		expect(() => evaluateScientificExpression("2 + 2; alert(1)")).toThrow(/Unexpected character/u);
 		expect(() => evaluateScientificExpression("1".repeat(501))).toThrow(/500 characters/u);
 	});
