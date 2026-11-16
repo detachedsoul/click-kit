@@ -5,6 +5,10 @@ import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import ReadAloud from "@/features/text-tools/read-aloud";
+import StandardCalculator from "@/features/calculators/standard-calculator";
+import PercentageCalculator from "@/features/calculators/percentage-calculator";
+import AgeCalculator from "@/features/calculators/age-calculator";
+import UnitConverter from "@/features/calculators/unit-converter";
 import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
 import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
 import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
@@ -33,6 +37,10 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"unicode-inspector": UnicodeInspectorTool,
 	"lorem-generator": LoremGeneratorTool,
 	"text-reverser": TextReverserTool,
+	"calculator": StandardCalculator,
+	"percentage-calculator": PercentageCalculator,
+	"age-calculator": AgeCalculator,
+	"unit-converter": UnitConverter,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
