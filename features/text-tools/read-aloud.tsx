@@ -63,6 +63,7 @@ const ReadAloud = () => {
 	const [rate, setRate] = useState(1);
 	const [isSpeaking, setIsSpeaking] = useState(false);
 	const [isPaused, setIsPaused] = useState(false);
+	const [isPreviewing, setIsPreviewing] = useState(false);
 	const [message, setMessage] = useState("");
 	const activeUtteranceId = useRef(0);
 	const speechChunks = useRef<string[]>([]);
@@ -124,13 +125,14 @@ const ReadAloud = () => {
 			if (activeUtteranceId.current !== utteranceId || event.error === "canceled" || event.error === "interrupted") return;
 			setIsSpeaking(false);
 			setIsPaused(false);
-			setMessage("Playback stopped unexpectedly. Try again.");
+			const voiceLabel = voice ? `${voice.name} (${voice.lang})` : "System default voice";
+			setMessage(`Could not play ${voiceLabel} (${event.error}). Test another voice or try System default.`);
 		};
 		synthesis.speak(utterance);
 	};
 
 	const startReading = () => {
-		if (!text.trim() || !isSupported) return;
+		if (!text.trim() || !isSupported || isPreviewing) return;
 		const synthesis = window.speechSynthesis;
 		if (!synthesis) return;
 		if (selectedVoiceURI && !voices.some((voice) => voice.voiceURI === selectedVoiceURI)) {
@@ -149,6 +151,7 @@ const ReadAloud = () => {
 	};
 
 	const handleVoiceChange = (voiceURI: string) => {
+		if (isPreviewing) return;
 		const voice = voices.find((item) => item.voiceURI === voiceURI);
 		speechSettings.current = { ...speechSettings.current, voiceURI, voices };
 		setSelectedVoiceURI(voiceURI);
@@ -157,15 +160,54 @@ const ReadAloud = () => {
 	};
 
 	const handleRateChange = (nextRate: number) => {
+		if (isPreviewing) return;
 		speechSettings.current = { ...speechSettings.current, rate: nextRate };
 		setRate(nextRate);
 		setMessage(isSpeaking ? "Your new speed will be used at the next speech segment." : "");
 	};
 
 	const refreshVoices = () => {
+		if (isPreviewing) return;
 		refreshSpeechSnapshot();
 		const currentVoices = window.speechSynthesis?.getVoices();
-		if (currentVoices) speechSettings.current = { ...speechSettings.current, voices: currentVoices };
+		if (!currentVoices) return;
+		speechSettings.current = { ...speechSettings.current, voices: currentVoices };
+		setMessage(currentVoices.length > 0
+			? `Voice list refreshed: ${currentVoices.length} voice${currentVoices.length === 1 ? "" : "s"} found. Test a voice before using it.`
+			: "Your browser reports no installed voices right now. Try refreshing again or use System default.");
+	};
+
+	const testVoice = () => {
+		if (!isSupported || isSpeaking || isPreviewing) return;
+		const synthesis = window.speechSynthesis;
+		if (!synthesis) return;
+		const voice = voices.find((item) => item.voiceURI === selectedVoiceURI);
+		if (selectedVoiceURI && !voice) {
+			setMessage("The selected voice/language is no longer available. Refresh voices or choose System default.");
+			return;
+		}
+
+		activeUtteranceId.current += 1;
+		const previewId = activeUtteranceId.current;
+		const utterance = new SpeechSynthesisUtterance("This is a short sample of the selected voice.");
+		if (voice) utterance.voice = voice;
+		utterance.rate = rate;
+		const voiceLabel = voice ? `${voice.name} (${voice.lang})` : "System default voice";
+		utterance.onend = () => {
+			if (activeUtteranceId.current !== previewId) return;
+			setIsPreviewing(false);
+			setMessage(`${voiceLabel} preview finished.`);
+		};
+		utterance.onerror = (event) => {
+			if (activeUtteranceId.current !== previewId || event.error === "canceled" || event.error === "interrupted") return;
+			setIsPreviewing(false);
+			setMessage(`Could not play ${voiceLabel} (${event.error}). Try another voice or System default.`);
+		};
+
+		synthesis.cancel();
+		setIsPreviewing(true);
+		setMessage(`Testing ${voiceLabel}…`);
+		synthesis.speak(utterance);
 	};
 
 	const togglePause = () => {
@@ -186,12 +228,13 @@ const ReadAloud = () => {
 		window.speechSynthesis?.cancel();
 		setIsSpeaking(false);
 		setIsPaused(false);
+		setIsPreviewing(false);
 	};
 
 	const handleTextChange = (nextText: string) => {
 		setText(nextText);
 		setMessage("");
-		if (isSpeaking) stopReading();
+		if (isSpeaking || isPreviewing) stopReading();
 	};
 
 	return (
@@ -239,19 +282,22 @@ const ReadAloud = () => {
 							value={selectedVoiceURI}
 							onChange={(event) => handleVoiceChange(event.target.value)}
 							aria-invalid={voiceUnavailable}
-							disabled={!isSupported}
+							disabled={!isSupported || isPreviewing}
 						>
 							{voiceUnavailable && <option value={selectedVoiceURI} disabled>{selectedVoiceName || "Selected voice"} · unavailable</option>}
 							<option value="">System default voice</option>
 							{voices.map((voice) => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}{voice.default ? " · default" : ""}</option>)}
 						</select>
-						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshVoices} disabled={!isSupported} title="Reload voices from your browser">
+						<button className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 border border-line bg-surface px-3 text-[11px] text-ink transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={refreshVoices} disabled={!isSupported || isPreviewing} title="Reload voices from your browser">
 							<RefreshCw size={14} aria-hidden="true" /><span className="max-[420px]:sr-only">Refresh</span>
 						</button>
 					</div>
 					{voiceUnavailable
 						? <p className="mb-0 mt-[7px] border-l-2 border-[#b78b42] bg-[#f8f2e2] px-2.5 py-2 text-[11px] leading-[1.5] text-[#61502b]" role="alert">The selected voice/language is unavailable. Refresh the list or choose System default.</p>
-						: <p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">{voices.length > 0 ? "Choose a voice provided by your browser or device." : "No extra voices are exposed right now; refresh or use the system default."}</p>}
+						: <p className="mb-0 mt-[7px] text-[11px] leading-[1.5] text-muted">{voices.length > 0 ? "Voices are supplied by your browser/device and may not all work. Test one before using it." : "No extra voices are exposed right now; refresh or use the system default."}</p>}
+					<button className="mt-2 inline-flex min-h-8 cursor-pointer items-center gap-1.5 border border-line bg-surface px-2.5 text-[11px] text-[#54554e] transition-colors hover:border-[#aaa69a] disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={testVoice} disabled={!isSupported || isSpeaking || isPreviewing}>
+						<Volume2 size={13} aria-hidden="true" /> Test voice
+					</button>
 				</div>
 				<div>
 					<div className="mb-2 flex items-center justify-between gap-3">
@@ -267,6 +313,7 @@ const ReadAloud = () => {
 						step="0.1"
 						value={rate}
 						onChange={(event) => handleRateChange(Number(event.target.value))}
+						disabled={isPreviewing}
 						aria-valuetext={`${rate.toFixed(1)} times normal speed`}
 					/>
 				</div>
@@ -275,7 +322,7 @@ const ReadAloud = () => {
 
 			<div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5 max-[520px]:items-stretch max-[520px]:flex-col">
 				<div className="flex flex-wrap gap-2 max-[520px]:grid max-[520px]:grid-cols-2">
-					<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 border border-forest bg-forest px-4 text-xs font-medium text-white transition-colors hover:bg-[#354d44] disabled:cursor-not-allowed disabled:border-[#b8b9b1] disabled:bg-[#b8b9b1]" type="button" onClick={() => startReading()} disabled={!isSupported || !text.trim()}>
+					<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 border border-forest bg-forest px-4 text-xs font-medium text-white transition-colors hover:bg-[#354d44] disabled:cursor-not-allowed disabled:border-[#b8b9b1] disabled:bg-[#b8b9b1]" type="button" onClick={() => startReading()} disabled={!isSupported || !text.trim() || isPreviewing}>
 						{isSpeaking && !isPaused ? <RotateCcw size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" fill="currentColor" />}
 						{isSpeaking && !isPaused ? "Start again" : "Read aloud"}
 					</button>

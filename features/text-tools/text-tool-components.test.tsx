@@ -4,7 +4,7 @@ import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import WordCounter from "@/features/text-tools/word-counter";
 import ReadAloud from "@/features/text-tools/read-aloud";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockSpeechSynthesis = (voices: SpeechSynthesisVoice[] = []) => {
@@ -168,6 +168,31 @@ describe("ReadAloud", () => {
 		await user.click(screen.getByRole("button", { name: "Read aloud" }));
 		expect(speechSynthesis.speak).toHaveBeenCalledTimes(3);
 		expect(utterances[2].voice).toBeNull();
+	});
+
+	it("shows refresh results and a useful error when a listed voice fails", async () => {
+		const user = userEvent.setup();
+		const browserVoice: SpeechSynthesisVoice = {
+			name: "Sample English",
+			voiceURI: "sample-en",
+			lang: "en",
+			default: true,
+			localService: true,
+		};
+		const { speechSynthesis, utterances } = mockSpeechSynthesis([browserVoice]);
+		render(<ReadAloud />);
+
+		await user.click(screen.getByRole("button", { name: "Refresh" }));
+		expect(screen.getByText(/Voice list refreshed: 1 voice found/)).toBeTruthy();
+		await user.selectOptions(screen.getByRole("combobox", { name: "Voice" }), "sample-en");
+		await user.click(screen.getByRole("button", { name: "Test voice" }));
+		expect(utterances[0].text).toContain("short sample");
+		expect(utterances[0].voice).toBe(browserVoice);
+
+		const voiceUnavailable = Object.assign(new Event("error"), { error: "voice-unavailable" }) as SpeechSynthesisErrorEvent;
+		await act(() => utterances[0].onerror?.(voiceUnavailable));
+		expect(screen.getByText(/Could not play Sample English \(en\)/)).toBeTruthy();
+		expect(speechSynthesis.speak).toHaveBeenCalledOnce();
 	});
 });
 
