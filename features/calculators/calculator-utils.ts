@@ -156,6 +156,250 @@ export const evaluateArithmeticExpression = (expression: string) => {
 	return normalizeCalculatorNumber(result);
 };
 
+export const evaluateScientificExpression = (expression: string, angleUnit: "degrees" | "radians" = "degrees", ans = 0) => {
+	if (!expression.trim()) throw new Error("Enter a calculation first.");
+	if (expression.length > 500) throw new Error("Keep calculations under 500 characters.");
+	if (!Number.isFinite(ans)) throw new Error("The previous answer is not a finite number.");
+
+	let position = 0;
+	let nestingDepth = 0;
+	const skipSpaces = () => {
+		while (/\s/u.test(expression[position] ?? "")) position += 1;
+	};
+	const parseExpression = (): number => {
+		let value = parseTerm();
+		while (true) {
+			skipSpaces();
+			const operator = expression[position];
+			if (operator !== "+" && operator !== "-") return value;
+			position += 1;
+			const nextValue = parseTerm();
+			value = normalizeCalculatorNumber(operator === "+" ? value + nextValue : value - nextValue);
+		}
+	};
+	const parseTerm = (): number => {
+		let value = parseUnary();
+		while (true) {
+			skipSpaces();
+			const currentCharacter = expression[position] ?? "";
+			const explicitOperator = currentCharacter === "*" || currentCharacter === "/" || currentCharacter === "%" ? currentCharacter : null;
+			const implicitMultiplication = currentCharacter === "(" || /[a-z]/iu.test(currentCharacter);
+			if (!explicitOperator && !implicitMultiplication) return value;
+			if (explicitOperator) position += 1;
+			const nextValue = parseUnary();
+			if ((explicitOperator === "/" || explicitOperator === "%") && nextValue === 0) throw new Error(explicitOperator === "/" ? "You can't divide by zero." : "You can't take a remainder with zero.");
+			value = normalizeCalculatorNumber(!explicitOperator || explicitOperator === "*" ? value * nextValue : explicitOperator === "/" ? value / nextValue : value % nextValue);
+		}
+	};
+	const parseUnary = (): number => {
+		skipSpaces();
+		if (expression[position] === "+") {
+			position += 1;
+			return parseUnary();
+		}
+		if (expression[position] === "-") {
+			position += 1;
+			return normalizeCalculatorNumber(-parseUnary());
+		}
+		return parsePower();
+	};
+	const parsePower = (): number => {
+		const base = parsePostfix();
+		skipSpaces();
+		if (expression[position] !== "^" && !expression.startsWith("**", position)) return base;
+		const operatorWidth = expression.startsWith("**", position) ? 2 : 1;
+		position += operatorWidth;
+		return normalizeCalculatorNumber(base ** parseUnary());
+	};
+	const factorial = (value: number) => {
+		if (!Number.isInteger(value) || value < 0 || value > 170) throw new Error("Factorial requires a whole number from 0 to 170.");
+		let result = 1;
+		for (let factor = 2; factor <= value; factor += 1) result *= factor;
+		return normalizeCalculatorNumber(result);
+	};
+	const parsePostfix = (): number => {
+		let value = parsePrimary();
+		while (true) {
+			skipSpaces();
+			if (expression[position] !== "!") return value;
+			position += 1;
+			value = factorial(value);
+		}
+	};
+	const convertAngle = (value: number) => angleUnit === "degrees" ? value * Math.PI / 180 : value;
+	const convertOutputAngle = (value: number) => angleUnit === "degrees" ? value * 180 / Math.PI : value;
+	const applyFunction = (name: string, args: number[]) => {
+		const [value, second, third] = args;
+		const requireCount = (minimum: number, maximum = minimum) => {
+			if (args.length < minimum || args.length > maximum) {
+				const expectedCount = minimum === maximum ? `${minimum}` : maximum === Number.MAX_SAFE_INTEGER ? `at least ${minimum}` : `${minimum} to ${maximum}`;
+				throw new Error(`${name} expects ${expectedCount} argument${expectedCount === "1" ? "" : "s"}.`);
+			}
+		};
+		switch (name) {
+			case "sin": requireCount(1); return Math.sin(convertAngle(value));
+			case "cos": requireCount(1); return Math.cos(convertAngle(value));
+			case "tan": {
+				requireCount(1);
+				const angle = convertAngle(value);
+				if (Math.abs(Math.cos(angle)) < 1e-14) throw new Error("Tangent is undefined at this angle.");
+				return Math.tan(angle);
+			}
+			case "sec": {
+				requireCount(1);
+				const cosine = Math.cos(convertAngle(value));
+				if (Math.abs(cosine) < 1e-14) throw new Error("Secant is undefined at this angle.");
+				return 1 / cosine;
+			}
+			case "csc": {
+				requireCount(1);
+				const sine = Math.sin(convertAngle(value));
+				if (Math.abs(sine) < 1e-14) throw new Error("Cosecant is undefined at this angle.");
+				return 1 / sine;
+			}
+			case "cot": {
+				requireCount(1);
+				const angle = convertAngle(value);
+				const sine = Math.sin(angle);
+				if (Math.abs(sine) < 1e-14) throw new Error("Cotangent is undefined at this angle.");
+				return Math.cos(angle) / sine;
+			}
+			case "asin": requireCount(1); return convertOutputAngle(Math.asin(value));
+			case "asec": requireCount(1); if (Math.abs(value) < 1) throw new Error("Inverse secant needs an input with an absolute value of at least one."); return convertOutputAngle(Math.acos(1 / value));
+			case "acsc": requireCount(1); if (Math.abs(value) < 1) throw new Error("Inverse cosecant needs an input with an absolute value of at least one."); return convertOutputAngle(Math.asin(1 / value));
+			case "acot": requireCount(1); return convertOutputAngle(Math.atan2(1, value));
+			case "acos": requireCount(1); return convertOutputAngle(Math.acos(value));
+			case "atan": requireCount(1); return convertOutputAngle(Math.atan(value));
+			case "atan2":
+				requireCount(2);
+				if (value === 0 && second === 0) throw new Error("atan2 is undefined when both inputs are zero.");
+				return convertOutputAngle(Math.atan2(value, second));
+			case "sinh": requireCount(1); return Math.sinh(value);
+			case "cosh": requireCount(1); return Math.cosh(value);
+			case "tanh": requireCount(1); return Math.tanh(value);
+			case "sech": requireCount(1); return 1 / Math.cosh(value);
+			case "csch": requireCount(1); if (value === 0) throw new Error("Cosecant hyperbolic is not defined for zero."); return 1 / Math.sinh(value);
+			case "coth": requireCount(1); if (value === 0) throw new Error("Cotangent hyperbolic is not defined for zero."); return 1 / Math.tanh(value);
+			case "asinh": requireCount(1); return Math.asinh(value);
+			case "acosh": requireCount(1); return Math.acosh(value);
+			case "atanh": requireCount(1); return Math.atanh(value);
+			case "sqrt": requireCount(1); return Math.sqrt(value);
+			case "cbrt": requireCount(1); return Math.cbrt(value);
+			case "abs": requireCount(1); return Math.abs(value);
+			case "ln": requireCount(1); return Math.log(value);
+			case "log10": requireCount(1); return Math.log10(value);
+			case "log2": requireCount(1); return Math.log2(value);
+			case "log":
+				requireCount(1, 2);
+				if (args.length === 1) return Math.log10(value);
+				if (second <= 0 || second === 1) throw new Error("Logarithm base must be greater than zero and not equal to one.");
+				return Math.log(value) / Math.log(second);
+			case "exp": requireCount(1); return Math.exp(value);
+			case "floor": requireCount(1); return Math.floor(value);
+			case "ceil": requireCount(1); return Math.ceil(value);
+			case "round": requireCount(1); return Math.round(value);
+			case "sign": requireCount(1); return Math.sign(value);
+			case "inv": requireCount(1); if (value === 0) throw new Error("Zero has no reciprocal."); return 1 / value;
+			case "deg": requireCount(1); return value * 180 / Math.PI;
+			case "rad": requireCount(1); return value * Math.PI / 180;
+			case "pow": requireCount(2); return value ** second;
+			case "sum": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total + current, 0);
+			case "product": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total * current, 1);
+			case "mean": requireCount(1, Number.MAX_SAFE_INTEGER); return args.reduce((total, current) => total + current, 0) / args.length;
+			case "median": {
+				requireCount(1, Number.MAX_SAFE_INTEGER);
+				const sorted = [...args].sort((left, right) => left - right);
+				const middle = Math.floor(sorted.length / 2);
+				return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+			}
+			case "variance":
+			case "stdev": {
+				requireCount(1, Number.MAX_SAFE_INTEGER);
+				const average = args.reduce((total, current) => total + current, 0) / args.length;
+				const variance = args.reduce((total, current) => total + (current - average) ** 2, 0) / args.length;
+				return name === "variance" ? variance : Math.sqrt(variance);
+			}
+			case "perm":
+			case "comb": {
+				requireCount(2);
+				if (!Number.isInteger(value) || !Number.isInteger(second) || value < 0 || second < 0 || second > value || value > 1000) throw new Error(`${name} needs whole numbers with 0 ≤ r ≤ n ≤ 1000.`);
+				const count = name === "comb" ? Math.min(second, value - second) : second;
+				let result = 1;
+				for (let index = 0; index < count; index += 1) result = name === "comb" ? result * (value - index) / (index + 1) : result * (value - index);
+				return result;
+			}
+			case "root":
+				requireCount(2);
+				if (second === 0) throw new Error("Root index cannot be zero.");
+				if (value < 0 && Number.isInteger(second) && Math.abs(second) % 2 === 1) return -((-value) ** (1 / second));
+				if (value < 0) throw new Error("An even or non-integer root needs a number that is zero or greater.");
+				return value ** (1 / second);
+			case "min": requireCount(1, Number.MAX_SAFE_INTEGER); return Math.min(...args);
+			case "max": requireCount(1, Number.MAX_SAFE_INTEGER); return Math.max(...args);
+			case "hypot": requireCount(2, Number.MAX_SAFE_INTEGER); return Math.hypot(...args);
+			case "clamp":
+				requireCount(3);
+				if (second > third) throw new Error("Clamp minimum must not exceed its maximum.");
+				return Math.min(Math.max(value, second), third);
+			default: throw new Error(`Unknown function “${name}”.`);
+		}
+	};
+	const parsePrimary = (): number => {
+		skipSpaces();
+		if (expression[position] === "(") {
+			nestingDepth += 1;
+			if (nestingDepth > 50) throw new Error("That calculation has too many nested parentheses.");
+			position += 1;
+			const value = parseExpression();
+			skipSpaces();
+			if (expression[position] !== ")") throw new Error("Add a closing parenthesis to finish the calculation.");
+			position += 1;
+			nestingDepth -= 1;
+			return value;
+		}
+		const number = expression.slice(position).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/iu)?.[0];
+		if (number) {
+			position += number.length;
+			const value = Number(number);
+			if (!Number.isFinite(value)) throw new Error("Enter a finite number.");
+			return value;
+		}
+		const identifier = expression.slice(position).match(/^[a-z][a-z0-9]*/iu)?.[0]?.toLowerCase();
+		if (!identifier) throw new Error(`Check the calculation near character ${position + 1}.`);
+		position += identifier.length;
+		skipSpaces();
+		if (expression[position] !== "(") {
+			const constants: Record<string, number> = { pi: Math.PI, e: Math.E, tau: Math.PI * 2, phi: (1 + Math.sqrt(5)) / 2, ans, c: 299792458, g0: 9.80665, h: 6.62607015e-34, kb: 1.380649e-23, na: 6.02214076e23 };
+			if (!(identifier in constants)) throw new Error(`Unknown constant “${identifier}”.`);
+			return constants[identifier];
+		}
+		nestingDepth += 1;
+		if (nestingDepth > 50) throw new Error("That calculation has too many nested parentheses.");
+		position += 1;
+		const args: number[] = [];
+		skipSpaces();
+		if (expression[position] !== ")") {
+			while (true) {
+				args.push(parseExpression());
+				skipSpaces();
+				if (expression[position] !== ",") break;
+				position += 1;
+			}
+		}
+		if (expression[position] !== ")") throw new Error(`Add a closing parenthesis after ${identifier}.`);
+		position += 1;
+		nestingDepth -= 1;
+		const result = applyFunction(identifier, args);
+		if (!Number.isFinite(result)) throw new Error(`${identifier} is not defined for that input.`);
+		return normalizeCalculatorNumber(result);
+	};
+
+	const result = parseExpression();
+	skipSpaces();
+	if (position < expression.length) throw new Error(`Unexpected character near position ${position + 1}.`);
+	return normalizeCalculatorNumber(result);
+};
+
 export const calculatePercentage = (mode: PercentageMode, firstValue: number, secondValue: number): PercentageResult => {
 	if (!Number.isFinite(firstValue) || !Number.isFinite(secondValue)) throw new Error("Enter valid numbers in both fields.");
 	let result: number;

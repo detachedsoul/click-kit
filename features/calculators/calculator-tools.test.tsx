@@ -84,8 +84,29 @@ describe("ScientificCalculator", () => {
 		const user = userEvent.setup();
 		render(<ScientificCalculator />);
 		await user.type(screen.getByRole("textbox", { name: "Calculation" }), "9");
-		await user.click(screen.getByRole("button", { name: "Square root" }));
+		await user.click(screen.getByRole("button", { name: "Insert square root function" }));
 		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("3");
+	});
+
+	it("shows binary output for safe whole-number results", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		await user.type(screen.getByRole("textbox", { name: "Calculation" }), "10");
+		await user.selectOptions(screen.getByRole("combobox", { name: "Number base" }), "binary");
+		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("1010₂");
+	});
+
+	it("stores answers in history and reuses Ans in later expressions", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		const expression = screen.getByRole("textbox", { name: "Calculation" });
+		await user.type(expression, "2^3");
+		await user.click(screen.getByRole("button", { name: "Calculate =" }));
+		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("8");
+		expect(screen.getByRole("heading", { name: "Recent calculations" })).toBeTruthy();
+		await user.clear(expression);
+		await user.type(expression, "ans + 2");
+		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("10");
 	});
 });
 

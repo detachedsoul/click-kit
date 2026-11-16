@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, convertMeasurement, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
+import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, convertMeasurement, evaluateScientificExpression, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
 
 describe("standard calculator", () => {
 	it("respects operator precedence, parentheses, and unary signs", () => {
@@ -88,6 +88,44 @@ describe("additional calculators", () => {
 		expect(calculateScientificFunction("sqrt", 9)).toBe(3);
 		expect(calculateScientificFunction("square", -4)).toBe(16);
 		expect(() => calculateScientificFunction("ln", 0)).toThrow(/greater than zero/u);
+	});
+
+	it("evaluates powers, remainders, factorials, constants, and previous answers safely", () => {
+		expect(evaluateScientificExpression("2^3^2")).toBe(512);
+		expect(evaluateScientificExpression("-2^2")).toBe(-4);
+		expect(evaluateScientificExpression("2(3 + 4) + 2pi")).toBeCloseTo(14 + Math.PI * 2, 12);
+		expect(evaluateScientificExpression("2sin(30)")).toBe(1);
+		expect(evaluateScientificExpression("10 % 4 + 5!")).toBe(122);
+		expect(evaluateScientificExpression("pi + tau + e + phi")).toBeCloseTo(Math.PI + Math.PI * 2 + Math.E + (1 + Math.sqrt(5)) / 2, 12);
+		expect(evaluateScientificExpression("ans * 2", "degrees", 21)).toBe(42);
+		expect(() => evaluateScientificExpression("171!")).toThrow(/0 to 170/u);
+	});
+
+	it("evaluates scientific functions, multiple arguments, and angle modes", () => {
+		expect(evaluateScientificExpression("sin(30) + cos(60)")).toBe(1);
+		expect(evaluateScientificExpression("asin(0.5)")).toBe(30);
+		expect(evaluateScientificExpression("log(8, 2) + root(27, 3)")).toBe(6);
+		expect(evaluateScientificExpression("max(2, 8, 4) + hypot(3, 4) + clamp(12, 0, 10)")).toBe(23);
+		expect(evaluateScientificExpression("sin(pi / 6)", "radians")).toBe(0.5);
+		expect(evaluateScientificExpression("cosh(0) + floor(2.9) + ceil(2.1) + round(2.4) + abs(-1) + inv(2) + exp(0) + cbrt(8) + atan2(1, 0)")).toBeCloseTo(102.5, 10);
+		expect(evaluateScientificExpression("sec(60) + csc(30) + cot(45)")).toBeCloseTo(5, 10);
+		expect(evaluateScientificExpression("mean(1, 2, 3) + median(1, 9, 2, 4) + variance(1, 2, 3) + stdev(1, 2, 3)")).toBeCloseTo(5 + 2 / 3 + Math.sqrt(2 / 3), 10);
+		expect(evaluateScientificExpression("comb(5, 2) + perm(5, 2) + deg(pi) + rad(180)")).toBeCloseTo(10 + 20 + 180 + Math.PI, 10);
+		expect(evaluateScientificExpression("c + g0")).toBeCloseTo(299792458 + 9.80665, 8);
+		expect(evaluateScientificExpression("h")).toBe(6.62607015e-34);
+		expect(evaluateScientificExpression("kb")).toBe(1.380649e-23);
+		expect(evaluateScientificExpression("na")).toBe(6.02214076e23);
+	});
+
+	it("rejects invalid scientific syntax, domains, and unsafe input", () => {
+		expect(() => evaluateScientificExpression("sqrt(-1)")).toThrow(/not defined/u);
+		expect(() => evaluateScientificExpression("log(1, 1)")).toThrow(/base/u);
+		expect(() => evaluateScientificExpression("root(-4, 2)")).toThrow(/zero or greater/u);
+		expect(() => evaluateScientificExpression("unknown(3)")).toThrow(/Unknown function/u);
+		expect(() => evaluateScientificExpression("tan(90)")).toThrow(/undefined/u);
+		expect(() => evaluateScientificExpression("atan2(0, 0)")).toThrow(/both inputs/u);
+		expect(() => evaluateScientificExpression("2 + 2; alert(1)")).toThrow(/Unexpected character/u);
+		expect(() => evaluateScientificExpression("1".repeat(501))).toThrow(/500 characters/u);
 	});
 });
 
