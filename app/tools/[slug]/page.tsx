@@ -13,6 +13,7 @@ import ScientificCalculator from "@/features/calculators/scientific-calculator";
 import LoanCalculator from "@/features/calculators/loan-calculator";
 import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import BmiCalculator from "@/features/calculators/bmi-calculator";
+import { Base64Tool, JsonFormatterTool, JsonTypeScriptTool, RegexTesterTool, TimestampConverterTool, UuidGeneratorTool } from "@/features/developer-tools/developer-tool-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
 import GeometryCalculator from "@/features/calculators/geometry-calculator";
@@ -53,6 +54,12 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"loan-calculator": LoanCalculator,
 	"tip-split-calculator": TipSplitCalculator,
 	"bmi-calculator": BmiCalculator,
+	"json-formatter": JsonFormatterTool,
+	"json-typescript": JsonTypeScriptTool,
+	"base64": Base64Tool,
+	"uuid-generator": UuidGeneratorTool,
+	"regex-tester": RegexTesterTool,
+	"timestamp-converter": TimestampConverterTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
 	"geometry-calculator": GeometryCalculator,
