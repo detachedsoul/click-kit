@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateAge, calculateCalendarDifference, calculatePercentage, convertMeasurement, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
+import { calculateAge, calculateBmi, calculateCalendarDifference, calculateLoanPayment, calculatePercentage, calculateScientificFunction, calculateTipSplit, convertMeasurement, evaluateArithmeticExpression } from "@/features/calculators/calculator-utils";
 
 describe("standard calculator", () => {
 	it("respects operator precedence, parentheses, and unary signs", () => {
@@ -55,6 +55,39 @@ describe("age and date calculator", () => {
 		expect(calculateCalendarDifference("2024-01-01", "2025-01-01")).toMatchObject({ years: 1, months: 0, days: 0, totalDays: 366 });
 		expect(() => calculateAge("2025-01-01", "2024-12-31")).toThrow(/end date/u);
 		expect(() => calculateAge("2025-02-30", "2025-03-01")).toThrow(/valid date/u);
+	});
+});
+
+describe("additional calculators", () => {
+	it("estimates fixed-rate loan payments including zero-interest loans", () => {
+		expect(calculateLoanPayment(12000, 0, 12)).toEqual({ monthlyPayment: 1000, totalPaid: 12000, totalInterest: 0 });
+		expect(calculateLoanPayment(10000, 12, 12).monthlyPayment).toBeCloseTo(888.4879, 3);
+		expect(() => calculateLoanPayment(10000, -1, 12)).toThrow(/cannot be negative/u);
+		expect(() => calculateLoanPayment(10000, 5, 0)).toThrow(/whole number/u);
+	});
+
+	it("calculates a tip and evenly split total with validation", () => {
+		expect(calculateTipSplit(80, 15, 4)).toEqual({ tipAmount: 12, total: 92, tipPerPerson: 3, totalPerPerson: 23 });
+		expect(() => calculateTipSplit(80, 15, 0)).toThrow(/Group size/u);
+	});
+
+	it("calculates metric and imperial BMI and adult screening categories", () => {
+		expect(calculateBmi(65, 170).bmi).toBeCloseTo(22.49134948096886, 12);
+		expect(calculateBmi(65, 170).category).toBe("Healthy weight");
+		expect(calculateBmi(145, 67, "imperial").bmi).toBeCloseTo(22.7, 1);
+		expect(calculateBmi(40, 170).category).toBe("Underweight");
+		expect(calculateBmi(85, 170).category).toBe("Overweight");
+		expect(calculateBmi(100, 170).category).toBe("Obesity");
+		expect(() => calculateBmi(0, 170)).toThrow(/greater than zero/u);
+	});
+
+	it("applies scientific functions with selected angle units and domain checks", () => {
+		expect(calculateScientificFunction("sin", 30)).toBe(0.5);
+		expect(calculateScientificFunction("cos", Math.PI, "radians")).toBe(-1);
+		expect(calculateScientificFunction("log", 100)).toBe(2);
+		expect(calculateScientificFunction("sqrt", 9)).toBe(3);
+		expect(calculateScientificFunction("square", -4)).toBe(16);
+		expect(() => calculateScientificFunction("ln", 0)).toThrow(/greater than zero/u);
 	});
 });
 

@@ -1,5 +1,9 @@
 import userEvent from "@testing-library/user-event";
 import AgeCalculator from "@/features/calculators/age-calculator";
+import BmiCalculator from "@/features/calculators/bmi-calculator";
+import LoanCalculator from "@/features/calculators/loan-calculator";
+import ScientificCalculator from "@/features/calculators/scientific-calculator";
+import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import PercentageCalculator from "@/features/calculators/percentage-calculator";
 import StandardCalculator from "@/features/calculators/standard-calculator";
 import UnitConverter from "@/features/calculators/unit-converter";
@@ -72,6 +76,49 @@ describe("AgeCalculator", () => {
 		expect(screen.getByRole("region", { name: "Time between dates" }).textContent).toContain("366");
 		fireEvent.change(screen.getByLabelText("From"), { target: { value: "2025-02-01" } });
 		expect(screen.getByRole("alert").textContent).toContain("end date");
+	});
+});
+
+describe("ScientificCalculator", () => {
+	it("evaluates arithmetic and applies a scientific function", async () => {
+		const user = userEvent.setup();
+		render(<ScientificCalculator />);
+		await user.type(screen.getByRole("textbox", { name: "Calculation" }), "9");
+		await user.click(screen.getByRole("button", { name: "Square root" }));
+		expect(screen.getByRole("region", { name: "Scientific calculator result" }).textContent).toContain("3");
+	});
+});
+
+describe("LoanCalculator", () => {
+	it("shows estimated monthly payments and total interest", () => {
+		render(<LoanCalculator />);
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Loan amount" }), { target: { value: "12000" } });
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Annual interest rate (%)" }), { target: { value: "0" } });
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Loan term (months)" }), { target: { value: "12" } });
+		const result = screen.getByRole("region", { name: "Loan payment estimate" });
+		expect(result.textContent).toContain("1,000");
+		expect(result.textContent).toContain("Total interest: 0");
+	});
+});
+
+describe("TipSplitCalculator", () => {
+	it("splits the bill and tip evenly", () => {
+		render(<TipSplitCalculator />);
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Bill amount" }), { target: { value: "80" } });
+		const result = screen.getByRole("region", { name: "Bill split result" });
+		expect(result.textContent).toContain("46");
+		expect(result.textContent).toContain("Tip total: 12");
+	});
+});
+
+describe("BmiCalculator", () => {
+	it("shows BMI with an adult screening category", () => {
+		render(<BmiCalculator />);
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Height (cm)" }), { target: { value: "170" } });
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Weight (kg)" }), { target: { value: "65" } });
+		const result = screen.getByRole("region", { name: "BMI result" });
+		expect(result.textContent).toContain("22.491");
+		expect(result.textContent).toContain("Healthy weight");
 	});
 });
 

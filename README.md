@@ -9,7 +9,7 @@ Tools are designed to be quick, clear, and private. Most work right in your brow
 ## Find a tool
 
 - **Text & writing** — count, clean, compare, convert, and work with text.
-- **Calculators** — solve everyday sums, percentages, date questions, and unit conversions.
+- **Calculators** — solve everyday and scientific sums, calculate percentages and loan estimates, split bills, check dates, convert units, and explore BMI as a general adult screening measure.
 - **Developer tools** — handle common code and data tasks.
 - **Image & files** — make simple changes to images and useful file formats.
 - **Productivity** — make planning, focusing, and choosing a little easier.

@@ -9,6 +9,10 @@ import StandardCalculator from "@/features/calculators/standard-calculator";
 import PercentageCalculator from "@/features/calculators/percentage-calculator";
 import AgeCalculator from "@/features/calculators/age-calculator";
 import UnitConverter from "@/features/calculators/unit-converter";
+import ScientificCalculator from "@/features/calculators/scientific-calculator";
+import LoanCalculator from "@/features/calculators/loan-calculator";
+import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
+import BmiCalculator from "@/features/calculators/bmi-calculator";
 import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
 import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
 import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
@@ -41,6 +45,10 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"percentage-calculator": PercentageCalculator,
 	"age-calculator": AgeCalculator,
 	"unit-converter": UnitConverter,
+	"scientific-calculator": ScientificCalculator,
+	"loan-calculator": LoanCalculator,
+	"tip-split-calculator": TipSplitCalculator,
+	"bmi-calculator": BmiCalculator,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));

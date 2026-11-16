@@ -4,6 +4,17 @@ export type PercentageResult = {
 	change: number;
 };
 
+export type LoanPayment = {
+	monthlyPayment: number;
+	totalPaid: number;
+	totalInterest: number;
+};
+
+export type BmiResult = {
+	bmi: number;
+	category: "Underweight" | "Healthy weight" | "Overweight" | "Obesity";
+};
+
 export type CalendarDifference = {
 	years: number;
 	months: number;
@@ -169,6 +180,64 @@ export const calculatePercentage = (mode: PercentageMode, firstValue: number, se
 			break;
 	}
 	return { result: normalizeCalculatorNumber(result), change: normalizeCalculatorNumber(change) };
+};
+
+export const calculateLoanPayment = (principal: number, annualRatePercent: number, termMonths: number): LoanPayment => {
+	if (![principal, annualRatePercent, termMonths].every(Number.isFinite)) throw new Error("Enter valid numbers for all loan details.");
+	if (principal <= 0) throw new Error("Loan amount must be greater than zero.");
+	if (annualRatePercent < 0) throw new Error("Annual interest rate cannot be negative.");
+	if (!Number.isInteger(termMonths) || termMonths <= 0) throw new Error("Loan term must be a whole number of months greater than zero.");
+
+	const monthlyRate = annualRatePercent / 100 / 12;
+	const monthlyPayment = monthlyRate === 0
+		? principal / termMonths
+		: principal * monthlyRate / (1 - (1 + monthlyRate) ** -termMonths);
+	const totalPaid = monthlyPayment * termMonths;
+	return {
+		monthlyPayment: normalizeCalculatorNumber(monthlyPayment),
+		totalPaid: normalizeCalculatorNumber(totalPaid),
+		totalInterest: normalizeCalculatorNumber(totalPaid - principal),
+	};
+};
+
+export const calculateTipSplit = (billAmount: number, tipPercent: number, people: number) => {
+	if (![billAmount, tipPercent, people].every(Number.isFinite)) throw new Error("Enter valid numbers for the bill, tip, and group size.");
+	if (billAmount < 0) throw new Error("Bill amount cannot be negative.");
+	if (tipPercent < 0) throw new Error("Tip percentage cannot be negative.");
+	if (!Number.isInteger(people) || people < 1) throw new Error("Group size must be a whole number of at least one.");
+	const tipAmount = billAmount * tipPercent / 100;
+	const total = billAmount + tipAmount;
+	return {
+		tipAmount: normalizeCalculatorNumber(tipAmount),
+		total: normalizeCalculatorNumber(total),
+		tipPerPerson: normalizeCalculatorNumber(tipAmount / people),
+		totalPerPerson: normalizeCalculatorNumber(total / people),
+	};
+};
+
+export const calculateBmi = (weight: number, height: number, units: "metric" | "imperial" = "metric"): BmiResult => {
+	if (![weight, height].every(Number.isFinite)) throw new Error("Enter valid numbers for height and weight.");
+	if (weight <= 0 || height <= 0) throw new Error("Height and weight must be greater than zero.");
+	const weightKg = units === "imperial" ? weight * 0.45359237 : weight;
+	const heightMeters = units === "imperial" ? height * 0.0254 : height / 100;
+	const bmi = normalizeCalculatorNumber(weightKg / (heightMeters * heightMeters));
+	const category = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy weight" : bmi < 30 ? "Overweight" : "Obesity";
+	return { bmi, category };
+};
+
+export const calculateScientificFunction = (operation: "sin" | "cos" | "tan" | "log" | "ln" | "sqrt" | "square", value: number, angleUnit: "degrees" | "radians" = "degrees") => {
+	if (!Number.isFinite(value)) throw new Error("Enter a finite number first.");
+	if (operation === "sqrt" && value < 0) throw new Error("Square root needs a number that is zero or greater.");
+	if ((operation === "log" || operation === "ln") && value <= 0) throw new Error("Logarithms need a number greater than zero.");
+	const angle = angleUnit === "degrees" ? value * Math.PI / 180 : value;
+	const result = operation === "sin" ? Math.sin(angle)
+		: operation === "cos" ? Math.cos(angle)
+			: operation === "tan" ? Math.tan(angle)
+				: operation === "log" ? Math.log10(value)
+					: operation === "ln" ? Math.log(value)
+						: operation === "sqrt" ? Math.sqrt(value) : value ** 2;
+	if (!Number.isFinite(result)) throw new Error("That operation does not have a finite result.");
+	return normalizeCalculatorNumber(result);
 };
 
 const createUtcDate = (year: number, month: number, day: number) => {
