@@ -37,7 +37,7 @@ const PercentageCalculator = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<label className="block max-w-[520px] text-xs font-semibold text-[#3c3d37]" htmlFor="percentage-mode">Calculate
-				<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="percentage-mode" value={mode} onChange={(event) => setMode(event.target.value as PercentageMode)}>
+				<select className="mt-2 block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-8 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="percentage-mode" value={mode} onChange={(event) => setMode(event.target.value as PercentageMode)}>
 					{modeOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
 				</select>
 			</label>

@@ -277,7 +277,7 @@ const ReadAloud = () => {
 					<label className="mb-2 block text-xs font-semibold text-[#3c3d37]" htmlFor="read-aloud-voice">Voice</label>
 					<div className="flex gap-2">
 						<select
-							className="h-10 min-w-0 flex-1 cursor-pointer border border-line bg-surface px-3 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							className="h-10 min-w-0 flex-1 cursor-pointer border border-line bg-surface pl-3 pr-8 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 							id="read-aloud-voice"
 							value={selectedVoiceURI}
 							onChange={(event) => handleVoiceChange(event.target.value)}
