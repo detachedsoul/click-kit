@@ -1,0 +1,93 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
+import { createSlug, decodeHtmlEntities, decodeUrlComponent, encodeHtmlEntities, encodeUrlComponent, findAndReplaceText, generateLoremIpsum, inspectUnicodeText, reverseGraphemes, sortTextLines } from "@/features/text-tools/extra-text-utils";
+
+const ToolLayout = ({ children }: { children: React.ReactNode }) => <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">{children}</div>;
+const ResultPanel = ({ label, value }: { label: string; value: string }) => <section className="flex flex-col gap-[11px] border-t border-line pt-[18px]"><div className="flex items-center justify-between gap-3"><h2 className="m-0 text-sm font-semibold tracking-[-.02em]">{label}</h2><CopyTextButton text={value} /></div><TextAreaField id={`${label.toLowerCase().replace(/[^a-z0-9]+/gu, "-")}-result`} label="Result" value={value} onChange={() => undefined} placeholder="Your result will appear here." rows={7} readOnly /></section>;
+
+const FindReplaceTool = () => {
+	const [text, setText] = useState("");
+	const [search, setSearch] = useState("");
+	const [replacement, setReplacement] = useState("");
+	const [useRegex, setUseRegex] = useState(false);
+	const [caseSensitive, setCaseSensitive] = useState(false);
+	const [wholeWord, setWholeWord] = useState(false);
+	const result = useMemo(() => {
+		try {
+			return { ...findAndReplaceText(text, search, replacement, { useRegex, caseSensitive, wholeWord }), error: "" };
+		} catch (error) {
+			return { text, matches: 0, error: error instanceof Error ? error.message : "Invalid search pattern." };
+		}
+	}, [text, search, replacement, useRegex, caseSensitive, wholeWord]);
+	return <ToolLayout>
+		<TextAreaField id="find-replace-input" label="Text" value={text} onChange={setText} placeholder="Paste or type the text to update…" />
+		<div className="grid grid-cols-2 gap-3 max-[520px]:grid-cols-1"><label className="text-xs font-semibold text-[#3c3d37]">Find<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={search} onChange={(event) => setSearch(event.target.value)} /></label><label className="text-xs font-semibold text-[#3c3d37]">Replace with<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" value={replacement} onChange={(event) => setReplacement(event.target.value)} /></label></div>
+		<fieldset className="flex flex-wrap gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Match options</legend>{[{ label: "Regular expression", value: useRegex, change: setUseRegex }, { label: "Match case", value: caseSensitive, change: setCaseSensitive }, { label: "Whole word", value: wholeWord, change: setWholeWord }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.label}><input className="size-4 accent-accent-dark" type="checkbox" checked={option.value} onChange={(event) => option.change(event.target.checked)} />{option.label}</label>)}</fieldset>
+		<p className="m-0 text-xs text-muted" role="status">{result.error || `${result.matches} match${result.matches === 1 ? "" : "es"} replaced.`}</p>
+		<ResultPanel label="Updated text" value={result.text} />
+	</ToolLayout>;
+};
+export { FindReplaceTool };
+
+const LineSorterTool = () => {
+	const [text, setText] = useState("");
+	const [descending, setDescending] = useState(false);
+	const [caseSensitive, setCaseSensitive] = useState(false);
+	const [removeDuplicates, setRemoveDuplicates] = useState(false);
+	const [removeBlankLines, setRemoveBlankLines] = useState(false);
+	const result = useMemo(() => sortTextLines(text, { descending, caseSensitive, removeDuplicates, removeBlankLines }), [text, descending, caseSensitive, removeDuplicates, removeBlankLines]);
+	return <ToolLayout><TextAreaField id="line-sort-input" label="Lines to sort" value={text} onChange={setText} placeholder="Paste a list, one item per line…" /><fieldset className="grid grid-cols-2 gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3 max-[520px]:grid-cols-1"><legend className="px-1 text-xs font-semibold">Sorting options</legend>{[{ label: "Descending order", value: descending, change: setDescending }, { label: "Match case", value: caseSensitive, change: setCaseSensitive }, { label: "Remove duplicate lines", value: removeDuplicates, change: setRemoveDuplicates }, { label: "Remove blank lines", value: removeBlankLines, change: setRemoveBlankLines }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.label}><input className="size-4 accent-accent-dark" type="checkbox" checked={option.value} onChange={(event) => option.change(event.target.checked)} />{option.label}</label>)}</fieldset><ResultPanel label="Sorted lines" value={result} /></ToolLayout>;
+};
+export { LineSorterTool };
+
+const SlugGeneratorTool = () => {
+	const [text, setText] = useState("");
+	return <ToolLayout><TextAreaField id="slug-input" label="Title or phrase" value={text} onChange={setText} placeholder="For example: A Guide to Better Writing" rows={5} hint="Accents are normalized; letters from other writing systems are kept." /><ResultPanel label="URL-friendly slug" value={createSlug(text)} /></ToolLayout>;
+};
+export { SlugGeneratorTool };
+
+const HtmlEntityTool = () => {
+	const [text, setText] = useState("");
+	const [direction, setDirection] = useState<"encode" | "decode">("encode");
+	const result = direction === "encode" ? encodeHtmlEntities(text) : decodeHtmlEntities(text);
+	return <ToolLayout><div className="flex flex-wrap gap-2" role="group" aria-label="HTML entity action">{(["encode", "decode"] as const).map((action) => <button className={`min-h-9 cursor-pointer border px-3 text-xs ${direction === action ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`} key={action} type="button" aria-pressed={direction === action} onClick={() => setDirection(action)}>{action === "encode" ? "Encode entities" : "Decode entities"}</button>)}</div><TextAreaField id="html-entity-input" label="Text or entities" value={text} onChange={setText} placeholder="Enter text containing <, >, &, or HTML entities…" /><ResultPanel label={direction === "encode" ? "Encoded text" : "Decoded text"} value={result} /></ToolLayout>;
+};
+export { HtmlEntityTool };
+
+const UrlEncoderTool = () => {
+	const [text, setText] = useState("");
+	const [direction, setDirection] = useState<"encode" | "decode">("encode");
+	const result = useMemo(() => {
+		try {
+			return { text: direction === "encode" ? encodeUrlComponent(text) : decodeUrlComponent(text), error: "" };
+		} catch {
+			return { text: "", error: "This contains an invalid percent-encoded sequence. Check the input and try again." };
+		}
+	}, [text, direction]);
+	return <ToolLayout><div className="flex flex-wrap gap-2" role="group" aria-label="URL encoding action">{(["encode", "decode"] as const).map((action) => <button className={`min-h-9 cursor-pointer border px-3 text-xs ${direction === action ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`} key={action} type="button" aria-pressed={direction === action} onClick={() => setDirection(action)}>{action === "encode" ? "Encode component" : "Decode component"}</button>)}</div><TextAreaField id="url-encode-input" label="Text or URL component" value={text} onChange={setText} placeholder="Enter text to safely use inside a URL…" /><p className="m-0 text-xs leading-relaxed text-muted">Encodes a URL component, not a full URL. Existing URL separators such as ? and & are encoded too.</p>{result.error && <p className="m-0 text-xs text-[#8a3f30]" role="alert">{result.error}</p>}<ResultPanel label={direction === "encode" ? "Encoded component" : "Decoded text"} value={result.text} /></ToolLayout>;
+};
+export { UrlEncoderTool };
+
+const TextReverserTool = () => {
+	const [text, setText] = useState("");
+	return <ToolLayout><TextAreaField id="reverse-input" label="Text to reverse" value={text} onChange={setText} placeholder="Type or paste text…" hint="Characters are reversed without splitting emoji or combined accents." /><ResultPanel label="Reversed text" value={reverseGraphemes(text)} /></ToolLayout>;
+};
+export { TextReverserTool };
+
+const LoremGeneratorTool = () => {
+	const [paragraphs, setParagraphs] = useState(2);
+	const [wordsPerParagraph, setWordsPerParagraph] = useState(45);
+	const result = useMemo(() => generateLoremIpsum(paragraphs, wordsPerParagraph), [paragraphs, wordsPerParagraph]);
+	return <ToolLayout><div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1"><label className="text-xs font-semibold text-[#3c3d37]">Paragraphs<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" type="number" min={1} max={20} value={paragraphs} onChange={(event) => setParagraphs(Math.min(20, Math.max(1, Number(event.target.value) || 1)))} /></label><label className="text-xs font-semibold text-[#3c3d37]">Words per paragraph<input className="mt-2 block h-10 w-full border border-line bg-surface px-3 text-sm outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" type="number" min={5} max={200} value={wordsPerParagraph} onChange={(event) => setWordsPerParagraph(Math.min(200, Math.max(5, Number(event.target.value) || 5)))} /></label></div><ResultPanel label="Placeholder text" value={result} /></ToolLayout>;
+};
+export { LoremGeneratorTool };
+
+const UnicodeInspectorTool = () => {
+	const [text, setText] = useState("");
+	const characters = useMemo(() => inspectUnicodeText(text), [text]);
+	const copiedValues = characters.map(({ codePoint }) => codePoint).join(" ");
+	return <ToolLayout><TextAreaField id="unicode-input" label="Text to inspect" value={text} onChange={setText} placeholder="Paste text, symbols, emoji, or accented characters…" rows={5} hint="Shows Unicode code points. A visible symbol may contain multiple code points." /><div className="overflow-x-auto border border-line"><table className="w-full min-w-[420px] border-collapse text-left text-xs"><thead className="bg-[#f3f2ec] text-[10px] uppercase tracking-wide text-muted"><tr><th className="px-3 py-2.5">Character</th><th className="px-3 py-2.5">Code point</th><th className="px-3 py-2.5">Decimal</th></tr></thead><tbody>{characters.map(({ character, codePoint, decimal }, index) => <tr className="border-t border-line" key={`${codePoint}-${index}`}><td className="px-3 py-2 font-serif text-lg">{character.trim() ? character : "␠"}</td><td className="px-3 py-2 font-mono">{codePoint}</td><td className="px-3 py-2 font-mono">{decimal}</td></tr>)}</tbody></table>{characters.length === 0 && <p className="m-0 p-4 text-xs text-muted">Enter text to inspect its Unicode code points.</p>}</div><div className="flex justify-end"><CopyTextButton text={copiedValues} /></div></ToolLayout>;
+};
+export { UnicodeInspectorTool };

@@ -4,6 +4,9 @@ import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import WordCounter from "@/features/text-tools/word-counter";
 import ReadAloud from "@/features/text-tools/read-aloud";
+import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
+import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
+import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -227,5 +230,104 @@ describe("TextDiffChecker", () => {
 
 		expect(screen.queryByRole("alert")).toBeNull();
 		expect(container.querySelector("del")?.textContent).toBe(longPassage);
+	});
+});
+
+describe("additional text tools", () => {
+	it("finds and replaces text with match counts", () => {
+		render(<FindReplaceTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text" }), { target: { value: "red red" } });
+		fireEvent.change(screen.getByLabelText("Find"), { target: { value: "red" } });
+		fireEvent.change(screen.getByLabelText("Replace with"), { target: { value: "blue" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("blue blue");
+		expect(screen.getByText("2 matches replaced.").textContent).toBe("2 matches replaced.");
+	});
+
+	it("sorts lines and removes duplicates", () => {
+		render(<LineSorterTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Lines to sort" }), { target: { value: "pear\napple\npear" } });
+		fireEvent.click(screen.getByRole("checkbox", { name: "Remove duplicate lines" }));
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("apple\npear");
+	});
+
+	it("creates a URL slug", () => {
+		render(<SlugGeneratorTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Title or phrase" }), { target: { value: "A Better ClickKit!" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("a-better-clickkit");
+	});
+
+	it("previews markdown safely", () => {
+		const { container } = render(<MarkdownPreviewTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Markdown" }), { target: { value: "# Hello\n\n<script>not executed</script>" } });
+		expect(container.querySelector("h1")?.textContent).toBe("Hello");
+		expect(container.querySelector("script")).toBeNull();
+		expect(container.textContent).toContain("<script>not executed</script>");
+	});
+
+	it("shows a readability estimate as text is entered", () => {
+		render(<ReadabilityCheckerTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text to analyze" }), { target: { value: "The cat sat. The dog ran." } });
+		expect(screen.getByText("2", { selector: "p" })).toBeTruthy();
+		expect(screen.getByRole("status").textContent).not.toContain("Add a few complete sentences");
+	});
+
+	it("extracts links from source text", () => {
+		render(<TextExtractorTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Source text" }), { target: { value: "Visit https://clickkit.test/path." } });
+		fireEvent.change(screen.getByLabelText("Extract"), { target: { value: "urls" } });
+		expect(screen.getByText("https://clickkit.test/path").textContent).toBe("https://clickkit.test/path");
+	});
+
+	it("formats HTML snippets and reports malformed XML", async () => {
+		const user = userEvent.setup();
+		const { container } = render(<MarkupFormatterTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "HTML input" }), { target: { value: "<main><h1>Hello</h1></main>" } });
+		await user.click(screen.getByRole("button", { name: "Format" }));
+		expect(container.querySelector("pre")?.textContent).toBe("<main>\n  <h1>Hello</h1>\n</main>");
+		fireEvent.change(screen.getByLabelText("Format"), { target: { value: "xml" } });
+		fireEvent.change(screen.getByRole("textbox", { name: "XML input" }), { target: { value: "<note>" } });
+		await user.click(screen.getByRole("button", { name: "Format" }));
+		expect(screen.getByRole("alert").textContent).toContain("well-formed");
+	});
+
+	it("converts tab-separated rows into a markdown table", () => {
+		const { container } = render(<MarkdownTableGeneratorTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Rows to convert" }), { target: { value: "Name\tAge\nAri\t31" } });
+		expect(container.querySelector("pre")?.textContent).toBe("| Name | Age |\n| --- | --- |\n| Ari | 31 |");
+	});
+
+	it("encodes and decodes HTML entities", () => {
+		render(<HtmlEntityTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text or entities" }), { target: { value: "<tag>" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("&lt;tag&gt;");
+		fireEvent.click(screen.getByRole("button", { name: "Decode entities" }));
+		fireEvent.change(screen.getByRole("textbox", { name: "Text or entities" }), { target: { value: "&lt;tag&gt;" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("<tag>");
+	});
+
+	it("encodes URL components", () => {
+		render(<UrlEncoderTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text or URL component" }), { target: { value: "a & b" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("a%20%26%20b");
+	});
+
+	it("lists Unicode code points for input characters", () => {
+		render(<UnicodeInspectorTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text to inspect" }), { target: { value: "A😀" } });
+		expect(screen.getByText("U+0041")).toBeTruthy();
+		expect(screen.getByText("U+1F600")).toBeTruthy();
+	});
+
+	it("generates lorem ipsum with adjustable length", () => {
+		render(<LoremGeneratorTool />);
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Paragraphs" }), { target: { value: "1" } });
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Words per paragraph" }), { target: { value: "5" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value.split(/\s+/u)).toHaveLength(5);
+	});
+
+	it("reverses text without splitting grapheme clusters", () => {
+		render(<TextReverserTool />);
+		fireEvent.change(screen.getByRole("textbox", { name: "Text to reverse" }), { target: { value: "ab😀" } });
+		expect((screen.getByRole("textbox", { name: "Result" }) as HTMLTextAreaElement).value).toBe("😀ba");
 	});
 });

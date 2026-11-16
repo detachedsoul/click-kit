@@ -5,6 +5,9 @@ import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
 import TextDiffChecker from "@/features/text-tools/text-diff-checker";
 import ReadAloud from "@/features/text-tools/read-aloud";
+import { FindReplaceTool, HtmlEntityTool, LineSorterTool, LoremGeneratorTool, SlugGeneratorTool, TextReverserTool, UnicodeInspectorTool, UrlEncoderTool } from "@/features/text-tools/text-transform-tools";
+import { MarkdownPreviewTool, MarkdownTableGeneratorTool, ReadabilityCheckerTool } from "@/features/text-tools/text-writing-tools";
+import { MarkupFormatterTool, TextExtractorTool } from "@/features/text-tools/text-developer-tools";
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
@@ -17,6 +20,19 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"text-cleaner": TextCleaner,
 	"text-diff": TextDiffChecker,
 	"read-aloud": ReadAloud,
+	"find-replace": FindReplaceTool,
+	"sort-lines": LineSorterTool,
+	"slug-generator": SlugGeneratorTool,
+	"markdown-preview": MarkdownPreviewTool,
+	"readability-checker": ReadabilityCheckerTool,
+	"text-extractor": TextExtractorTool,
+	"markup-formatter": MarkupFormatterTool,
+	"markdown-table": MarkdownTableGeneratorTool,
+	"html-entities": HtmlEntityTool,
+	"url-encoder": UrlEncoderTool,
+	"unicode-inspector": UnicodeInspectorTool,
+	"lorem-generator": LoremGeneratorTool,
+	"text-reverser": TextReverserTool,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
