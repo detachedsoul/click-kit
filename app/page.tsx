@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
-import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ArrowRight, Bug, GitPullRequest, Lightbulb, LockKeyhole } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
 
 const HomePage = () => {
@@ -61,6 +61,33 @@ const HomePage = () => {
 				<div className="mt-[23px] flex items-center gap-3 border border-[#d8dfd1] bg-[#e9ede3] px-[17px] py-[15px] text-xs leading-[1.55] text-[#50584e] max-[620px]:items-start max-[620px]:p-[14px]">
 					<LockKeyhole className="shrink-0 text-[#536c50]" size={17} aria-hidden="true" />
 					<span><strong className="font-bold text-forest">Private by nature.</strong> Available tools run in your browser. Your inputs stay on your device.</span>
+				</div>
+			</Shell>
+		</section>
+
+		<section className="border-t border-line bg-[#f7f5ee] py-[54px] max-[620px]:py-10" aria-labelledby="contribute-title">
+			<Shell>
+				<div className="mb-6 max-w-[640px]">
+					<p className="m-0 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark">Built better together</p>
+					<h2 id="contribute-title" className="mb-2 mt-2 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">Have an idea? Found a snag?</h2>
+					<p className="m-0 text-[13px] leading-[1.65] text-[#60635b]">Tell us what would make ClickKit more useful. Report a problem, suggest a tool or improvement, or help make a fix with a pull request.</p>
+				</div>
+				<div className="grid grid-cols-3 border-l border-t border-line max-[620px]:grid-cols-1">
+					<a className="group flex min-h-[120px] flex-col items-start border-b border-r border-line bg-surface p-5 transition-colors hover:bg-[#f0efe9] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-accent" href="https://github.com/detachedsoul/click-kit/issues/new" target="_blank" rel="noreferrer">
+						<Bug className="text-accent" size={19} aria-hidden="true" />
+						<span className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-ink">Report an issue <ArrowRight className="transition-transform group-hover:translate-x-1" size={14} aria-hidden="true" /></span>
+						<span className="mt-1 text-[11px] text-muted">Let us know what isn’t working.</span>
+					</a>
+					<a className="group flex min-h-[120px] flex-col items-start border-b border-r border-line bg-surface p-5 transition-colors hover:bg-[#f0efe9] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-accent" href="https://github.com/detachedsoul/click-kit/issues" target="_blank" rel="noreferrer">
+						<Lightbulb className="text-accent" size={19} aria-hidden="true" />
+						<span className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-ink">Share a suggestion <ArrowRight className="transition-transform group-hover:translate-x-1" size={14} aria-hidden="true" /></span>
+						<span className="mt-1 text-[11px] text-muted">Request a tool or propose an improvement.</span>
+					</a>
+					<a className="group flex min-h-[120px] flex-col items-start border-b border-r border-line bg-surface p-5 transition-colors hover:bg-[#f0efe9] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-accent" href="https://github.com/detachedsoul/click-kit/compare" target="_blank" rel="noreferrer">
+						<GitPullRequest className="text-accent" size={19} aria-hidden="true" />
+						<span className="mt-4 inline-flex items-center gap-2 text-[13px] font-semibold text-ink">Open a pull request <ArrowRight className="transition-transform group-hover:translate-x-1" size={14} aria-hidden="true" /></span>
+						<span className="mt-1 text-[11px] text-muted">Help build the improvements you want to see.</span>
+					</a>
 				</div>
 			</Shell>
 		</section>
