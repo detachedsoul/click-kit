@@ -116,7 +116,7 @@ describe("JWT decoder", () => {
 	});
 
 	it("rejects invalid token structure and non-object JWT segments", () => {
-		expect(() => decodeJwt("one.two.three")).toThrow(/header is not valid/u);
+		expect(() => decodeJwt(`${encode("not an object")}.${encode({})}.signature`)).toThrow(/must be a JSON object/u);
 		expect(() => decodeJwt("a.b")).toThrow(/three-part JWT/u);
 	});
 });
