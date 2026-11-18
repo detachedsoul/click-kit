@@ -33,6 +33,7 @@ import { JsonZodTool } from "@/features/developer-tools/zod-tool";
 import { JsonPatchTool } from "@/features/developer-tools/json-patch-tool";
 import { JsonSqlTool } from "@/features/developer-tools/json-sql-tool";
 import { EscapeTool } from "@/features/developer-tools/escape-tool";
+import { MimeLookupTool } from "@/features/developer-tools/mime-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -112,6 +113,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"json-patch": JsonPatchTool,
 	"json-sql": JsonSqlTool,
 	"string-escape": EscapeTool,
+	"mime-lookup": MimeLookupTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
