@@ -74,6 +74,7 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 ];
 
 export const tools: Tool[] = [
+	{ id: "text-wrapper", name: "Text wrapper & unwrapper", description: "Hard-wrap text to a column width or unwrap paragraphs back into single lines.", category: "text", slug: "text-wrapper", keywords: ["wrap", "unwrap", "line length", "justify", "paragraph"], icon: AlignLeft, status: "available" },
 	{ id: "word-frequency", name: "Word & phrase frequency", description: "Rank repeated words and 2-3 word phrases, with stop-word filtering and exportable counts.", category: "text", slug: "word-frequency", keywords: ["frequency", "keyword density", "repetition", "ngram", "seo"], icon: BarChart3, status: "available" },
 	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "available" },
 	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "available" },

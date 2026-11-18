@@ -53,6 +53,7 @@ import { ObjectIdTool } from "@/features/developer-tools/objectid-tool";
 import { DdlTool } from "@/features/developer-tools/ddl-tool";
 import { FixtureTool } from "@/features/developer-tools/fixture-tool";
 import { FrequencyTool } from "@/features/text-tools/frequency-tool";
+import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -152,6 +153,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"sql-ddl": DdlTool,
 	"json-fixtures": FixtureTool,
 	"word-frequency": FrequencyTool,
+	"text-wrapper": WrapTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
