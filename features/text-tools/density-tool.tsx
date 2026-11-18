@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckboxField, DownloadLink, ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, DownloadLink, ErrorNote, ResultBlock, StatGrid, ToolPanel, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { analyseKeywordDensity, verdictFor } from "@/features/text-tools/density-utils";
 
@@ -40,7 +40,7 @@ export default function DensityTool() {
 			<label className={labelClassName} htmlFor="density-keywords">
 				Keywords and phrases (one per line, up to 20)
 				<textarea
-					className={`${fieldClassName} h-24 py-2 font-mono text-xs`}
+					className="mt-2 block h-24 w-full resize-y border border-[#d9d7cd] bg-surface px-3 py-2 font-mono text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="density-keywords"
 					onChange={(event) => setKeywordInput(event.target.value)}
 					placeholder={"coffee\ncoffee subscription\nsmall lots"}
