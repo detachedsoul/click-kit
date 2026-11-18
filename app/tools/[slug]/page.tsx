@@ -50,6 +50,7 @@ import { ModelTool } from "@/features/developer-tools/model-tool";
 import { ClampTool } from "@/features/developer-tools/clamp-tool";
 import { ComposeTool } from "@/features/developer-tools/compose-tool";
 import { ObjectIdTool } from "@/features/developer-tools/objectid-tool";
+import { DdlTool } from "@/features/developer-tools/ddl-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -146,6 +147,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"fluid-clamp": ClampTool,
 	"compose-to-run": ComposeTool,
 	"mongodb-objectid": ObjectIdTool,
+	"sql-ddl": DdlTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
