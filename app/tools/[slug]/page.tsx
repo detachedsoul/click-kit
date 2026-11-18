@@ -45,6 +45,7 @@ import { JsxTool } from "@/features/developer-tools/jsx-tool";
 import { GradientTool } from "@/features/developer-tools/gradient-tool";
 import { EnvConvertTool } from "@/features/developer-tools/env-convert-tool";
 import { SvgTool } from "@/features/developer-tools/svg-tool";
+import { SqlJsonTool } from "@/features/developer-tools/sql-json-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -136,6 +137,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"css-gradient": GradientTool,
 	"dotenv-converter": EnvConvertTool,
 	"svg-optimizer": SvgTool,
+	"sql-to-json": SqlJsonTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
