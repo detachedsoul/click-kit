@@ -23,6 +23,7 @@ import { JsonFlattenTool } from "@/features/developer-tools/json-flatten-tool";
 import { JsonCodeTool } from "@/features/developer-tools/json-code-tool";
 import { QueryJsonTool } from "@/features/developer-tools/query-tool";
 import { SemverTool } from "@/features/developer-tools/semver-tool";
+import { SubnetTool } from "@/features/developer-tools/subnet-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -92,6 +93,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"json-code": JsonCodeTool,
 	"query-json": QueryJsonTool,
 	"semver-check": SemverTool,
+	"subnet-calculator": SubnetTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
