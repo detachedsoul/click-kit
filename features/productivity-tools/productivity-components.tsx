@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
-import { CheckboxField } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, selectClassName } from "@/features/developer-tools/tool-ui";
 import {
 	chooseRandomOption,
 	generatePassword,
@@ -372,7 +372,7 @@ const ImageTool = ({ mode }: { mode: ImageMode }) => {
 						<label className="block text-xs font-semibold" htmlFor={`${mode}-format`}>
 							Output format
 							<select
-								className={fieldClass + " mt-2 cursor-pointer"}
+								className={`${selectClassName} mt-2 cursor-pointer`}
 								id={`${mode}-format`}
 								disabled={busy}
 								value={format}

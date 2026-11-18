@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { parseModel, toMongoose, toPrisma } from "@/features/developer-tools/model-utils";
-import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `{
   "id": "3f2b8c1e-1d6a-4b0e-9f2c-5d7a1b2c3d4e",
@@ -56,17 +56,6 @@ export const ModelTool = () => {
 					Model name
 					<input className={fieldClassName} id="model-name" value={name} onChange={(event) => setName(event.target.value)} />
 				</label>
-				{target === "mongoose" ? (
-					<div className="flex flex-col gap-2">
-						<CheckboxField checked={timestamps} id="model-timestamps" label={<>Add createdAt / updatedAt timestamps</>} onChange={setTimestamps} />
-						<CheckboxField checked={strict} id="model-strict" label={<>Strict mode (reject unknown fields)</>} onChange={setStrict} />
-					</div>
-				) : (
-					<div className="flex flex-col gap-2">
-						<CheckboxField checked={addId} id="model-id" label={<>Add an <code>id</code> field with <code>@id</code></>} onChange={setAddId} />
-						<CheckboxField checked={nullableOptional} id="model-optional" label={<>Make nullable fields optional (<code>?</code>)</>} onChange={setNullableOptional} />
-					</div>
-				)}
 				{target === "prisma" && (
 					<label className={labelClassName} htmlFor="model-map">
 						Map to table (optional)
@@ -74,6 +63,19 @@ export const ModelTool = () => {
 					</label>
 				)}
 			</div>
+			<CheckboxRow>
+				{target === "mongoose" ? (
+					<>
+						<CheckboxField checked={timestamps} id="model-timestamps" label={<>Add createdAt / updatedAt timestamps</>} onChange={setTimestamps} />
+						<CheckboxField checked={strict} id="model-strict" label={<>Strict mode (reject unknown fields)</>} onChange={setStrict} />
+					</>
+				) : (
+					<>
+						<CheckboxField checked={addId} id="model-id" label={<>Add an <code>id</code> field with <code>@id</code></>} onChange={setAddId} />
+						<CheckboxField checked={nullableOptional} id="model-optional" label={<>Make nullable fields optional (<code>?</code>)</>} onChange={setNullableOptional} />
+					</>
+				)}
+			</CheckboxRow>
 			<TextAreaField
 				id="model-source"
 				label="Sample JSON"

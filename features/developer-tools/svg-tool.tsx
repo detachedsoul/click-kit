@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { formatBytes, optimiseSvg } from "@/features/developer-tools/svg-utils";
-import { CheckboxField, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Exported by Vector Studio -->
@@ -43,13 +43,13 @@ export const SvgTool = () => {
 						<option value={3}>3 decimals</option>
 					</select>
 				</label>
-				<div className="flex flex-col justify-end gap-2">
-					<CheckboxField checked={removeMetadata} id="svg-metadata" label={<>Remove metadata and editor nodes</>} onChange={setRemoveMetadata} />
-					<CheckboxField checked={keepTitle} id="svg-title" label={<>Keep title and description (accessibility)</>} onChange={setKeepTitle} />
-				</div>
+			</div>
+			<CheckboxRow>
+				<CheckboxField checked={removeMetadata} id="svg-metadata" label={<>Remove metadata and editor nodes</>} onChange={setRemoveMetadata} />
+				<CheckboxField checked={keepTitle} id="svg-title" label={<>Keep title and description (accessibility)</>} onChange={setKeepTitle} />
 				<CheckboxField checked={removeIds} id="svg-ids" label={<>Strip id attributes from child elements</>} onChange={setRemoveIds} />
 				<CheckboxField checked={prettify} id="svg-pretty" label={<>Pretty-print instead of minifying</>} onChange={setPrettify} />
-			</div>
+			</CheckboxRow>
 			<TextAreaField id="svg-source" label="SVG markup" value={source} onChange={setSource} placeholder="<svg …</svg>" rows={12} hint="Comments, metadata, editor namespaces, and empty groups are dropped; numeric attributes are rounded and path data is compacted." />
 			<ErrorNote message={result.error} />
 			{result.report && (

@@ -8,7 +8,7 @@ export const ToolPanel = ({ children }: { children: ReactNode }) => (
 );
 
 export const fieldClassName =
-	"mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
+	"mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]";
 export const selectClassName = "select-input";
 export const labelClassName = "block text-xs font-semibold text-[#3c3d37]";
 export const hintClassName = "m-0 text-[11px] leading-relaxed text-muted";
@@ -79,6 +79,11 @@ export const CheckboxField = ({ id, label, checked, onChange, hint, disabled = f
 	</div>
 	);
 };
+
+/** A row of checkbox options, placed under a panel's field grid so nothing drifts out of line. */
+export const CheckboxRow = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
+	<div className={`flex flex-wrap items-start gap-x-6 gap-y-2.5 ${className}`.trim()}>{children}</div>
+);
 
 export const ErrorNote = ({ message }: { message: string }) =>
 	message ? (

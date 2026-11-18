@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { fromRoman, numberToWords, ordinalSuffix, toRoman } from "@/features/calculators/numerals-utils";
-import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 type Mode = "number" | "roman";
 
@@ -49,8 +49,10 @@ export default function NumeralsCalculator() {
 						<input className={`${fieldClassName} font-mono uppercase`} id="numerals-roman" onChange={(event) => setRoman(event.target.value)} value={roman} />
 					</label>
 				)}
-				<CheckboxField checked={useAnd} id="numerals-and" label={<>British style (“one hundred and five”)</>} onChange={setUseAnd} />
 			</div>
+			<CheckboxRow>
+				<CheckboxField checked={useAnd} id="numerals-and" label={<>British style (“one hundred and five”)</>} onChange={setUseAnd} />
+			</CheckboxRow>
 			<ErrorNote message={result.error} />
 			{result.lines.length > 0 && <ResultBlock title="Result" value={result.lines.join("\n")} rows={6} fileName="numerals.txt" />}
 			<p className={hintClassName}>

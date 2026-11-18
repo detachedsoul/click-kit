@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { dateDifference, monthDifference } from "@/features/calculators/date-diff-utils";
-import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -19,7 +19,7 @@ export default function DateDiffCalculator() {
 	}, [start, end, includeEnd]);
 	return (
 		<ToolPanel>
-			<div className="grid gap-4 sm:grid-cols-3">
+			<div className="grid gap-4 sm:grid-cols-2">
 				<label className={labelClassName} htmlFor="date-diff-start">
 					Start date
 					<input className={fieldClassName} id="date-diff-start" onChange={(event) => setStart(event.target.value)} type="date" value={start} />
@@ -28,8 +28,10 @@ export default function DateDiffCalculator() {
 					End date
 					<input className={fieldClassName} id="date-diff-end" onChange={(event) => setEnd(event.target.value)} type="date" value={end} />
 				</label>
-				<CheckboxField checked={includeEnd} id="date-diff-include" label={<>Count the end date as a full day</>} onChange={setIncludeEnd} />
 			</div>
+			<CheckboxRow>
+				<CheckboxField checked={includeEnd} id="date-diff-include" label={<>Count the end date as a full day</>} onChange={setIncludeEnd} />
+			</CheckboxRow>
 			<ErrorNote message={result.error} />
 			{result.report && (
 				<>

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { frequencyToCsv, frequencyToJson, wordFrequency } from "@/features/text-tools/frequency-utils";
-import { CheckboxField, DownloadLink, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, DownloadLink, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `Good documentation is short, concrete, and honest. Short paragraphs help readers scan. Concrete examples beat abstract rules, and honest limitations build trust. Every paragraph should earn its place: if a sentence does not add information, cut it.`;
 
@@ -25,7 +25,7 @@ export const FrequencyTool = () => {
 	return (
 		<ToolPanel>
 			<TextAreaField id="frequency-input" label="Your text" value={source} onChange={setSource} placeholder="Paste text to count repeated words and phrases." rows={10} />
-			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+			<div className="grid gap-4 sm:grid-cols-3">
 				<label className={labelClassName} htmlFor="frequency-ngram">
 					Phrase length
 					<select className={selectClassName} id="frequency-ngram" onChange={(event) => setNgram(Number(event.target.value) as 1 | 2 | 3)} value={ngram}>
@@ -42,9 +42,11 @@ export const FrequencyTool = () => {
 					Min word length
 					<input className={fieldClassName} id="frequency-min-length" max={20} min={1} onChange={(event) => setMinimumLength(Number(event.target.value))} type="number" value={minimumLength} />
 				</label>
+			</div>
+			<CheckboxRow>
 				<CheckboxField checked={ignoreCase} id="frequency-case" label={<>Ignore case</>} onChange={setIgnoreCase} />
 				<CheckboxField checked={removeStopWords} id="frequency-stop" label={<>Remove stop words</>} onChange={setRemoveStopWords} />
-			</div>
+			</CheckboxRow>
 			<ErrorNote message={result.error} />
 			{result.report && (
 				<>

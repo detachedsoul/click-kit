@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { convertIndentation, indentLabel, type IndentOptions, type IndentUnit } from "@/features/developer-tools/indent-utils";
-import { CheckboxField, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `function build(config) {
 \tif (!config) {
@@ -54,9 +54,11 @@ export const IndentTool = () => {
 						))}
 					</select>
 				</label>
+			</div>
+			<CheckboxRow>
 				<CheckboxField checked={trimTrailing} id="indent-trim" label={<>Trim trailing whitespace</>} onChange={setTrimTrailing} />
 				<CheckboxField checked={blankLines} id="indent-blank" label={<>Keep whitespace on blank lines</>} onChange={setBlankLines} />
-			</div>
+			</CheckboxRow>
 			<TextAreaField id="indent-input" label="Text to re-indent" value={source} onChange={setSource} placeholder={"function x() {\n    return 1;\n}"} rows={14} hint="Leading indentation is converted column by column, so mixed tabs and spaces end up consistent." />
 			<ErrorNote message={result.error} />
 			{result.report && (

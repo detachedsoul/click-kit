@@ -50,4 +50,22 @@ describe("classical ciphers", () => {
 		fireEvent.change(screen.getByLabelText("Your text"), { target: { value: " " } });
 		expect(screen.getByRole("alert").textContent).toContain("Paste some text");
 	});
+
+	it("explains and disables the Caesar-only controls on the other ciphers", () => {
+		render(<CipherTool />);
+		const output = () => (screen.getByLabelText("Result") as HTMLTextAreaElement).value;
+		fireEvent.click(screen.getByLabelText("Brute force all 25 shifts"));
+		expect(output().split("\n")).toHaveLength(25);
+		fireEvent.change(screen.getByLabelText("Cipher"), { target: { value: "rot13" } });
+		expect((screen.getByLabelText("Shift") as HTMLInputElement).disabled).toBe(true);
+		expect((screen.getByLabelText("Decode instead of encode") as HTMLInputElement).disabled).toBe(true);
+		const brute = screen.getByLabelText("Brute force all 25 shifts") as HTMLInputElement;
+		expect(brute.disabled).toBe(true);
+		expect(brute.checked).toBe(false);
+		expect(screen.getByText(/belong to the Caesar cipher/)).toBeTruthy();
+		expect(output()).toBe("Zrrg zr ng gur uneobhe — gur cyna fgnaqf.");
+		fireEvent.change(screen.getByLabelText("Cipher"), { target: { value: "caesar" } });
+		expect((screen.getByLabelText("Shift") as HTMLInputElement).disabled).toBe(false);
+		expect((screen.getByLabelText("Brute force all 25 shifts") as HTMLInputElement).checked).toBe(false);
+	});
 });

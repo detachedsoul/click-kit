@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { wrapText } from "@/features/text-tools/wrap-utils";
-import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, fieldClassName, selectClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `A hard wrap puts a line break at a fixed column so the text fits in terminals, emails, and code comments. It is different from soft wrapping, which only changes how a paragraph is displayed.
 
@@ -24,21 +24,23 @@ export const WrapTool = () => {
 	}, [source, width, mode, breakLongWords, keepBlankLines]);
 	return (
 		<ToolPanel>
-			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+			<div className="grid gap-4 sm:grid-cols-2">
 				<label className={labelClassName} htmlFor="wrap-width">
 					Column width
 					<input className={fieldClassName} id="wrap-width" max={200} min={3} onChange={(event) => setWidth(Number(event.target.value))} type="number" value={width} />
 				</label>
 				<label className={labelClassName} htmlFor="wrap-mode">
 					Action
-					<select className={fieldClassName} id="wrap-mode" onChange={(event) => setMode(event.target.value as "wrap" | "unwrap")} value={mode}>
+					<select className={selectClassName} id="wrap-mode" onChange={(event) => setMode(event.target.value as "wrap" | "unwrap")} value={mode}>
 						<option value="wrap">Wrap to column width</option>
 						<option value="unwrap">Unwrap paragraphs</option>
 					</select>
 				</label>
+			</div>
+			<CheckboxRow>
 				<CheckboxField checked={breakLongWords} id="wrap-long-words" label={<>Break words longer than the width</>} onChange={setBreakLongWords} />
 				<CheckboxField checked={keepBlankLines} id="wrap-blank" label={<>Keep blank lines between paragraphs</>} onChange={setKeepBlankLines} />
-			</div>
+			</CheckboxRow>
 			<TextAreaField id="wrap-input" label="Your text" value={source} onChange={setSource} placeholder="Paste text to wrap or unwrap." rows={11} />
 			<ErrorNote message={result.error} />
 			{result.report && (

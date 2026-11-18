@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { envToTarget, structuredToEnv, type EnvTarget } from "@/features/developer-tools/env-convert-utils";
-import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, CheckboxRow, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const envSample = `# app config
 NODE_ENV=production
@@ -82,14 +82,14 @@ export const EnvConvertTool = () => {
 					Nested key separator
 					<input className={`${fieldClassName} font-mono`} id="env-separator" value={separator} onChange={(event) => setSeparator(event.target.value)} />
 				</label>
+			</div>
+			<CheckboxRow>
 				{direction === "env-to-structured" ? (
 					<CheckboxField checked={nested} id="env-nested" label={<>Split {separator || "__"} keys into nested objects</>} onChange={setNested} />
 				) : (
-					<span className="flex flex-col justify-end gap-2">
-						<CheckboxField checked={comments} id="env-comments" label={<>Group keys with section comments</>} onChange={setComments} />
-					</span>
+					<CheckboxField checked={comments} id="env-comments" label={<>Group keys with section comments</>} onChange={setComments} />
 				)}
-			</div>
+			</CheckboxRow>
 			<TextAreaField
 				id="env-source"
 				label={direction === "env-to-structured" ? ".env file" : `${structuredFormat.toUpperCase()} object`}
