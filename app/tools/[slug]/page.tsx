@@ -57,6 +57,12 @@ import { FrequencyTool } from "@/features/text-tools/frequency-tool";
 import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
+import { CropTool } from "@/features/image-tools/crop-tool";
+import { FaviconTool } from "@/features/image-tools/favicon-tool";
+import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
+import { PaletteTool } from "@/features/image-tools/palette-tool";
+import { MetadataTool } from "@/features/image-tools/metadata-tool";
+import { FileTypeTool } from "@/features/image-tools/file-type-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
@@ -170,6 +176,12 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
+	"image-cropper": CropTool,
+	"favicon-generator": FaviconTool,
+	"svg-to-png": SvgPngTool,
+	"image-palette": PaletteTool,
+	"image-metadata": MetadataTool,
+	"file-type-identifier": FileTypeTool,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,

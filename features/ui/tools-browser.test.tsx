@@ -40,13 +40,13 @@ describe("tools browser", () => {
 		render(<ToolsBrowser />);
 		const search = screen.getByLabelText("Search all tools");
 		await user.type(search, "json");
-		const jsonCount = Number(/(\d+) of 105 tools/u.exec(screen.getByRole("status").textContent ?? "")?.[1]);
+		const jsonCount = Number(new RegExp(`(\\d+) of ${tools.length} tools`, "u").exec(screen.getByRole("status").textContent ?? "")?.[1]);
 		expect(jsonCount).toBeGreaterThan(1);
 		expect(jsonCount).toBeLessThan(tools.length);
 		expect(screen.getAllByRole("link")).toHaveLength(jsonCount);
 		await user.clear(search);
 		await user.type(search, "mermaid");
-		expect(screen.getByRole("status").textContent).toContain("1 of 105 tools");
+		expect(screen.getByRole("status").textContent).toContain(`1 of ${tools.length} tools`);
 		expect(screen.getAllByRole("link")[0].getAttribute("href")).toBe("/tools/json-mermaid");
 		await user.clear(search);
 		await user.type(search, "calculator");
