@@ -59,6 +59,7 @@ import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroT
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
+import NumeralsCalculator from "@/features/calculators/numerals-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
 import GeometryCalculator from "@/features/calculators/geometry-calculator";
 import FuelEconomyCalculator from "@/features/calculators/fuel-economy-calculator";
@@ -170,6 +171,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"fuel-economy-calculator": FuelEconomyCalculator,
 	"date-difference": DateDiffCalculator,
 	"aspect-ratio": AspectCalculator,
+	"roman-numerals": NumeralsCalculator,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
