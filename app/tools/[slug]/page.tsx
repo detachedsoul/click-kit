@@ -58,6 +58,7 @@ import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
+import AspectCalculator from "@/features/calculators/aspect-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
 import GeometryCalculator from "@/features/calculators/geometry-calculator";
 import FuelEconomyCalculator from "@/features/calculators/fuel-economy-calculator";
@@ -168,6 +169,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"geometry-calculator": GeometryCalculator,
 	"fuel-economy-calculator": FuelEconomyCalculator,
 	"date-difference": DateDiffCalculator,
+	"aspect-ratio": AspectCalculator,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
