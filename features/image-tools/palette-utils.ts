@@ -103,6 +103,14 @@ export const paletteToHexList = (palette: PaletteColor[]) => palette.map((color)
 export const paletteToCssVariables = (palette: PaletteColor[]) =>
 	[":root {", ...palette.map((color, index) => `\t--color-${index + 1}: ${color.hex};`), "}"].join("\n");
 
+/** Tailwind v4 CSS-first theme: drop into a stylesheet that imports tailwindcss. */
+export const paletteToTailwindV4 = (palette: PaletteColor[], prefix = "palette") =>
+	["@theme {", ...palette.map((color, index) => `\t--color-${prefix}-${index + 1}: ${color.hex};`), "}"].join("\n");
+
+/** Utility names a v4 theme exposes, handy for copy under the swatches. */
+export const tailwindV4ClassNames = (palette: PaletteColor[], prefix = "palette") =>
+	palette.map((_, index) => `bg-${prefix}-${index + 1} text-${prefix}-${index + 1} border-${prefix}-${index + 1}`);
+
 export const paletteToTailwind = (palette: PaletteColor[]) =>
 	JSON.stringify(
 		{

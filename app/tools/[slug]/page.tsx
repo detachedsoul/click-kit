@@ -63,6 +63,12 @@ import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
 import { MetadataTool } from "@/features/image-tools/metadata-tool";
 import { FileTypeTool } from "@/features/image-tools/file-type-tool";
+import { RotateTool } from "@/features/image-tools/rotate-tool";
+import { WatermarkTool } from "@/features/image-tools/watermark-tool";
+import { FiltersTool } from "@/features/image-tools/filters-tool";
+import { StripTool } from "@/features/image-tools/strip-tool";
+import { PlaceholderTool } from "@/features/image-tools/placeholder-tool";
+import { ZipTool } from "@/features/image-tools/zip-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
@@ -182,6 +188,12 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"image-palette": PaletteTool,
 	"image-metadata": MetadataTool,
 	"file-type-identifier": FileTypeTool,
+	"image-rotate": RotateTool,
+	"image-watermark": WatermarkTool,
+	"image-filters": FiltersTool,
+	"image-metadata-remover": StripTool,
+	"placeholder-image": PlaceholderTool,
+	"zip-creator": ZipTool,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,

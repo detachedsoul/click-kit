@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractPalette, paletteToCssVariables, paletteToHexList, paletteToTailwind, rgbToHex, rgbToHsl } from "@/features/image-tools/palette-utils";
+import { extractPalette, paletteToCssVariables, paletteToHexList, paletteToTailwind, paletteToTailwindV4, rgbToHex, rgbToHsl, tailwindV4ClassNames } from "@/features/image-tools/palette-utils";
 
 const pixelsFrom = (colors: [number, number, number, number][]) => new Uint8ClampedArray(colors.flat());
 
@@ -49,5 +49,15 @@ describe("palette extraction", () => {
 		expect(paletteToHexList(palette)).toBe("#123456");
 		expect(paletteToCssVariables(palette)).toContain("--color-1: #123456;");
 		expect(JSON.parse(paletteToTailwind(palette)).theme.extend.colors["palette-1"]).toBe("#123456");
+	});
+
+	it("writes a Tailwind v4 @theme block", () => {
+		const palette = [
+			{ hex: "#123456", rgb: { r: 18, g: 52, b: 86 }, share: 0.6 },
+			{ hex: "#abcdef", rgb: { r: 171, g: 205, b: 239 }, share: 0.4 },
+		];
+		expect(paletteToTailwindV4(palette)).toBe("@theme {\n\t--color-palette-1: #123456;\n\t--color-palette-2: #abcdef;\n}");
+		expect(paletteToTailwindV4(palette, "brand")).toContain("--color-brand-2: #abcdef;");
+		expect(tailwindV4ClassNames(palette)[0]).toBe("bg-palette-1 text-palette-1 border-palette-1");
 	});
 });

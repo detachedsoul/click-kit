@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { CopyTextButton } from "@/features/text-tools/text-tool-shared";
-import { ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { ErrorNote, hintClassName, labelClassName, ResultBlock, SegmentedControl, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import {
 	ACCEPTED_IMAGE_TYPES,
 	describeBytes,
@@ -13,7 +13,7 @@ import {
 	MAX_IMAGE_BYTES,
 	useObjectUrl,
 } from "@/features/image-tools/image-file-shared";
-import { extractPalette, paletteToCssVariables, paletteToTailwind, rgbToHsl, type PaletteColor } from "@/features/image-tools/palette-utils";
+import { extractPalette, paletteToCssVariables, paletteToTailwind, paletteToTailwindV4, rgbToHsl, type PaletteColor } from "@/features/image-tools/palette-utils";
 
 const SAMPLE_EDGE = 240;
 
@@ -33,6 +33,7 @@ export const PaletteTool = () => {
 	const [pixels, setPixels] = useState<Uint8ClampedArray | null>(null);
 	const [count, setCount] = useState("6");
 	const [palette, setPalette] = useState<PaletteColor[]>([]);
+	const [tailwindSyntax, setTailwindSyntax] = useState<"v4" | "v3">("v4");
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
 	const previewUrl = useObjectUrl(file);
@@ -139,11 +140,26 @@ export const PaletteTool = () => {
 						]}
 					/>
 					<ResultBlock fileName="palette.css" title="CSS variables" value={paletteToCssVariables(palette)} rows={8} />
-					<ResultBlock fileName="tailwind.palette.json" title="Tailwind theme" value={paletteToTailwind(palette)} rows={10} />
+					<SegmentedControl
+						label="Tailwind syntax"
+						onChange={setTailwindSyntax}
+						options={[
+							{ id: "v4", label: "Tailwind v4 @theme" },
+							{ id: "v3", label: "v3 config" },
+						]}
+						value={tailwindSyntax}
+					/>
+					<ResultBlock
+						fileName={tailwindSyntax === "v4" ? "theme.css" : "tailwind.config.json"}
+						title={tailwindSyntax === "v4" ? "Tailwind v4 theme" : "Tailwind v3 config"}
+						value={tailwindSyntax === "v4" ? paletteToTailwindV4(palette) : paletteToTailwind(palette)}
+						rows={10}
+					/>
 				</>
 			) : null}
 			<p className={hintClassName}>
-				Colours are grouped with median-cut quantisation, the same idea behind classic image palettes: split the pixels along their widest colour
+				Tailwind v4 defines colours in CSS, so the @theme block goes straight into a stylesheet that imports tailwindcss; the v3 config is kept for
+				older projects. Colours are grouped with median-cut quantisation, the same idea behind classic image palettes: split the pixels along their widest colour
 				range, then average each group. Percentages are the share of visible pixels.
 			</p>
 		</ToolPanel>

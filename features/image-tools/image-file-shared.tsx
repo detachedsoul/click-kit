@@ -46,6 +46,39 @@ export const FileField = ({
 	</div>
 );
 
+/** The same field, for tools that take several files at once. */
+export const MultiFileField = ({
+	id,
+	label,
+	hint,
+	accept,
+	disabled = false,
+	onFiles,
+}: {
+	id: string;
+	label: string;
+	hint?: string;
+	accept?: string;
+	disabled?: boolean;
+	onFiles: (files: File[]) => void;
+}) => (
+	<div>
+		<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor={id}>
+			{label}
+			<input
+				accept={accept}
+				className={fileInputClassName}
+				disabled={disabled}
+				id={id}
+				multiple
+				onChange={(event) => onFiles(Array.from(event.target.files ?? []))}
+				type="file"
+			/>
+		</label>
+		{hint ? <p className="mb-0 mt-2 text-[11px] leading-relaxed text-muted">{hint}</p> : null}
+	</div>
+);
+
 /** Load an image element from a URL that is already in the page. */
 export const loadImage = (url: string) =>
 	new Promise<HTMLImageElement>((resolve, reject) => {
