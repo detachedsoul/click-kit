@@ -38,6 +38,7 @@ import { HeadersTool } from "@/features/developer-tools/headers-tool";
 import { JsonlTool } from "@/features/developer-tools/jsonl-tool";
 import { XPathTool } from "@/features/developer-tools/xpath-tool";
 import { HmacTool } from "@/features/developer-tools/hmac-tool";
+import { DockerTool } from "@/features/developer-tools/docker-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -122,6 +123,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"jsonl-formatter": JsonlTool,
 	"xpath-tester": XPathTool,
 	"hmac-totp": HmacTool,
+	"docker-compose": DockerTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
