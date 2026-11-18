@@ -74,6 +74,7 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 ];
 
 export const tools: Tool[] = [
+	{ id: "text-cipher", name: "Caesar & cipher toolkit", description: "Encode or decode Caesar, ROT13, Atbash, and ROT47 ciphers, or brute-force all 25 Caesar shifts.", category: "text", slug: "text-cipher", keywords: ["caesar", "rot13", "atbash", "rot47", "cipher", "decode"], icon: Shuffle, status: "available" },
 	{ id: "text-wrapper", name: "Text wrapper & unwrapper", description: "Hard-wrap text to a column width or unwrap paragraphs back into single lines.", category: "text", slug: "text-wrapper", keywords: ["wrap", "unwrap", "line length", "justify", "paragraph"], icon: AlignLeft, status: "available" },
 	{ id: "word-frequency", name: "Word & phrase frequency", description: "Rank repeated words and 2-3 word phrases, with stop-word filtering and exportable counts.", category: "text", slug: "word-frequency", keywords: ["frequency", "keyword density", "repetition", "ngram", "seo"], icon: BarChart3, status: "available" },
 	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "available" },
