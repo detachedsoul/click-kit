@@ -18,6 +18,7 @@ import { ColorConverterTool, HashGeneratorTool, JsonSchemaTool, JwtDecoderTool, 
 import { ColorContrastTool, CronExplainerTool, EnvValidatorTool, JsonDiffTool, YamlJsonTool } from "@/features/developer-tools/extra-tools-components";
 import { CsvJsonTool, FileHashTool, GitignoreGeneratorTool, JsonPathTool, JsonSchemaValidatorTool } from "@/features/developer-tools/data-tools-components";
 import { TomlJsonTool } from "@/features/developer-tools/toml-tool";
+import { XmlJsonTool } from "@/features/developer-tools/xml-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -82,6 +83,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"file-checksum": FileHashTool,
 	"gitignore-generator": GitignoreGeneratorTool,
 	"toml-json": TomlJsonTool,
+	"xml-json": XmlJsonTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
