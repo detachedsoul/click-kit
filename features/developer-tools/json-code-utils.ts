@@ -2,7 +2,7 @@ const maximumSourceLength = 500_000;
 const maximumDepth = 40;
 const maximumTypes = 200;
 
-export type CodeLanguage = "go" | "rust" | "python" | "java";
+export type CodeLanguage = "go" | "rust" | "python" | "java" | "csharp" | "kotlin" | "swift";
 
 type PrimitiveKind = "string" | "integer" | "number" | "boolean" | "null";
 
@@ -321,6 +321,156 @@ const renderJava = (named: Named[], names: Map<TypeNode, string>, root: TypeNode
 		.replace(/\n{3,}/gu, "\n\n");
 };
 
+const renderCSharp = (named: Named[], names: Map<TypeNode, string>, root: TypeNode, rootName: string) => {
+	const csType = (node: TypeNode, optional: boolean): string => {
+		if (node.kind === "array") return `List<${csType(node.element, false)}>${optional ? "?" : ""}`;
+		if (node.kind === "object") return `${names.get(node) ?? "JsonElement"}${optional ? "?" : ""}`;
+		switch (primitiveKind(node)) {
+			case "string":
+				return `string${optional ? "?" : ""}`;
+			case "boolean":
+				return `bool${optional ? "?" : ""}`;
+			case "integer":
+				return `long${optional ? "?" : ""}`;
+			case "number":
+				return `double${optional ? "?" : ""}`;
+			default:
+				return `JsonElement${optional ? "?" : ""}`;
+		}
+	};
+	let usesJsonElement = false;
+	const records = named.map(({ name, node }) => {
+		const parameters = [...node.fields.entries()].map(([key, field]) => {
+			const optional = field.optional || isOptional(field.node);
+			const type = csType(stripNull(field.node), optional);
+			if (type.includes("JsonElement")) usesJsonElement = true;
+			const property = pascalCase(key) || "Value";
+			const attribute = property === key ? "" : `[property: JsonPropertyName("${key}")] `;
+			return `    ${attribute}${type} ${property}${optional ? " = default" : ""}`;
+		});
+		return `public sealed record ${name}(\n${parameters.join(",\n")}\n);`;
+	});
+	const aliasBase = pascalCase(rootName);
+	const aliasName = [...names.values()].includes(aliasBase) ? `${aliasBase}List` : aliasBase;
+	const alias =
+		root.kind === "array" || root.kind === "primitive"
+			? `public sealed record ${aliasName}(${csType(root, false)} Value);`
+			: "";
+	return [
+		"// Code generated from JSON by ClickKit.",
+		"using System.Collections.Generic;",
+		"using System.Text.Json;",
+		"using System.Text.Json.Serialization;",
+		"",
+		"namespace Models;",
+		"",
+		[...records, alias].filter(Boolean).join("\n\n"),
+		usesJsonElement ? "// JsonElement keeps values whose shape could not be narrowed." : "",
+		"",
+	]
+		.join("\n")
+		.replace(/\n{3,}/gu, "\n\n");
+};
+
+const kotlinKeywords = new Set(["as", "break", "class", "continue", "do", "else", "false", "for", "fun", "if", "in", "interface", "is", "null", "object", "package", "return", "super", "this", "throw", "true", "try", "typealias", "typeof", "val", "var", "when", "while"]);
+
+const renderKotlin = (named: Named[], names: Map<TypeNode, string>, root: TypeNode, rootName: string) => {
+	const kotlinType = (node: TypeNode, optional: boolean): string => {
+		if (node.kind === "array") return `List<${kotlinType(node.element, false)}>${optional ? "?" : ""}`;
+		if (node.kind === "object") return `${names.get(node) ?? "JsonElement"}${optional ? "?" : ""}`;
+		const suffix = optional ? "?" : "";
+		switch (primitiveKind(node)) {
+			case "string":
+				return `String${suffix}`;
+			case "boolean":
+				return `Boolean${suffix}`;
+			case "integer":
+				return `Long${suffix}`;
+			case "number":
+				return `Double${suffix}`;
+			default:
+				return `JsonElement${suffix}`;
+		}
+	};
+	let usesJsonElement = false;
+	const blocks = named.map(({ name, node }) => {
+		const fields = [...node.fields.entries()].map(([key, field]) => {
+			const optional = field.optional || isOptional(field.node);
+			const type = kotlinType(stripNull(field.node), optional);
+			if (type.includes("JsonElement")) usesJsonElement = true;
+			const raw = key.replace(/[^A-Za-z0-9_]/gu, "_");
+			const property = kotlinKeywords.has(raw) ? `\`${raw}\`` : raw;
+			const annotation = property === key ? "" : `\n    @SerialName("${key}")`;
+			return `${annotation}\n    val ${property}: ${type}${optional ? " = null" : ""}`;
+		});
+		return `@Serializable\ndata class ${name}(${fields.join(",")}\n)`;
+	});
+	const aliasBase = pascalCase(rootName);
+	const aliasName = [...names.values()].includes(aliasBase) ? `${aliasBase}List` : aliasBase;
+	const alias = root.kind === "array" || root.kind === "primitive" ? `typealias ${aliasName} = ${kotlinType(root, false)}` : "";
+	return [
+		"// Code generated from JSON by ClickKit.",
+		"import kotlinx.serialization.SerialName",
+		"import kotlinx.serialization.Serializable",
+		...(usesJsonElement ? ["import kotlinx.serialization.json.JsonElement"] : []),
+		"",
+		[...blocks, alias].filter(Boolean).join("\n\n"),
+		"",
+	]
+		.join("\n")
+		.replace(/\n{3,}/gu, "\n\n");
+};
+
+const swiftKeywords = new Set(["associatedtype", "class", "deinit", "enum", "extension", "fileprivate", "func", "import", "init", "inout", "internal", "let", "open", "operator", "private", "protocol", "public", "rethrows", "static", "struct", "subscript", "typealias", "var", "break", "case", "continue", "default", "defer", "do", "else", "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch", "where", "while", "as", "Any", "catch", "false", "is", "nil", "super", "self", "Self", "throw", "throws", "true", "try", "Type"]);
+
+const renderSwift = (named: Named[], names: Map<TypeNode, string>, root: TypeNode, rootName: string) => {
+	const swiftType = (node: TypeNode, optional: boolean): string => {
+		if (node.kind === "array") return `[${swiftType(node.element, false)}]${optional ? "?" : ""}`;
+		if (node.kind === "object") return `${names.get(node) ?? "JSONValue"}${optional ? "?" : ""}`;
+		const suffix = optional ? "?" : "";
+		switch (primitiveKind(node)) {
+			case "string":
+				return `String${suffix}`;
+			case "boolean":
+				return `Bool${suffix}`;
+			case "integer":
+				return `Int64${suffix}`;
+			case "number":
+				return `Double${suffix}`;
+			default:
+				return `JSONValue${suffix}`;
+		}
+	};
+	let usesJsonValue = false;
+	const structs = named.map(({ name, node }) => {
+		const renames: string[] = [];
+		const fields = [...node.fields.entries()].map(([key, field]) => {
+			const optional = field.optional || isOptional(field.node);
+			const type = swiftType(stripNull(field.node), optional);
+			if (type.includes("JSONValue")) usesJsonValue = true;
+			const raw = camelCase(key) || "value";
+			const property = swiftKeywords.has(raw) ? `\`${raw}\`` : raw;
+			if (property !== key) renames.push(`        case ${property.replaceAll("`", "")} = "${key}"`);
+			return `    let ${property}: ${type}`;
+		});
+		const codingKeys = renames.length ? `\n\n    enum CodingKeys: String, CodingKey {\n${renames.join("\n")}\n    }` : "";
+		return `struct ${name}: Codable {\n${fields.join("\n")}${codingKeys}\n}`;
+	});
+	const aliasBase = pascalCase(rootName);
+	const aliasName = [...names.values()].includes(aliasBase) ? `${aliasBase}List` : aliasBase;
+	const alias = root.kind === "array" || root.kind === "primitive" ? `typealias ${aliasName} = ${swiftType(root, false)}` : "";
+	return [
+		"// Code generated from JSON by ClickKit.",
+		"import Foundation",
+		"",
+		usesJsonValue ? "/// JSONValue stands in for values whose shape could not be narrowed; supply your own decoder." : "",
+		[...structs, alias].filter(Boolean).join("\n\n"),
+		"",
+	]
+		.join("\n")
+		.replace(/\n{3,}/gu, "\n\n");
+};
+
 export const jsonToCode = (source: string, language: CodeLanguage, rootName = "Root") => {
 	const value = parseJson(source);
 	if (!rootName.trim()) throw new Error("Give the root type a name.");
@@ -330,5 +480,8 @@ export const jsonToCode = (source: string, language: CodeLanguage, rootName = "R
 	if (language === "go") return renderGo(named, names, root, safeRootName);
 	if (language === "rust") return renderRust(named, names, root, safeRootName);
 	if (language === "python") return renderPython(named, names, root, safeRootName);
+	if (language === "csharp") return renderCSharp(named, names, root, safeRootName);
+	if (language === "kotlin") return renderKotlin(named, names, root, safeRootName);
+	if (language === "swift") return renderSwift(named, names, root, safeRootName);
 	return renderJava(named, names, root, safeRootName);
 };

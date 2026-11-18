@@ -21,6 +21,9 @@ const languages: { id: CodeLanguage; label: string; extension: string }[] = [
 	{ id: "rust", label: "Rust (serde)", extension: "rs" },
 	{ id: "python", label: "Python (dataclasses)", extension: "py" },
 	{ id: "java", label: "Java (records)", extension: "java" },
+	{ id: "csharp", label: "C# (records)", extension: "cs" },
+	{ id: "kotlin", label: "Kotlin (kotlinx.serialization)", extension: "kt" },
+	{ id: "swift", label: "Swift (Codable)", extension: "swift" },
 ];
 
 export const JsonCodeTool = () => {
