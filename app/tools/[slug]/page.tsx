@@ -16,6 +16,7 @@ import BmiCalculator from "@/features/calculators/bmi-calculator";
 import { Base64Tool, JsonFormatterTool, JsonTypeScriptTool, RegexTesterTool, TimestampConverterTool, UuidGeneratorTool } from "@/features/developer-tools/developer-tool-components";
 import { ColorConverterTool, HashGeneratorTool, JsonSchemaTool, JwtDecoderTool, SqlFormatterTool, UrlInspectorTool } from "@/features/developer-tools/additional-developer-tools";
 import { ColorContrastTool, CronExplainerTool, EnvValidatorTool, JsonDiffTool, YamlJsonTool } from "@/features/developer-tools/extra-tools-components";
+import { CsvJsonTool, FileHashTool, GitignoreGeneratorTool, JsonPathTool, JsonSchemaValidatorTool } from "@/features/developer-tools/data-tools-components";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -74,6 +75,11 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"cron-explainer": CronExplainerTool,
 	"env-validator": EnvValidatorTool,
 	"color-contrast": ColorContrastTool,
+	"csv-json": CsvJsonTool,
+	"jsonpath-tester": JsonPathTool,
+	"json-schema-validator": JsonSchemaValidatorTool,
+	"file-checksum": FileHashTool,
+	"gitignore-generator": GitignoreGeneratorTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
