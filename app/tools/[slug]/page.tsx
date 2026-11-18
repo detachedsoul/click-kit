@@ -28,6 +28,7 @@ import { ChmodTool } from "@/features/developer-tools/chmod-tool";
 import { IdToolkitTool } from "@/features/developer-tools/id-tool";
 import { CurlTool } from "@/features/developer-tools/curl-tool";
 import { HttpStatusTool } from "@/features/developer-tools/http-status-tool";
+import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -102,6 +103,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"id-toolkit": IdToolkitTool,
 	"curl-converter": CurlTool,
 	"http-status": HttpStatusTool,
+	"number-base": NumberBaseTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
