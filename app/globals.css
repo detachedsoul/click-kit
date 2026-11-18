@@ -15,6 +15,137 @@
 	--font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+@layer components {
+	/* One checkbox for every tool: same box, tick, hover, focus ring, and disabled state as the form fields. */
+	.checkbox-input {
+		appearance: none;
+		width: 18px;
+		height: 18px;
+		flex: none;
+		cursor: pointer;
+		border: 1px solid var(--color-line);
+		background-color: var(--color-surface);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 12px 12px;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		transition: background-color 120ms ease, border-color 120ms ease;
+	}
+
+	.checkbox-input:hover:not(:disabled) {
+		border-color: #9a978a;
+	}
+
+	.checkbox-input:focus {
+		border-color: var(--color-accent);
+		outline-color: var(--color-accent);
+	}
+
+	.checkbox-input:checked {
+		border-color: var(--color-forest);
+		background-color: var(--color-forest);
+		background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fffdf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+	}
+
+	.checkbox-input:focus:checked {
+		border-color: var(--color-forest);
+	}
+
+	.checkbox-input:disabled {
+		cursor: not-allowed;
+		border-color: #e2dfd5;
+		background-color: #f4f3ef;
+		opacity: 0.6;
+	}
+
+	.select-input {
+		appearance: none;
+		display: block;
+		width: 100%;
+		margin-top: 0.5rem; /* same caption gap as fieldClassName's mt-2 */
+
+		height: 2.75rem;
+		border: 1px solid #d9d7cd;
+		background-color: var(--color-surface);
+		background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2372756c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.75rem center;
+		background-size: 14px 14px;
+		padding: 0 2.25rem 0 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		color: var(--color-ink);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		transition: border-color 120ms ease, outline-color 120ms ease;
+	}
+
+	.select-input:hover:not(:disabled) {
+		border-color: #aaa69a;
+	}
+
+	.select-input:focus {
+		border-color: var(--color-accent);
+		outline-color: var(--color-accent);
+	}
+
+	.select-input:disabled {
+		cursor: not-allowed;
+		border-color: #e2dfd5;
+		background-color: #f4f3ef;
+		color: #a7a69e;
+	}
+
+	.select-input option {
+		color: var(--color-ink);
+		background-color: var(--color-surface);
+	}
+
+	.radio-input {
+		appearance: none;
+		width: 18px;
+		height: 18px;
+		flex: none;
+		cursor: pointer;
+		border: 1px solid var(--color-line);
+		border-radius: 9999px;
+		background-color: var(--color-surface);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 8px 8px;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		transition: background-color 120ms ease, border-color 120ms ease;
+	}
+
+	.radio-input:hover:not(:disabled) {
+		border-color: #9a978a;
+	}
+
+	.radio-input:focus {
+		border-color: var(--color-accent);
+		outline-color: var(--color-accent);
+	}
+
+	.radio-input:checked {
+		border-color: var(--color-forest);
+		background-color: var(--color-surface);
+		background-image: radial-gradient(circle, var(--color-forest) 0 4px, transparent 4px);
+	}
+
+	.radio-input:disabled {
+		cursor: not-allowed;
+		border-color: #e2dfd5;
+		opacity: 0.6;
+	}
+
+	.checkbox-input:checked:disabled {
+		border-color: #8d9a92;
+		background-color: #8d9a92;
+	}
+}
+
 @layer base {
 	:focus-visible {
 		@apply outline-3 outline-offset-3 outline-accent;

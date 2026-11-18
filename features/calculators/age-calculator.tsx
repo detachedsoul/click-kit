@@ -48,7 +48,7 @@ const AgeCalculator = () => {
 			<fieldset className="m-0 flex flex-wrap gap-x-5 gap-y-3 border border-line bg-[#f8f7f3] px-4 py-3">
 				<legend className="px-1 text-xs font-semibold">What would you like to calculate?</legend>
 				{[{ id: "age", label: "Age on a date" }, { id: "between", label: "Time between dates" }].map((option) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={option.id}>
-					<input className="size-4 accent-accent-dark" checked={mode === option.id} name="age-calculator-mode" onChange={() => setMode(option.id as "age" | "between")} type="radio" value={option.id} />{option.label}
+					<input className="radio-input" checked={mode === option.id} name="age-calculator-mode" onChange={() => setMode(option.id as "age" | "between")} type="radio" value={option.id} />{option.label}
 				</label>)}
 			</fieldset>
 			<div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">

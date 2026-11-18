@@ -317,13 +317,13 @@ const ScientificCalculator = () => {
 					<input className="mt-2 block h-12 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-base font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-expression" inputMode="text" onChange={(event) => updateExpression(event.target.value)} ref={expressionInputRef} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} placeholder="Try sin(30) + 2^3" value={expression} />
 				</label>
 				<label className="block min-w-[145px] text-xs font-semibold text-[#3c3d37]" htmlFor="scientific-angle-unit">Angles
-					<SelectField containerClassName="relative mt-2 block w-full" className="block h-12 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-angle-unit" value={angleUnit} onChange={(event) => { setAngleUnit(event.target.value as AngleUnit); setError(""); resetIntegralResult(); }}>
+					<SelectField containerClassName="relative block w-full" className="h-12 cursor-pointer" id="scientific-angle-unit" value={angleUnit} onChange={(event) => { setAngleUnit(event.target.value as AngleUnit); setError(""); resetIntegralResult(); }}>
 						<option value="degrees">Degrees</option>
 						<option value="radians">Radians</option>
 					</SelectField>
 				</label>
 				<label className="block min-w-[145px] text-xs font-semibold text-[#3c3d37]" htmlFor="scientific-output-base">Number base
-					<SelectField containerClassName="relative mt-2 block w-full" className="block h-12 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="scientific-output-base" value={outputBase} onChange={(event) => setOutputBase(event.target.value as OutputBase)}>
+					<SelectField containerClassName="relative block w-full" className="h-12 cursor-pointer" id="scientific-output-base" value={outputBase} onChange={(event) => setOutputBase(event.target.value as OutputBase)}>
 						{outputBases.map((base) => <option key={base.id} value={base.id}>{base.label}</option>)}
 					</SelectField>
 				</label>
