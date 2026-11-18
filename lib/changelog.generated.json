@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "3117e99",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "site",
+              "summary": "five more tools, new-tool tracking, and a changelog",
+              "group": "Added"
+            },
+            {
               "hash": "ed04ff7",
               "date": "2026-11-18",
               "type": "feat",
