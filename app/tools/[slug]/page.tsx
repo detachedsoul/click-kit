@@ -32,6 +32,7 @@ import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
 import { JsonZodTool } from "@/features/developer-tools/zod-tool";
 import { JsonPatchTool } from "@/features/developer-tools/json-patch-tool";
 import { JsonSqlTool } from "@/features/developer-tools/json-sql-tool";
+import { EscapeTool } from "@/features/developer-tools/escape-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -110,6 +111,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"json-zod": JsonZodTool,
 	"json-patch": JsonPatchTool,
 	"json-sql": JsonSqlTool,
+	"string-escape": EscapeTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
