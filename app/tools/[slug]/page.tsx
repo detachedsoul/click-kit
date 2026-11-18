@@ -41,6 +41,7 @@ import { HmacTool } from "@/features/developer-tools/hmac-tool";
 import { DockerTool } from "@/features/developer-tools/docker-tool";
 import { DelimitedTool } from "@/features/developer-tools/delimited-tool";
 import { IndentTool } from "@/features/developer-tools/indent-tool";
+import { JsxTool } from "@/features/developer-tools/jsx-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -128,6 +129,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"docker-compose": DockerTool,
 	"delimiter-converter": DelimitedTool,
 	"indent-converter": IndentTool,
+	"html-to-jsx": JsxTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
