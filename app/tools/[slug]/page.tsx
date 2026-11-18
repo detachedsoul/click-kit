@@ -59,7 +59,13 @@ import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroT
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
+import DensityTool from "@/features/text-tools/density-tool";
+import InvisibleTool from "@/features/text-tools/invisible-tool";
+import MermaidTool from "@/features/developer-tools/mermaid-tool";
 import NumeralsCalculator from "@/features/calculators/numerals-calculator";
+import DurationCalculator from "@/features/calculators/duration-calculator";
+import UnitPriceCalculator from "@/features/calculators/unit-price-calculator";
+import GpaCalculator from "@/features/calculators/gpa-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
 import GeometryCalculator from "@/features/calculators/geometry-calculator";
 import FuelEconomyCalculator from "@/features/calculators/fuel-economy-calculator";
@@ -170,8 +176,14 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"geometry-calculator": GeometryCalculator,
 	"fuel-economy-calculator": FuelEconomyCalculator,
 	"date-difference": DateDiffCalculator,
+	"json-mermaid": MermaidTool,
 	"aspect-ratio": AspectCalculator,
+	"invisible-characters": InvisibleTool,
+	"keyword-density": DensityTool,
 	"roman-numerals": NumeralsCalculator,
+	"time-duration": DurationCalculator,
+	"unit-price": UnitPriceCalculator,
+	"gpa-calculator": GpaCalculator,
 };
 
 export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
