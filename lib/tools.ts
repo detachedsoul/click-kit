@@ -1,5 +1,6 @@
 import {
 	AlignLeft,
+	BarChart3,
 	Binary,
 	Braces,
 	Boxes,
@@ -73,6 +74,7 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 ];
 
 export const tools: Tool[] = [
+	{ id: "word-frequency", name: "Word & phrase frequency", description: "Rank repeated words and 2-3 word phrases, with stop-word filtering and exportable counts.", category: "text", slug: "word-frequency", keywords: ["frequency", "keyword density", "repetition", "ngram", "seo"], icon: BarChart3, status: "available" },
 	{ id: "word-counter", name: "Word counter", description: "Count words, characters, and estimate reading time.", category: "text", slug: "word-counter", keywords: ["writing", "words", "characters", "length"], icon: FileText, status: "available" },
 	{ id: "case-converter", name: "Case converter", description: "Switch text between common letter cases.", category: "text", slug: "case-converter", keywords: ["uppercase", "lowercase", "title case"], icon: CaseSensitive, status: "available" },
 	{ id: "text-cleaner", name: "Text cleaner", description: "Remove extra spaces, line breaks, and stray characters.", category: "text", slug: "text-cleaner", keywords: ["whitespace", "format", "clean"], icon: WandSparkles, status: "available" },
