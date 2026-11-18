@@ -13,7 +13,7 @@ import {
 	MAX_IMAGE_BYTES,
 	useObjectUrl,
 } from "@/features/image-tools/image-file-shared";
-import { extractPalette, paletteToCssVariables, paletteToHexList, paletteToTailwind, rgbToHsl, type PaletteColor } from "@/features/image-tools/palette-utils";
+import { extractPalette, paletteToCssVariables, paletteToTailwind, rgbToHsl, type PaletteColor } from "@/features/image-tools/palette-utils";
 
 const SAMPLE_EDGE = 240;
 
@@ -139,7 +139,6 @@ export const PaletteTool = () => {
 						]}
 					/>
 					<ResultBlock fileName="palette.css" title="CSS variables" value={paletteToCssVariables(palette)} rows={8} />
-					<ResultBlock fileName="palette.txt" title="Hex list" value={paletteToHexList(palette)} rows={6} />
 					<ResultBlock fileName="tailwind.palette.json" title="Tailwind theme" value={paletteToTailwind(palette)} rows={10} />
 				</>
 			) : null}
