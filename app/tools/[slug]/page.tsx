@@ -68,6 +68,12 @@ import { WatermarkTool } from "@/features/image-tools/watermark-tool";
 import { FiltersTool } from "@/features/image-tools/filters-tool";
 import { StripTool } from "@/features/image-tools/strip-tool";
 import { PlaceholderTool } from "@/features/image-tools/placeholder-tool";
+import { ShadesTool } from "@/features/developer-tools/shades-tool";
+import { UserAgentTool } from "@/features/developer-tools/user-agent-tool";
+import { ChunkTool } from "@/features/text-tools/chunk-tool";
+import { TeamTool } from "@/features/productivity-tools/team-tool";
+import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
+import { PaceCalculator } from "@/features/calculators/pace-calculator";
 import { ZipTool } from "@/features/image-tools/zip-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
@@ -89,6 +95,8 @@ import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { NewBadge } from "@/components/new-badge";
+import { addedOnLabel, toolAddedOn } from "@/lib/tool-recency";
 import { categories, getTool, tools } from "@/lib/tools";
 import { categoryUrl, siteUrl, toolUrl } from "@/lib/site";
 
@@ -194,6 +202,12 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"image-metadata-remover": StripTool,
 	"placeholder-image": PlaceholderTool,
 	"zip-creator": ZipTool,
+	"colour-shades": ShadesTool,
+	"user-agent-parser": UserAgentTool,
+	"text-chunker": ChunkTool,
+	"team-splitter": TeamTool,
+	"meeting-planner": MeetingPlanner,
+	"pace-calculator": PaceCalculator,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,
@@ -269,7 +283,11 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
 			<nav className="flex items-center gap-[9px] text-[11px] text-[#777a70]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
-			<div className="mt-[26px] font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">{tool.status === "available" ? "Available now" : category.name}</div>
+			<div className="mt-[26px] flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">
+				<span>{tool.status === "available" ? "Available now" : category.name}</span>
+				<NewBadge slug={tool.slug} />
+				{toolAddedOn(tool.slug) ? <span className="normal-case tracking-normal text-[#8a8b80]">Added {addedOnLabel(toolAddedOn(tool.slug) as string)}</span> : null}
+			</div>
 			<h1 className="mb-2 mt-1.5 font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-[5px] max-[620px]:text-[clamp(48px,12vw,62px)]">{tool.name}</h1>
 			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{tool.description}</p>
 		</header>

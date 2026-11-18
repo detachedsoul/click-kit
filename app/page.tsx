@@ -3,12 +3,16 @@ import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
 import { ArrowRight, Bug, GitPullRequest, Lightbulb, LockKeyhole } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
+import { addedOnLabel, recentToolReleases } from "@/lib/tool-recency";
 
 const HomePage = () => {
 	const featuredTools = ["word-counter", "read-aloud", "percentage-calculator", "password-generator", "case-converter", "qr-generator", "unit-converter", "pomodoro-timer"]
 		.map((id) => tools.find((tool) => tool.id === id)!)
 		.filter(Boolean);
 	const readyToolsCount = tools.filter((tool) => tool.status === "available").length;
+	const recentReleases = recentToolReleases();
+	const recentTools = recentReleases.flatMap((release) => release.tools).slice(0, 4);
+	const latestAdded = recentReleases[0]?.date;
 
 	return <>
 		<section aria-labelledby="home-title">
@@ -44,6 +48,24 @@ const HomePage = () => {
 				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{featuredTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
 			</Shell>
 		</section>
+
+		{recentTools.length > 0 ? (
+			<section aria-labelledby="new-title" className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="new">
+				<Shell>
+					<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
+						<div>
+							<p className="m-0 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark">Fresh out of the workshop</p>
+							<h2 className="mb-0 mt-2 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]" id="new-title">Recently added</h2>
+							<p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">{recentTools.length} new tools in the last two weeks{latestAdded ? ` · latest ${addedOnLabel(latestAdded)}` : ""}.</p>
+						</div>
+						<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark max-[620px]:text-[11px]" href="/changelog">
+							What&apos;s new <ArrowRight size={14} aria-hidden="true" />
+						</Link>
+					</div>
+					<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{recentTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
+				</Shell>
+			</section>
+		) : null}
 
 		<section className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="categories" aria-labelledby="categories-title">
 			<Shell>

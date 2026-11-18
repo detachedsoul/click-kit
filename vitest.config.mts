@@ -6,6 +6,6 @@ export default defineConfig({
 	resolve: { tsconfigPaths: true },
 	test: {
 		environment: "jsdom",
-		include: ["features/**/*.test.{ts,tsx}"],
+		include: ["features/**/*.test.{ts,tsx}", "lib/**/*.test.ts"],
 	},
 });

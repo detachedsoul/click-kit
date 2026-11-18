@@ -50,10 +50,11 @@ const SiteHeader = () => {
 				</Link>
 				<nav className="flex items-center gap-6 text-[13px] text-[#55594f] max-[900px]:gap-[15px] max-[620px]:hidden" aria-label="Main navigation">
 					<Link className="transition-colors hover:text-accent-dark" href="/tools">All tools</Link>
+					<Link className="transition-colors hover:text-accent-dark" href="/changelog">Changelog</Link>
 					<Link className="transition-colors hover:text-accent-dark" href="/#categories">Categories</Link>
 				</nav>
 				<nav className="hidden items-center gap-4 text-xs text-[#55594f] max-[620px]:ml-auto max-[620px]:flex" aria-label="Main navigation">
-					<Link href="/tools">Tools</Link><Link href="/#categories">Categories</Link>
+					<Link href="/tools">Tools</Link><Link href="/changelog">Changelog</Link><Link href="/#categories">Categories</Link>
 				</nav>
 				<div className="relative ml-auto w-[min(310px,32vw)] max-[620px]:order-3 max-[620px]:mt-2.5 max-[620px]:w-full">
 					<Search className="pointer-events-none absolute left-3 top-[12px] text-[#85857e]" size={15} aria-hidden="true" />

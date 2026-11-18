@@ -5,6 +5,7 @@ import { LogoMark } from "@/components/logo";
 const footerLinks = [
 	{ href: "/tools", label: "All tools" },
 	{ href: "/#categories", label: "Categories" },
+	{ href: "/changelog", label: "Changelog" },
 	{ href: "/privacy", label: "Privacy" },
 	{ href: "https://github.com/detachedsoul/click-kit", label: "GitHub", external: true },
 ];

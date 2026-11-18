@@ -1,0 +1,43 @@
+{
+  "releases": [
+    {
+      "date": "2026-11-18",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "ed04ff7",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add six more tools and a Tailwind v4 palette theme",
+              "group": "Added"
+            },
+            {
+              "hash": "2affb63",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "image",
+              "summary": "six new image and file tools",
+              "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "a79c5f3",
+              "date": "2026-11-18",
+              "type": "refine",
+              "scope": "image",
+              "summary": "keep the palette page to two copy blocks",
+              "group": "Changed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

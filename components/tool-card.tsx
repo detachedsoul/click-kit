@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Tool } from "@/lib/tools";
 import { ArrowUpRight } from "lucide-react";
+import { NewBadge } from "@/components/new-badge";
 
 const ToolCard = ({ tool }: { tool: Tool }) => {
 	const Icon = tool.icon;
@@ -16,9 +17,12 @@ const ToolCard = ({ tool }: { tool: Tool }) => {
 				<span className="grid size-9 place-items-center rounded-[2px] bg-[#eddfd4] text-accent-dark transition-transform duration-200 group-hover:-translate-y-0.5 max-[620px]:size-8">
 					<Icon size={17} strokeWidth={1.7} aria-hidden="true" />
 				</span>
-				<span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-[.02em] max-[620px]:gap-1 max-[620px]:px-1.5 max-[620px]:text-[8px] ${isAvailable ? "bg-sage text-[#536b4e]" : "bg-[#efeee8] text-[#77786f]"}`}>
-					{isAvailable && <span className="size-1.5 rounded-full bg-[#6b8a61]" aria-hidden="true" />}
-					{isAvailable ? "Ready" : "In the works"}
+				<span className="flex items-center gap-1.5">
+					<NewBadge slug={tool.slug} />
+					<span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-[.02em] max-[620px]:gap-1 max-[620px]:px-1.5 max-[620px]:text-[8px] ${isAvailable ? "bg-sage text-[#536b4e]" : "bg-[#efeee8] text-[#77786f]"}`}>
+						{isAvailable && <span className="size-1.5 rounded-full bg-[#6b8a61]" aria-hidden="true" />}
+						{isAvailable ? "Ready" : "In the works"}
+					</span>
 				</span>
 			</div>
 			<h3 className="mb-1.5 mt-4 text-[14px] font-semibold tracking-[-.02em] group-hover:text-accent-dark max-[620px]:mt-3 max-[620px]:text-xs">{tool.name}</h3>
