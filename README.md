@@ -10,7 +10,7 @@ Tools are designed to be quick, clear, and private. Most work right in your brow
 
 - **Text & writing** — count, clean, compare, convert, and work with text.
 - **Calculators** — solve everyday sums and advanced scientific calculations, including trigonometry, statistics, combinatorics, and numerical integrals; calculate percentages, discounts, sales tax, loans, and compound savings growth; split bills, check dates, convert units, explore fuel economy and geometry, and view BMI as a general adult screening measure.
-- **Developer tools** — format JSON and SQL, generate TypeScript types and JSON Schemas, encode Base64, generate UUIDs and hashes, test regular expressions, inspect URLs and JWT claims, convert colors, and work with Unix timestamps.
+- **Developer tools** — format, compare, and convert JSON, YAML, and SQL; generate TypeScript types and JSON Schemas; encode Base64; inspect `.env` files; explain cron schedules; check color contrast; generate UUIDs and hashes; test regular expressions; inspect URLs and verify supported JWT signatures; and work with Unix timestamps.
 - **Image & files** — generate QR codes and resize or compress common image formats locally in your browser.
 - **Productivity** — generate strong local passwords, run a focus-and-break timer, or pick fairly from a list.
 

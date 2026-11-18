@@ -15,6 +15,7 @@ import TipSplitCalculator from "@/features/calculators/tip-split-calculator";
 import BmiCalculator from "@/features/calculators/bmi-calculator";
 import { Base64Tool, JsonFormatterTool, JsonTypeScriptTool, RegexTesterTool, TimestampConverterTool, UuidGeneratorTool } from "@/features/developer-tools/developer-tool-components";
 import { ColorConverterTool, HashGeneratorTool, JsonSchemaTool, JwtDecoderTool, SqlFormatterTool, UrlInspectorTool } from "@/features/developer-tools/additional-developer-tools";
+import { ColorContrastTool, CronExplainerTool, EnvValidatorTool, JsonDiffTool, YamlJsonTool } from "@/features/developer-tools/extra-tools-components";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -68,6 +69,11 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"color-converter": ColorConverterTool,
 	"jwt-decoder": JwtDecoderTool,
 	"json-schema": JsonSchemaTool,
+	"json-diff": JsonDiffTool,
+	"yaml-json": YamlJsonTool,
+	"cron-explainer": CronExplainerTool,
+	"env-validator": EnvValidatorTool,
+	"color-contrast": ColorContrastTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,

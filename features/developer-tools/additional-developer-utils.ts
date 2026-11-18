@@ -185,19 +185,18 @@ const parseHslColor = (source: string): RgbaTuple | null => {
 	return [(red + offset) * 255, (green + offset) * 255, (blue + offset) * 255, alpha] as RgbaTuple;
 };
 
-export const convertColor = (source: string): ColorValue => {
+export const readColorChannels = (source: string): RgbaTuple => {
 	const value = source.trim();
-	if (/^transparent$/iu.test(value)) return makeColor(0, 0, 0, 0);
-	if (/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/iu.test(value)) {
-		const [red, green, blue, alpha] = parseHexColor(value);
-		return makeColor(red, green, blue, alpha);
-	}
+	if (/^transparent$/iu.test(value)) return [0, 0, 0, 0];
+	if (/^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/iu.test(value)) return [...parseHexColor(value)];
 	const rgb = parseRgbColor(value);
-	if (rgb) return makeColor(...rgb);
+	if (rgb) return rgb;
 	const hsl = parseHslColor(value);
-	if (hsl) return makeColor(...hsl);
+	if (hsl) return hsl;
 	throw new Error("Enter a HEX color (#rgb, #rgba, #rrggbb, #rrggbbaa), rgb()/rgba(), hsl()/hsla(), or transparent.");
 };
+
+export const convertColor = (source: string): ColorValue => makeColor(...readColorChannels(source));
 
 const inferJsonSchema = (value: unknown): Record<string, unknown> => {
 	if (value === null) return { type: "null" };
