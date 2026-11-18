@@ -29,7 +29,7 @@ const FuelEconomyCalculator = () => {
 	return <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 		<div className="grid grid-cols-2 gap-4 max-[620px]:grid-cols-1">
 			<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="fuel-economy-unit">Fuel economy unit
-				<SelectField containerClassName="relative mt-2 block w-full" className="cursor-pointer" id="fuel-economy-unit" value={unit} onChange={(event) => setUnit(event.target.value as FuelEconomyUnit)}>
+				<SelectField containerClassName="relative block w-full" className="cursor-pointer" id="fuel-economy-unit" value={unit} onChange={(event) => setUnit(event.target.value as FuelEconomyUnit)}>
 					{economyUnits.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
 				</SelectField>
 			</label>

@@ -48,7 +48,6 @@ export const EscapeTool = () => {
 					</label>
 					<SelectField
 						className={selectClassName}
-						containerClassName="mt-2"
 						id="escape-mode"
 						value={mode}
 						onChange={(event) => changeMode(event.target.value as EscapeMode)}

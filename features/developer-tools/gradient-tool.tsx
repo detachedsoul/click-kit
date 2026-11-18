@@ -55,7 +55,7 @@ export const GradientTool = () => {
 					{options.type === "radial" && (
 						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="gradient-shape">
 							<span className="sr-only">Radial shape</span>
-							<select className={selectClassName} id="gradient-shape" value={options.shape} onChange={(event) => setOptions((current) => ({ ...current, shape: event.target.value as "circle" | "ellipse" }))}>
+							<select className={`${selectClassName} mt-0`} id="gradient-shape" value={options.shape} onChange={(event) => setOptions((current) => ({ ...current, shape: event.target.value as "circle" | "ellipse" }))}>
 								<option value="circle">Circle</option>
 								<option value="ellipse">Ellipse</option>
 							</select>

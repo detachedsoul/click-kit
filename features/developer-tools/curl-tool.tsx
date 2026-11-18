@@ -39,7 +39,7 @@ export const CurlTool = () => {
 			/>
 			<label className={`${labelClassName} max-w-[240px]`} htmlFor="curl-target">
 				Target
-				<SelectField className={selectClassName} containerClassName="mt-2" id="curl-target" value={target} onChange={(event) => setTarget(event.target.value as Target)}>
+				<SelectField className={selectClassName} containerClassName="" id="curl-target" value={target} onChange={(event) => setTarget(event.target.value as Target)}>
 					<option value="fetch">JavaScript fetch</option>
 					<option value="axios">Axios</option>
 					<option value="python">Python requests</option>

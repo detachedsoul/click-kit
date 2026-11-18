@@ -11,6 +11,8 @@ import { describe, expect, it } from "vitest";
  */
 
 const ROOT = join(process.cwd(), "features");
+const CSS = join(process.cwd(), "app", "globals.css");
+const TOOL_UI = join(process.cwd(), "features", "developer-tools", "tool-ui.tsx");
 
 const sourceFiles = (): string[] => {
 	const out: string[] = [];
@@ -84,10 +86,52 @@ const selectClassViolations = (file: string, source: string): Violation[] => {
 	return violations;
 };
 
+/** Selects whose own class list re-adds padding or spacing, which is what desynced the caret and the caption. */
+const selectOverrideViolations = (file: string, source: string): Violation[] => {
+	const violations: Violation[] = [];
+	const pattern = /<SelectField\b[^>]*>/g;
+	let match = pattern.exec(source);
+	while (match) {
+		const tag = match[0];
+		const line = source.slice(0, match.index).split("\n").length;
+		const where = `${file.split("features/")[1]}:${line}`;
+		const className = /className="([^"]*)"/.exec(tag)?.[1] ?? "";
+		const container = /containerClassName="([^"]*)"/.exec(tag)?.[1] ?? "";
+		if (/(^|\s)(p|px|pl|pr)-/.test(className)) violations.push(`${where} (pads itself: ${className})`);
+		// A caption gap belongs to select-input; adding one here would double it.
+		if (/(^|\s)m[tb]?-/.test(container) || /(^|\s)m[tb]?-/.test(className.replaceAll("mt-0", ""))) {
+			violations.push(`${where} (adds its own margin: ${container || className})`);
+		}
+		match = pattern.exec(source);
+	}
+	return violations;
+};
+
+/** The caption gap: what sits between a label and its control must match for inputs and selects. */
+const captionGap = () => {
+	const css = readFileSync(CSS, "utf8");
+	const block = /\.select-input \{([\s\S]*?)\n\t\}/.exec(css)?.[1] ?? "";
+	const selectGap = /margin-top:\s*([\d.]+)rem/.exec(block)?.[1];
+	const fieldClass = /export const fieldClassName =\s*"([^"]*)"/.exec(readFileSync(TOOL_UI, "utf8"))?.[1] ?? "";
+	const inputGap = /\bmt-(\d+(?:\.\d+)?)\b/.exec(fieldClass)?.[1];
+	return { selectGap: Number(selectGap), inputGap: Number(inputGap) * 0.25 };
+};
+
 describe("tool layout contract", () => {
 	it("keeps checkboxes out of field grids", () => {
 		const violations = sourceFiles().flatMap((file) => checkboxGridViolations(file, readFileSync(file, "utf8").split("\n")));
 		expect(violations, `Wrap these checkboxes in <CheckboxRow> instead of adding them as grid cells:\n${violations.join("\n")}`).toEqual([]);
+	});
+
+	it("keeps select overrides out of the shared padding and spacing", () => {
+		const violations = sourceFiles().flatMap((file) => selectOverrideViolations(file, readFileSync(file, "utf8")));
+		expect(violations, `Let select-input own the padding and the caption gap:\n${violations.join("\n")}`).toEqual([]);
+	});
+
+	it("gives selects the same caption gap as text inputs", () => {
+		const { selectGap, inputGap } = captionGap();
+		expect(selectGap).toBeGreaterThan(0);
+		expect(selectGap).toBeCloseTo(inputGap, 5);
 	});
 
 	it("gives every select the shared select-input class", () => {

@@ -63,6 +63,8 @@
 		appearance: none;
 		display: block;
 		width: 100%;
+		margin-top: 0.5rem; /* same caption gap as fieldClassName's mt-2 */
+
 		height: 2.75rem;
 		border: 1px solid #d9d7cd;
 		background-color: var(--color-surface);

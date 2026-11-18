@@ -84,7 +84,7 @@ export const NumberBaseTool = () => {
 							<label className={labelClassName} htmlFor="base-from">
 								Input base
 							</label>
-							<SelectField className={selectClassName} containerClassName="mt-2" id="base-from" value={base} onChange={(event) => setBase(event.target.value)}>
+							<SelectField className={selectClassName} containerClassName="" id="base-from" value={base} onChange={(event) => setBase(event.target.value)}>
 								<option value="2">Binary (2)</option>
 								<option value="8">Octal (8)</option>
 								<option value="10">Decimal (10)</option>
@@ -144,7 +144,6 @@ export const NumberBaseTool = () => {
 							</label>
 							<SelectField
 								className={selectClassName}
-								containerClassName="mt-2"
 								id="bitwise-operator"
 								value={operator}
 								onChange={(event) => setOperator(event.target.value as BitwiseOperator)}

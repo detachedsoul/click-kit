@@ -69,7 +69,6 @@ export const JsonFlattenTool = () => {
 					</label>
 					<SelectField
 						className={selectClassName}
-						containerClassName="mt-2"
 						id="flatten-delimiter"
 						value={delimiter}
 						onChange={(event) => setDelimiter(event.target.value as "." | "/" | "_")}
@@ -86,7 +85,6 @@ export const JsonFlattenTool = () => {
 						</label>
 						<SelectField
 							className={selectClassName}
-							containerClassName="mt-2"
 							id="flatten-arrays"
 							value={arrayStyle}
 							onChange={(event) => setArrayStyle(event.target.value as "index" | "bracket")}

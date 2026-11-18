@@ -39,7 +39,7 @@ const PercentageCalculator = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<label className="block max-w-[520px] text-xs font-semibold text-[#3c3d37]" htmlFor="percentage-mode">Calculate
-				<SelectField containerClassName="relative mt-2 block w-full" className="cursor-pointer" id="percentage-mode" value={mode} onChange={(event) => setMode(event.target.value as PercentageMode)}>
+				<SelectField containerClassName="relative block w-full" className="cursor-pointer" id="percentage-mode" value={mode} onChange={(event) => setMode(event.target.value as PercentageMode)}>
 					{modeOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
 				</SelectField>
 			</label>

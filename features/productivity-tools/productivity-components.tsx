@@ -372,7 +372,7 @@ const ImageTool = ({ mode }: { mode: ImageMode }) => {
 						<label className="block text-xs font-semibold" htmlFor={`${mode}-format`}>
 							Output format
 							<select
-								className={`${selectClassName} mt-2 cursor-pointer`}
+								className={`${selectClassName} cursor-pointer`}
 								id={`${mode}-format`}
 								disabled={busy}
 								value={format}

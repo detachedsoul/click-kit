@@ -92,7 +92,6 @@ export const CsvJsonTool = () => {
 					</label>
 					<SelectField
 						className={selectClassName}
-						containerClassName="mt-2"
 						id="csv-json-delimiter"
 						value={delimiter}
 						onChange={(event) => setDelimiter(event.target.value as CsvDelimiter)}
@@ -284,7 +283,6 @@ export const FileHashTool = () => {
 				</label>
 				<SelectField
 					className={selectClassName}
-					containerClassName="mt-2"
 					id="file-hash-algorithm"
 					value={algorithm}
 					onChange={(event) => {

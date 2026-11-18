@@ -52,7 +52,6 @@ export const JsonSqlTool = () => {
 					</label>
 					<SelectField
 						className={selectClassName}
-						containerClassName="mt-2"
 						id="sql-dialect"
 						value={dialect}
 						onChange={(event) => setDialect(event.target.value as SqlDialect)}

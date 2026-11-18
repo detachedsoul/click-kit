@@ -47,7 +47,6 @@ export const JsonCodeTool = () => {
 					</label>
 					<SelectField
 						className={selectClassName}
-						containerClassName="mt-2"
 						id="code-language"
 						value={language}
 						onChange={(event) => setLanguage(event.target.value as CodeLanguage)}

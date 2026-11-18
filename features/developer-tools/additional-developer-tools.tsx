@@ -159,7 +159,7 @@ export const HashGeneratorTool = () => {
 				<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="hash-algorithm">
 					Algorithm
 					<SelectField
-						containerClassName="relative mt-2 block w-full"
+						containerClassName="relative block w-full"
 						className="cursor-pointer"
 						id="hash-algorithm"
 						disabled={isHashing}
@@ -257,7 +257,7 @@ export const SqlFormatterTool = () => {
 			<label className="block max-w-[360px] text-xs font-semibold text-[#3c3d37]" htmlFor="sql-dialect">
 				SQL dialect
 				<SelectField
-					containerClassName="relative mt-2 block w-full"
+					containerClassName="relative block w-full"
 					className="cursor-pointer"
 					id="sql-dialect"
 					disabled={isFormatting}
@@ -448,7 +448,6 @@ export const JwtDecoderTool = () => {
 							setVerificationError("");
 						}}
 						className="select-input mt-2 font-normal"
-						containerClassName="mt-2"
 					>
 						{(["HS256", "HS384", "HS512", "RS256", "RS384", "RS512"] as const).map((item) => (
 							<option key={item} value={item}>

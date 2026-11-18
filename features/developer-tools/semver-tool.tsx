@@ -133,7 +133,6 @@ export const SemverTool = () => {
 							</label>
 							<SelectField
 								className={selectClassName}
-								containerClassName="mt-2"
 								id="semver-release"
 								value={release}
 								onChange={(event) => setRelease(event.target.value as ReleaseType)}
