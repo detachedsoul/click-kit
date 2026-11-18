@@ -28,7 +28,7 @@ const BmiCalculator = () => {
 	return (
 		<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 			<label className="block max-w-[360px] text-xs font-semibold text-[#3c3d37]" htmlFor="bmi-units">Units
-				<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="bmi-units" value={units} onChange={(event) => changeUnits(event.target.value as "metric" | "imperial")}>
+				<SelectField containerClassName="relative mt-2 block w-full" className="cursor-pointer" id="bmi-units" value={units} onChange={(event) => changeUnits(event.target.value as "metric" | "imperial")}>
 					<option value="metric">Metric (cm, kg)</option>
 					<option value="imperial">Imperial (in, lb)</option>
 				</SelectField>

@@ -160,7 +160,7 @@ export const HashGeneratorTool = () => {
 					Algorithm
 					<SelectField
 						containerClassName="relative mt-2 block w-full"
-						className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+						className="cursor-pointer"
 						id="hash-algorithm"
 						disabled={isHashing}
 						value={algorithm}
@@ -258,7 +258,7 @@ export const SqlFormatterTool = () => {
 				SQL dialect
 				<SelectField
 					containerClassName="relative mt-2 block w-full"
-					className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="cursor-pointer"
 					id="sql-dialect"
 					disabled={isFormatting}
 					value={dialect}
@@ -447,7 +447,7 @@ export const JwtDecoderTool = () => {
 							setVerification(null);
 							setVerificationError("");
 						}}
-						className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 pr-9 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+						className="select-input mt-2 font-normal"
 						containerClassName="mt-2"
 					>
 						{(["HS256", "HS384", "HS512", "RS256", "RS384", "RS512"] as const).map((item) => (

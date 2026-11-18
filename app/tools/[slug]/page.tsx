@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Shell from "@/components/shell";
+import ToolCard from "@/components/tool-card";
 import WordCounter from "@/features/text-tools/word-counter";
 import CaseConverter from "@/features/text-tools/case-converter";
 import TextCleaner from "@/features/text-tools/text-cleaner";
@@ -77,6 +78,7 @@ import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { categories, getTool, tools } from "@/lib/tools";
+import { categoryUrl, siteUrl, toolUrl } from "@/lib/site";
 
 const availableToolComponents: Record<string, ComponentType> = {
 	"word-counter": WordCounter,
@@ -191,7 +193,16 @@ export const generateStaticParams = () => tools.map(({ slug }) => ({ slug }));
 export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> => {
 	const { slug } = await params;
 	const tool = getTool(slug);
-	return tool ? { title: tool.name, description: tool.description } : {};
+	if (!tool) return { title: "Tool not found" };
+	const category = categories.find((item) => item.id === tool.category);
+	return {
+		title: tool.name,
+		description: tool.description,
+		keywords: [...tool.keywords, category?.name ?? "", "browser tool", "free"],
+		alternates: { canonical: `/tools/${tool.slug}` },
+		openGraph: { type: "website", title: `${tool.name} · ClickKit`, description: tool.description, url: toolUrl(tool.slug) },
+		twitter: { card: "summary_large_image", title: `${tool.name} · ClickKit`, description: tool.description },
+	};
 };
 
 const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
@@ -201,8 +212,37 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 	const category = categories.find((item) => item.id === tool.category)!;
 	const Icon = tool.icon;
 	const AvailableTool = availableToolComponents[tool.slug];
+	const related = tools.filter((item) => item.category === tool.category && item.id !== tool.id).slice(0, 4);
+	const categoryCount = tools.filter((item) => item.category === tool.category).length;
+
+	const toolJsonLd = {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "WebApplication",
+				name: tool.name,
+				description: tool.description,
+				url: toolUrl(tool.slug),
+				applicationCategory: "UtilitiesApplication",
+				operatingSystem: "Any",
+				browserRequirements: "Requires JavaScript",
+				isAccessibleForFree: true,
+				offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+				isPartOf: { "@id": `${siteUrl}/#website` },
+			},
+			{
+				"@type": "BreadcrumbList",
+				itemListElement: [
+					{ "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+					{ "@type": "ListItem", position: 2, name: category.name, item: categoryUrl(category.id) },
+					{ "@type": "ListItem", position: 3, name: tool.name, item: toolUrl(tool.slug) },
+				],
+			},
+		],
+	};
 
 	return <Shell>
+		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
 			<nav className="flex items-center gap-[9px] text-[11px] text-[#777a70]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
 			<div className="mt-[26px] font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">{tool.status === "available" ? "Available now" : category.name}</div>
@@ -217,6 +257,20 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 				<p className="mx-auto mb-[22px] max-w-[400px] text-[13px] leading-[1.65] text-muted">This tool is on the ClickKit roadmap. It will be marked available here only when it can do the job properly.</p>
 				<Link className="inline-flex items-center gap-2 bg-forest px-[14px] py-[11px] text-xs text-white hover:bg-[#354d44]" href={`/category/${category.id}`}><ArrowLeft size={14} /> Explore {category.name}</Link>
 			</section>}
+		{related.length > 0 && (
+			<section className="border-t border-line py-8 pb-[70px] max-[620px]:py-6 max-[620px]:pb-[55px]" aria-labelledby="related-title">
+				<div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+					<div>
+						<h2 className="m-0 font-serif text-[26px] font-normal leading-[1.05] tracking-[-.02em]" id="related-title">More {category.name.toLowerCase()}</h2>
+						<p className="mb-0 mt-1.5 text-xs text-muted">If this one was not quite it, these are close by.</p>
+					</div>
+					<Link className="inline-flex items-center gap-1.5 text-xs text-[#50534c] hover:text-accent-dark" href={`/category/${category.id}`}>
+						All {categoryCount} tools <ArrowLeft className="rotate-180" size={13} aria-hidden="true" />
+					</Link>
+				</div>
+				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{related.map((item) => <ToolCard key={item.id} tool={item} />)}</div>
+			</section>
+		)}
 	</Shell>;
 };
 

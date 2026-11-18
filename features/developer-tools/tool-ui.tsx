@@ -9,8 +9,7 @@ export const ToolPanel = ({ children }: { children: ReactNode }) => (
 
 export const fieldClassName =
 	"mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
-export const selectClassName =
-	"block h-11 w-full border border-[#d9d7cd] bg-surface px-3 pr-9 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
+export const selectClassName = "select-input";
 export const labelClassName = "block text-xs font-semibold text-[#3c3d37]";
 export const hintClassName = "m-0 text-[11px] leading-relaxed text-muted";
 export const errorClassName = "m-0 whitespace-pre-wrap break-words text-xs text-[#8a3f30]";

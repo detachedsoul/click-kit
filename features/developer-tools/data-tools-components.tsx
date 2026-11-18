@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { SelectField } from "@/components/select-field";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
-import { CheckboxField } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, selectClassName } from "@/features/developer-tools/tool-ui";
 import type { HashAlgorithm } from "@/features/developer-tools/additional-developer-utils";
 import {
 	csvToJson,
@@ -43,9 +43,6 @@ const ResultPanel = ({ title, value, rows = 9 }: { title: string; value: string;
 
 const actionClassName =
 	"min-h-9 cursor-pointer border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-const selectClassName =
-	"block h-11 w-full border border-[#d9d7cd] bg-surface px-3 pr-9 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
-
 const sampleCsv = 'name,notes,active\n"Ari","likes commas, too",true\nBo,"said ""hello""",false';
 const sampleJson = '[{"name":"Ari","notes":"likes commas, too","active":true},{"name":"Bo","notes":"said \\"hello\\"","active":false}]';
 

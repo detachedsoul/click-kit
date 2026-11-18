@@ -35,7 +35,7 @@ const HomePage = () => {
 			</Shell>
 		</section>
 
-		<section className="border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="tools" aria-labelledby="tools-title">
+		<section className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="tools" aria-labelledby="tools-title">
 			<Shell>
 				<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
 					<div><h2 id="tools-title" className="m-0 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">A good place to start</h2><p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">The little helpers people reach for most.</p></div>
@@ -45,10 +45,10 @@ const HomePage = () => {
 			</Shell>
 		</section>
 
-		<section className="border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="categories" aria-labelledby="categories-title">
+		<section className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="categories" aria-labelledby="categories-title">
 			<Shell>
 				<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
-					<div><h2 id="categories-title" className="m-0 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">Find your kind of tool</h2><p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">Five useful corners, each with its own purpose.</p></div>
+					<div><h2 id="categories-title" className="m-0 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">Find your kind of tool</h2><p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">{categories.length} useful corners, each with its own purpose.</p></div>
 				</div>
 				<div className="grid grid-cols-5 border-l border-t border-line max-[900px]:grid-cols-3 max-[620px]:grid-cols-2">{categories.map((category) => {
 					const Icon = category.icon;

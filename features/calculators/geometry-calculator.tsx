@@ -30,7 +30,7 @@ const GeometryCalculator = () => {
 
 	return <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">
 		<label className="block max-w-[420px] text-xs font-semibold text-[#3c3d37]" htmlFor="geometry-shape">Shape
-			<SelectField containerClassName="relative mt-2 block w-full" className="block h-11 w-full cursor-pointer border border-[#d9d7cd] bg-surface pl-3 pr-10 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="geometry-shape" value={shape} onChange={(event) => setShape(event.target.value as GeometryShape)}>
+			<SelectField containerClassName="relative mt-2 block w-full" className="cursor-pointer" id="geometry-shape" value={shape} onChange={(event) => setShape(event.target.value as GeometryShape)}>
 				{shapeOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
 			</SelectField>
 		</label>

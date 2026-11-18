@@ -5,13 +5,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
+import { categoryUrl } from "@/lib/site";
 
 export const generateStaticParams = () => categories.map(({ id }) => ({ slug: id }));
 
 export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> => {
 	const { slug } = await params;
 	const category = categories.find((item) => item.id === slug);
-	return category ? { title: category.name, description: category.description } : {};
+	if (!category) return { title: "Category not found" };
+	return {
+		title: category.name,
+		description: `${category.description} Browse ${tools.filter((tool) => tool.category === category.id).length} free browser tools.`,
+		alternates: { canonical: `/category/${category.id}` },
+		openGraph: { type: "website", title: `${category.name} tools · ClickKit`, description: category.description, url: categoryUrl(category.id) },
+	};
 };
 
 const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
