@@ -1,4 +1,5 @@
 import {
+	AlignLeft,
 	Binary,
 	Braces,
 	Calculator,
@@ -116,6 +117,7 @@ export const tools: Tool[] = [
 	{ id: "json-schema-validator", name: "JSON Schema validator", description: "Validate JSON data against a JSON Schema Draft 2020-12 schema and list every violation.", category: "developer", slug: "json-schema-validator", keywords: ["json schema", "validate", "draft 2020-12", "ajv", "errors"], icon: ShieldCheck, status: "available" },
 	{ id: "file-checksum", name: "File checksum", description: "Hash a local file with SHA-256, SHA-384, or SHA-512 without uploading it.", category: "developer", slug: "file-checksum", keywords: ["checksum", "hash", "sha256", "sha512", "file", "verify", "digest"], icon: FileKey2, status: "available" },
 	{ id: "gitignore-generator", name: ".gitignore generator", description: "Combine project and operating-system templates into a ready-to-download .gitignore file.", category: "developer", slug: "gitignore-generator", keywords: ["gitignore", "git", "ignore", "template", "node", "python"], icon: GitBranch, status: "available" },
+	{ id: "indent-converter", name: "Indent converter", description: "Convert between tabs and 2, 4, or 8 spaces, normalise mixed indentation, and trim trailing whitespace.", category: "developer", slug: "indent-converter", keywords: ["indent", "tabs", "spaces", "whitespace", "format"], icon: AlignLeft, status: "available" },
 	{ id: "delimiter-converter", name: "Delimiter converter", description: "Convert CSV, TSV, semicolon, and pipe data to JSON, Markdown tables, or SQL inserts.", category: "developer", slug: "delimiter-converter", keywords: ["csv", "tsv", "delimiter", "convert", "markdown table", "sql"], icon: Table2, status: "available" },
 	{ id: "docker-compose", name: "docker run → compose", description: "Turn a docker run command into a docker-compose.yml service, flag by flag.", category: "developer", slug: "docker-compose", keywords: ["docker", "compose", "container", "yaml", "devops"], icon: Container, status: "available" },
 	{ id: "hmac-totp", name: "HMAC & TOTP generator", description: "Sign messages with HMAC SHA-1/256/384/512 and generate or verify time-based one-time codes.", category: "developer", slug: "hmac-totp", keywords: ["hmac", "totp", "otp", "2fa", "signature", "authenticator"], icon: KeyRound, status: "available" },
