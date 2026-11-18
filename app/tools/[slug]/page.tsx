@@ -43,6 +43,7 @@ import { DelimitedTool } from "@/features/developer-tools/delimited-tool";
 import { IndentTool } from "@/features/developer-tools/indent-tool";
 import { JsxTool } from "@/features/developer-tools/jsx-tool";
 import { GradientTool } from "@/features/developer-tools/gradient-tool";
+import { EnvConvertTool } from "@/features/developer-tools/env-convert-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -132,6 +133,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"indent-converter": IndentTool,
 	"html-to-jsx": JsxTool,
 	"css-gradient": GradientTool,
+	"dotenv-converter": EnvConvertTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
