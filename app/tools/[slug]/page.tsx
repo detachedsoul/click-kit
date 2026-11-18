@@ -26,6 +26,7 @@ import { SemverTool } from "@/features/developer-tools/semver-tool";
 import { SubnetTool } from "@/features/developer-tools/subnet-tool";
 import { ChmodTool } from "@/features/developer-tools/chmod-tool";
 import { IdToolkitTool } from "@/features/developer-tools/id-tool";
+import { CurlTool } from "@/features/developer-tools/curl-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -98,6 +99,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"subnet-calculator": SubnetTool,
 	"chmod-calculator": ChmodTool,
 	"id-toolkit": IdToolkitTool,
+	"curl-converter": CurlTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
