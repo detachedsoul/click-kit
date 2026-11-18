@@ -47,6 +47,7 @@ import { EnvConvertTool } from "@/features/developer-tools/env-convert-tool";
 import { SvgTool } from "@/features/developer-tools/svg-tool";
 import { SqlJsonTool } from "@/features/developer-tools/sql-json-tool";
 import { ModelTool } from "@/features/developer-tools/model-tool";
+import { ClampTool } from "@/features/developer-tools/clamp-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import SalesTaxCalculator from "@/features/calculators/sales-tax-calculator";
@@ -140,6 +141,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"svg-optimizer": SvgTool,
 	"sql-to-json": SqlJsonTool,
 	"json-model-generator": ModelTool,
+	"fluid-clamp": ClampTool,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
