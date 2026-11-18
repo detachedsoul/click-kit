@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { jsonToQuery, queryToJson } from "@/features/developer-tools/query-utils";
-import { ErrorNote, ResultBlock, SegmentedControl, ToolPanel, hintClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, hintClassName, ResultBlock, SegmentedControl, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sampleQuery = "?tag=typescript&tag=json&filter[status]=active&filter[limit]=20&page=2";
 const sampleJson = `{
@@ -46,19 +46,16 @@ export const QueryJsonTool = () => {
 			/>
 			<div className="flex flex-wrap items-center gap-5">
 				{direction === "query-to-json" ? (
-					<label className="flex w-fit cursor-pointer items-center gap-2 py-1 text-xs text-ink">
-						<input
-							className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							type="checkbox"
-							checked={plusAsSpace}
-							onChange={(event) => setPlusAsSpace(event.target.checked)}
-						/>
-						Treat <code className="font-mono text-[11px]">+</code> as a space
-					</label>
+					<CheckboxField
+						checked={plusAsSpace}
+						className="py-1"
+						label={<>Treat <code className="font-mono text-[11px]">+</code> as a space</>}
+						onChange={setPlusAsSpace}
+					/>
 				) : (
 					<label className="flex w-fit cursor-pointer items-center gap-2 py-1 text-xs text-ink">
 						<input
-							className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="checkbox-input"
 							type="checkbox"
 							checked={leading}
 							onChange={(event) => setLeading(event.target.checked)}

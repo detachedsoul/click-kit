@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { applyCipher, bruteForceCaesar, caesarToText, type CipherMode } from "@/features/text-tools/cipher-utils";
-import { ErrorNote, ResultBlock, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = "Meet me at the harbour — the plan stands.";
 
@@ -46,14 +46,8 @@ export const CipherTool = () => {
 						value={shift}
 					/>
 				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="cipher-decode">
-					<input checked={decode} disabled={mode !== "caesar"} id="cipher-decode" onChange={(event) => setDecode(event.target.checked)} type="checkbox" />
-					Decode instead of encode
-				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="cipher-brute">
-					<input checked={bruteForce} id="cipher-brute" onChange={(event) => setBruteForce(event.target.checked)} type="checkbox" />
-					Brute force all 25 shifts
-				</label>
+				<CheckboxField checked={decode} disabled={mode !== "caesar"} id="cipher-decode" label={<>Decode instead of encode</>} onChange={setDecode} />
+				<CheckboxField checked={bruteForce} id="cipher-brute" label={<>Brute force all 25 shifts</>} onChange={setBruteForce} />
 			</div>
 			<TextAreaField id="cipher-input" label="Your text" value={source} onChange={setSource} placeholder="Paste text to encode or decode." rows={8} />
 			<ErrorNote message={result.error} />

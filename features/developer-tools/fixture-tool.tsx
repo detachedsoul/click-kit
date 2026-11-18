@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { generateFixtures } from "@/features/developer-tools/fixture-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `{
   "id": 1,
@@ -46,10 +46,12 @@ export const FixtureTool = () => {
 					<input className={fieldClassName} id="fixture-seed" onChange={(event) => setSeed(event.target.value)} value={seed} />
 				</label>
 				<span className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="fixture-rows">
-						<input checked={!rows} id="fixture-rows" onChange={(event) => setRows(!event.target.checked)} type="checkbox" />
-						Emit JSON Lines instead of a JSON array
-					</label>
+					<CheckboxField
+						checked={!rows}
+						id="fixture-rows"
+						label="Emit JSON Lines instead of a JSON array"
+						onChange={(jsonLines) => setRows(!jsonLines)}
+					/>
 				</span>
 			</div>
 			<TextAreaField

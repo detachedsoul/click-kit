@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { dateDifference, monthDifference } from "@/features/calculators/date-diff-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -28,10 +28,7 @@ export default function DateDiffCalculator() {
 					End date
 					<input className={fieldClassName} id="date-diff-end" onChange={(event) => setEnd(event.target.value)} type="date" value={end} />
 				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="date-diff-include">
-					<input checked={includeEnd} id="date-diff-include" onChange={(event) => setIncludeEnd(event.target.checked)} type="checkbox" />
-					Count the end date as a full day
-				</label>
+				<CheckboxField checked={includeEnd} id="date-diff-include" label={<>Count the end date as a full day</>} onChange={setIncludeEnd} />
 			</div>
 			<ErrorNote message={result.error} />
 			{result.report && (

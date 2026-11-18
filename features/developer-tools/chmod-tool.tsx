@@ -7,7 +7,7 @@ import {
 	type Bit,
 	type PermissionClass,
 } from "@/features/developer-tools/chmod-utils";
-import { ErrorNote, ResultBlock, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const classes: { id: PermissionClass; label: string }[] = [
 	{ id: "user", label: "Owner" },
@@ -79,16 +79,16 @@ export const ChmodTool = () => {
 								<div className="flex flex-wrap items-center gap-4" key={id}>
 									<span className="w-20 text-xs text-[#4a4c43]">{label}</span>
 									{actions.map((action) => (
-										<label className="flex cursor-pointer items-center gap-2 text-xs text-ink" key={action.key}>
-											<input
-												className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-												type="checkbox"
-												checked={permissions.result![id][action.key]}
-												onChange={() => toggle(id, action.key)}
-											/>
-											{action.label}
-											<span className="font-mono text-[10px] text-muted">({action.value})</span>
-										</label>
+										<CheckboxField
+											checked={permissions.result![id][action.key]}
+											key={action.key}
+											label={
+												<>
+													{action.label} <span className="font-mono text-[10px] text-muted">({action.value})</span>
+												</>
+											}
+											onChange={() => toggle(id, action.key)}
+										/>
 									))}
 								</div>
 							))}

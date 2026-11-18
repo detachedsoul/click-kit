@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
+import { CheckboxField } from "@/features/developer-tools/tool-ui";
 import {
 	calculateContrast,
 	compareJson,
@@ -267,16 +268,7 @@ export const EnvValidatorTool = () => {
 				rows={12}
 				hint="Parsed locally only. Variable values are masked by default; this tool never executes shell code or expands variables."
 			/>
-			<label className="flex w-fit cursor-pointer items-center gap-2 text-xs text-ink" htmlFor="env-mask-values">
-				<input
-					className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-					id="env-mask-values"
-					type="checkbox"
-					checked={maskValues}
-					onChange={(event) => setMaskValues(event.target.checked)}
-				/>
-				Mask values in results
-			</label>
+			<CheckboxField checked={maskValues} id="env-mask-values" label={<>Mask values in results</>} onChange={setMaskValues} />
 			{result.error ? (
 				<p className="m-0 text-xs text-[#8a3f30]" role="alert">
 					{result.error}

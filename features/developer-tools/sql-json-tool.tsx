@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { sqlToJson } from "@/features/developer-tools/sql-json-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, hintClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `-- exported from the billing database
 INSERT INTO customers (id, name, email, plan, seats, trial, notes) VALUES
@@ -31,15 +31,9 @@ export const SqlJsonTool = () => {
 	return (
 		<ToolPanel>
 			<div className="flex flex-wrap items-center gap-4">
-				<label className={`${labelClassName} flex items-center gap-2`} htmlFor="sql-cast">
-					<input checked={castTypes} id="sql-cast" onChange={(event) => setCastTypes(event.target.checked)} type="checkbox" />
-					Cast numbers, booleans, and NULL (off = everything is a string)
-				</label>
+				<CheckboxField checked={castTypes} id="sql-cast" label={<>Cast numbers, booleans, and NULL (off = everything is a string)</>} onChange={setCastTypes} />
 				{result.report && result.report.tables.length > 1 && (
-					<label className={`${labelClassName} flex items-center gap-2`} htmlFor="sql-wrap">
-						<input checked={wrap} id="sql-wrap" onChange={(event) => setWrap(event.target.checked)} type="checkbox" />
-						Wrap tables in a <code>tables</code> object
-					</label>
+					<CheckboxField checked={wrap} id="sql-wrap" label={<>Wrap tables in a <code>tables</code> object</>} onChange={setWrap} />
 				)}
 			</div>
 			<TextAreaField

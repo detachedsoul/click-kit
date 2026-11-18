@@ -5,6 +5,7 @@ import Image from "next/image";
 import { SelectField } from "@/components/select-field";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { decodeBase64, decodeBase64Bytes, encodeBase64, encodeBase64Bytes, findRegexMatches, formatJson, generateUuidV4, isValidMimeType, isoToTimestamp, jsonToTypeScript, maximumBinaryBytes, timestampToIso, type JsonOutputMode, type JsonTypeMode, type TimestampUnit } from "@/features/developer-tools/developer-utils";
+import { CheckboxField } from "@/features/developer-tools/tool-ui";
 
 const ToolLayout = ({ children }: { children: React.ReactNode }) => <div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-[14px]">{children}</div>;
 
@@ -350,15 +351,7 @@ export const Base64Tool = () => {
 						</div>
 					)}
 					{file && encodedFile !== null && (
-						<label className="flex cursor-pointer items-center gap-2 text-xs text-[#44463f]">
-							<input
-								className="h-4 w-4 cursor-pointer accent-[#405a4e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-								type="checkbox"
-								checked={includeDataUrl}
-								onChange={(event) => setIncludeDataUrl(event.target.checked)}
-							/>
-							Include data URL prefix with MIME type
-						</label>
+						<CheckboxField checked={includeDataUrl} label="Include data URL prefix with MIME type" onChange={setIncludeDataUrl} />
 					)}
 					{file && encodedFile !== null && (
 						<ResultPanel
@@ -502,7 +495,7 @@ export const RegexTesterTool = () => {
 			return { matches: [], error: error instanceof Error ? error.message : "Could not test this expression." };
 		}
 	}, [source, pattern, flags]);
-	return <ToolLayout><div className="grid grid-cols-[minmax(0,1fr)_minmax(240px,.9fr)] gap-5 max-[760px]:grid-cols-1"><div className="flex flex-col gap-4"><label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="regex-pattern">Regular expression<input className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} placeholder="Enter a pattern, for example \\d+" /></label><fieldset className="flex flex-wrap gap-x-4 gap-y-2 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Flags</legend>{regexFlags.map((flag) => <label className="flex cursor-pointer items-center gap-2 text-xs" key={flag.id}><input className="size-4 accent-accent-dark" type="checkbox" checked={flags.includes(flag.id)} onChange={(event) => setFlags((current) => event.target.checked ? [...current, flag.id] : current.filter((item) => item !== flag.id))} />{flag.label}</label>)}</fieldset></div><TextAreaField id="regex-source" label="Test text" value={source} onChange={setSource} placeholder="Enter text to search…" rows={9} /></div>{result.error ? <p className="m-0 text-xs text-[#8a3f30]" role="alert">{result.error}</p> : <section className="flex flex-col gap-3 border-l-2 border-accent bg-[#f8f6ef] p-4" aria-label="Regular expression matches" aria-live="polite"><p className="m-0 text-xs font-semibold">{result.matches.length} match{result.matches.length === 1 ? "" : "es"}</p>{result.matches.length ? <ol className="m-0 max-h-[320px] space-y-2 overflow-auto pl-5 font-mono text-xs">{result.matches.map((match, index) => <li className="break-all pl-1" key={`${match.index}-${index}`}><mark className="bg-[#f2d797]">{match.text || "(empty match)"}</mark><span className="ml-2 text-muted">at index {match.index}</span>{match.captures.map((capture, captureIndex) => <p className="mb-0 mt-1 break-all text-muted" key={`${captureIndex}-${capture}`}>Group {captureIndex + 1}: {capture ?? "—"}</p>)}</li>)}</ol> : <p className="m-0 text-xs text-muted">No matches found.</p>}</section>}<p className="m-0 text-[11px] leading-relaxed text-muted">Tests run locally in your browser. Global matching is enabled automatically. Keep patterns and test text reasonably small; some complex expressions can take longer to evaluate.</p></ToolLayout>;
+	return <ToolLayout><div className="grid grid-cols-[minmax(0,1fr)_minmax(240px,.9fr)] gap-5 max-[760px]:grid-cols-1"><div className="flex flex-col gap-4"><label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="regex-pattern">Regular expression<input className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent" id="regex-pattern" value={pattern} onChange={(event) => setPattern(event.target.value)} placeholder="Enter a pattern, for example \\d+" /></label><fieldset className="flex flex-wrap gap-x-4 gap-y-2 border border-line bg-[#f8f7f3] px-4 py-3"><legend className="px-1 text-xs font-semibold">Flags</legend>{regexFlags.map((flag) => <CheckboxField checked={flags.includes(flag.id)} key={flag.id} label={flag.label} onChange={(next) => setFlags((current) => next ? [...current, flag.id] : current.filter((item) => item !== flag.id))} />)}</fieldset></div><TextAreaField id="regex-source" label="Test text" value={source} onChange={setSource} placeholder="Enter text to search…" rows={9} /></div>{result.error ? <p className="m-0 text-xs text-[#8a3f30]" role="alert">{result.error}</p> : <section className="flex flex-col gap-3 border-l-2 border-accent bg-[#f8f6ef] p-4" aria-label="Regular expression matches" aria-live="polite"><p className="m-0 text-xs font-semibold">{result.matches.length} match{result.matches.length === 1 ? "" : "es"}</p>{result.matches.length ? <ol className="m-0 max-h-[320px] space-y-2 overflow-auto pl-5 font-mono text-xs">{result.matches.map((match, index) => <li className="break-all pl-1" key={`${match.index}-${index}`}><mark className="bg-[#f2d797]">{match.text || "(empty match)"}</mark><span className="ml-2 text-muted">at index {match.index}</span>{match.captures.map((capture, captureIndex) => <p className="mb-0 mt-1 break-all text-muted" key={`${captureIndex}-${capture}`}>Group {captureIndex + 1}: {capture ?? "—"}</p>)}</li>)}</ol> : <p className="m-0 text-xs text-muted">No matches found.</p>}</section>}<p className="m-0 text-[11px] leading-relaxed text-muted">Tests run locally in your browser. Global matching is enabled automatically. Keep patterns and test text reasonably small; some complex expressions can take longer to evaluate.</p></ToolLayout>;
 };
 
 export const TimestampConverterTool = () => {

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { parseModel, toMongoose, toPrisma } from "@/features/developer-tools/model-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `{
   "id": "3f2b8c1e-1d6a-4b0e-9f2c-5d7a1b2c3d4e",
@@ -58,25 +58,13 @@ export const ModelTool = () => {
 				</label>
 				{target === "mongoose" ? (
 					<div className="flex flex-col gap-2">
-						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="model-timestamps">
-							<input checked={timestamps} id="model-timestamps" onChange={(event) => setTimestamps(event.target.checked)} type="checkbox" />
-							Add createdAt / updatedAt timestamps
-						</label>
-						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="model-strict">
-							<input checked={strict} id="model-strict" onChange={(event) => setStrict(event.target.checked)} type="checkbox" />
-							Strict mode (reject unknown fields)
-						</label>
+						<CheckboxField checked={timestamps} id="model-timestamps" label={<>Add createdAt / updatedAt timestamps</>} onChange={setTimestamps} />
+						<CheckboxField checked={strict} id="model-strict" label={<>Strict mode (reject unknown fields)</>} onChange={setStrict} />
 					</div>
 				) : (
 					<div className="flex flex-col gap-2">
-						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="model-id">
-							<input checked={addId} id="model-id" onChange={(event) => setAddId(event.target.checked)} type="checkbox" />
-							Add an <code>id</code> field with <code>@id</code>
-						</label>
-						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="model-optional">
-							<input checked={nullableOptional} id="model-optional" onChange={(event) => setNullableOptional(event.target.checked)} type="checkbox" />
-							Make nullable fields optional (<code>?</code>)
-						</label>
+						<CheckboxField checked={addId} id="model-id" label={<>Add an <code>id</code> field with <code>@id</code></>} onChange={setAddId} />
+						<CheckboxField checked={nullableOptional} id="model-optional" label={<>Make nullable fields optional (<code>?</code>)</>} onChange={setNullableOptional} />
 					</div>
 				)}
 				{target === "prisma" && (

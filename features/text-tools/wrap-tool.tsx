@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { wrapText } from "@/features/text-tools/wrap-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `A hard wrap puts a line break at a fixed column so the text fits in terminals, emails, and code comments. It is different from soft wrapping, which only changes how a paragraph is displayed.
 
@@ -36,14 +36,8 @@ export const WrapTool = () => {
 						<option value="unwrap">Unwrap paragraphs</option>
 					</select>
 				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="wrap-long-words">
-					<input checked={breakLongWords} id="wrap-long-words" onChange={(event) => setBreakLongWords(event.target.checked)} type="checkbox" />
-					Break words longer than the width
-				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="wrap-blank">
-					<input checked={keepBlankLines} id="wrap-blank" onChange={(event) => setKeepBlankLines(event.target.checked)} type="checkbox" />
-					Keep blank lines between paragraphs
-				</label>
+				<CheckboxField checked={breakLongWords} id="wrap-long-words" label={<>Break words longer than the width</>} onChange={setBreakLongWords} />
+				<CheckboxField checked={keepBlankLines} id="wrap-blank" label={<>Keep blank lines between paragraphs</>} onChange={setKeepBlankLines} />
 			</div>
 			<TextAreaField id="wrap-input" label="Your text" value={source} onChange={setSource} placeholder="Paste text to wrap or unwrap." rows={11} />
 			<ErrorNote message={result.error} />

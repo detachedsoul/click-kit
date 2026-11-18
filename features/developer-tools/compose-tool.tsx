@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { composeServiceNames, composeToRun } from "@/features/developer-tools/compose-utils";
-import { ErrorNote, ResultBlock, ToolPanel, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `services:
   api:
@@ -75,14 +75,8 @@ export const ComposeTool = () => {
 					</select>
 				</label>
 				<div className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="compose-detach">
-						<input checked={detach} id="compose-detach" onChange={(event) => setDetach(event.target.checked)} type="checkbox" />
-						Run detached (<code>-d</code>)
-					</label>
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="compose-rm">
-						<input checked={rm} id="compose-rm" onChange={(event) => setRm(event.target.checked)} type="checkbox" />
-						Remove the container when it exits (<code>--rm</code>)
-					</label>
+					<CheckboxField checked={detach} id="compose-detach" label={<>Run detached (<code>-d</code>)</>} onChange={setDetach} />
+					<CheckboxField checked={rm} id="compose-rm" label={<>Remove the container when it exits (<code>--rm</code>)</>} onChange={setRm} />
 				</div>
 			</div>
 			<TextAreaField

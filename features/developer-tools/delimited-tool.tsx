@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { convertDelimited, delimiterLabel, type DelimitedOutput, type Delimiter } from "@/features/developer-tools/delimited-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, labelClassName, selectClassName, hintClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `id,name,role,joined
 1,Ada Lovelace,engineer,1843-01-01
@@ -63,10 +63,7 @@ export const DelimitedTool = () => {
 					</label>
 				)}
 				{output === "json" && (
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="delimited-typed">
-						<input checked={typed} id="delimited-typed" onChange={(event) => setTyped(event.target.checked)} type="checkbox" />
-						Infer numbers, booleans, and empty values
-					</label>
+					<CheckboxField checked={typed} id="delimited-typed" label={<>Infer numbers, booleans, and empty values</>} onChange={setTyped} />
 				)}
 			</div>
 			<TextAreaField

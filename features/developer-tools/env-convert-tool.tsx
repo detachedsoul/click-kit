@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { envToTarget, structuredToEnv, type EnvTarget } from "@/features/developer-tools/env-convert-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const envSample = `# app config
 NODE_ENV=production
@@ -83,16 +83,10 @@ export const EnvConvertTool = () => {
 					<input className={`${fieldClassName} font-mono`} id="env-separator" value={separator} onChange={(event) => setSeparator(event.target.value)} />
 				</label>
 				{direction === "env-to-structured" ? (
-					<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="env-nested">
-						<input checked={nested} id="env-nested" onChange={(event) => setNested(event.target.checked)} type="checkbox" />
-						Split {separator || "__"} keys into nested objects
-					</label>
+					<CheckboxField checked={nested} id="env-nested" label={<>Split {separator || "__"} keys into nested objects</>} onChange={setNested} />
 				) : (
 					<span className="flex flex-col justify-end gap-2">
-						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="env-comments">
-							<input checked={comments} id="env-comments" onChange={(event) => setComments(event.target.checked)} type="checkbox" />
-							Group keys with section comments
-						</label>
+						<CheckboxField checked={comments} id="env-comments" label={<>Group keys with section comments</>} onChange={setComments} />
 					</span>
 				)}
 			</div>

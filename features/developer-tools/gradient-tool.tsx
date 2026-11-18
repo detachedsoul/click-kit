@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { buildGradient, presetGradients, toPreviewStyle, type GradientOptions, type GradientStop, type GradientType } from "@/features/developer-tools/gradient-utils";
-import { ErrorNote, ResultBlock, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const defaultOptions: GradientOptions = presetGradients[0].options;
 
@@ -46,10 +46,12 @@ export const GradientTool = () => {
 					/>
 				</label>
 				<div className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="gradient-repeating">
-						<input checked={options.repeating} id="gradient-repeating" onChange={(event) => setOptions((current) => ({ ...current, repeating: event.target.checked }))} type="checkbox" />
-						Repeating
-					</label>
+					<CheckboxField
+						checked={options.repeating}
+						id="gradient-repeating"
+						label="Repeating"
+						onChange={(repeating) => setOptions((current) => ({ ...current, repeating }))}
+					/>
 					{options.type === "radial" && (
 						<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="gradient-shape">
 							<span className="sr-only">Radial shape</span>

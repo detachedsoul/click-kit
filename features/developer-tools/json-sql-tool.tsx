@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { SelectField } from "@/components/select-field";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { createTableFromJson, jsonToSqlInsert, type SqlDialect } from "@/features/developer-tools/json-sql-utils";
-import { ErrorNote, ResultBlock, SegmentedControl, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, SegmentedControl, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `[
   { "id": 1, "name": "Ada", "active": true, "score": 9.5, "meta": { "plan": "pro" } },
@@ -63,15 +63,7 @@ export const JsonSqlTool = () => {
 					</SelectField>
 				</div>
 				{mode === "insert" && (
-					<label className="flex w-fit cursor-pointer items-center gap-2 pb-2 text-xs text-ink">
-						<input
-							className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							type="checkbox"
-							checked={multiRow}
-							onChange={(event) => setMultiRow(event.target.checked)}
-						/>
-						Single multi-row statement
-					</label>
+					<CheckboxField checked={multiRow} className="w-fit pb-2" label="Single multi-row statement" onChange={setMultiRow} />
 				)}
 			</div>
 			<TextAreaField id="json-sql-input" label="JSON rows" value={source} onChange={setSource} placeholder="Paste an object or array of objects…" rows={12} />

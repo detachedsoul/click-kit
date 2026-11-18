@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { jsonToXml, xmlToJson } from "@/features/developer-tools/xml-utils";
-import { ErrorNote, ResultBlock, SegmentedControl, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, SegmentedControl, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
 <catalog>
@@ -65,15 +65,12 @@ export const XmlJsonTool = () => {
 				onChange={changeDirection}
 			/>
 			<div className="flex flex-wrap items-end gap-4">
-				<label className="flex w-fit cursor-pointer items-center gap-2 py-2 text-xs text-ink">
-					<input
-						className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-						type="checkbox"
-						checked={includeAttributes}
-						onChange={(event) => setIncludeAttributes(event.target.checked)}
-					/>
-					Keep attributes (as <code className="font-mono text-[11px]">@_name</code> keys)
-				</label>
+				<CheckboxField
+					checked={includeAttributes}
+					className="w-fit py-2"
+					label={<>Keep attributes (as <code className="font-mono text-[11px]">@_name</code> keys)</>}
+					onChange={setIncludeAttributes}
+				/>
 				{direction === "json-to-xml" && (
 					<label className={`${labelClassName} w-40`} htmlFor="xml-root-name">
 						Wrapper root

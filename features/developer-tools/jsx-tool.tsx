@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { htmlToJsx } from "@/features/developer-tools/jsx-utils";
-import { ErrorNote, ResultBlock, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `<section class="card" data-id="7">
   <!-- pricing card -->
@@ -34,14 +34,8 @@ export const JsxTool = () => {
 					<input className={fieldClassName} id="jsx-component" value={component} onChange={(event) => setComponent(event.target.value)} />
 				</label>
 				<div className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="jsx-wrap">
-						<input checked={wrap} id="jsx-wrap" onChange={(event) => setWrap(event.target.checked)} type="checkbox" />
-						Wrap in a React component
-					</label>
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="jsx-svg">
-						<input checked={svg} id="jsx-svg" onChange={(event) => setSvg(event.target.checked)} type="checkbox" />
-						Treat input as SVG (case-sensitive XML)
-					</label>
+					<CheckboxField checked={wrap} id="jsx-wrap" label={<>Wrap in a React component</>} onChange={setWrap} />
+					<CheckboxField checked={svg} id="jsx-svg" label={<>Treat input as SVG (case-sensitive XML)</>} onChange={setSvg} />
 				</div>
 			</div>
 			<TextAreaField

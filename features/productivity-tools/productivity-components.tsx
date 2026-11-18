@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
+import { CheckboxField } from "@/features/developer-tools/tool-ui";
 import {
 	chooseRandomOption,
 	generatePassword,
@@ -140,15 +141,7 @@ export const PasswordGeneratorTool = () => {
 			<fieldset className="m-0 grid grid-cols-2 gap-3 border border-line p-4 max-[520px]:grid-cols-1">
 				<legend className="px-1 text-xs font-semibold">Include</legend>
 				{checks.map(({ key, label }) => (
-					<label className="flex cursor-pointer items-center gap-2 text-xs text-[#44463f]" key={key}>
-						<input
-							className="h-4 w-4 cursor-pointer accent-[#405a4e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							type="checkbox"
-							checked={options[key]}
-							onChange={(event) => toggle(key, event.target.checked)}
-						/>
-						{label}
-					</label>
+					<CheckboxField checked={options[key]} key={key} label={label} onChange={(next) => toggle(key, next)} />
 				))}
 			</fieldset>
 			<button className={actionClass + " self-start"} type="button" onClick={generate}>
@@ -374,16 +367,7 @@ const ImageTool = ({ mode }: { mode: ImageMode }) => {
 							/>
 						</label>
 					</div>
-					<label className="flex cursor-pointer items-center gap-2 text-xs">
-						<input
-							className="h-4 w-4 cursor-pointer accent-[#405a4e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							type="checkbox"
-							disabled={busy}
-							checked={keepRatio}
-							onChange={(event) => setKeepRatio(event.target.checked)}
-						/>
-						Keep aspect ratio
-					</label>
+					<CheckboxField checked={keepRatio} disabled={busy} label="Keep aspect ratio" onChange={setKeepRatio} />
 					<div className="grid grid-cols-2 gap-3 max-[520px]:grid-cols-1">
 						<label className="block text-xs font-semibold" htmlFor={`${mode}-format`}>
 							Output format

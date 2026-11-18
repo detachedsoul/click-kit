@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { convertIndentation, indentLabel, type IndentOptions, type IndentUnit } from "@/features/developer-tools/indent-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `function build(config) {
 \tif (!config) {
@@ -54,14 +54,8 @@ export const IndentTool = () => {
 						))}
 					</select>
 				</label>
-				<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="indent-trim">
-					<input checked={trimTrailing} id="indent-trim" onChange={(event) => setTrimTrailing(event.target.checked)} type="checkbox" />
-					Trim trailing whitespace
-				</label>
-				<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="indent-blank">
-					<input checked={blankLines} id="indent-blank" onChange={(event) => setBlankLines(event.target.checked)} type="checkbox" />
-					Keep whitespace on blank lines
-				</label>
+				<CheckboxField checked={trimTrailing} id="indent-trim" label={<>Trim trailing whitespace</>} onChange={setTrimTrailing} />
+				<CheckboxField checked={blankLines} id="indent-blank" label={<>Keep whitespace on blank lines</>} onChange={setBlankLines} />
 			</div>
 			<TextAreaField id="indent-input" label="Text to re-indent" value={source} onChange={setSource} placeholder={"function x() {\n    return 1;\n}"} rows={14} hint="Leading indentation is converted column by column, so mixed tabs and spaces end up consistent." />
 			<ErrorNote message={result.error} />

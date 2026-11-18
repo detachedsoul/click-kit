@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { formatBytes, optimiseSvg } from "@/features/developer-tools/svg-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Exported by Vector Studio -->
@@ -44,23 +44,11 @@ export const SvgTool = () => {
 					</select>
 				</label>
 				<div className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="svg-metadata">
-						<input checked={removeMetadata} id="svg-metadata" onChange={(event) => setRemoveMetadata(event.target.checked)} type="checkbox" />
-						Remove metadata and editor nodes
-					</label>
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="svg-title">
-						<input checked={keepTitle} id="svg-title" onChange={(event) => setKeepTitle(event.target.checked)} type="checkbox" />
-						Keep title and description (accessibility)
-					</label>
+					<CheckboxField checked={removeMetadata} id="svg-metadata" label={<>Remove metadata and editor nodes</>} onChange={setRemoveMetadata} />
+					<CheckboxField checked={keepTitle} id="svg-title" label={<>Keep title and description (accessibility)</>} onChange={setKeepTitle} />
 				</div>
-				<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="svg-ids">
-					<input checked={removeIds} id="svg-ids" onChange={(event) => setRemoveIds(event.target.checked)} type="checkbox" />
-					Strip id attributes from child elements
-				</label>
-				<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="svg-pretty">
-					<input checked={prettify} id="svg-pretty" onChange={(event) => setPrettify(event.target.checked)} type="checkbox" />
-					Pretty-print instead of minifying
-				</label>
+				<CheckboxField checked={removeIds} id="svg-ids" label={<>Strip id attributes from child elements</>} onChange={setRemoveIds} />
+				<CheckboxField checked={prettify} id="svg-pretty" label={<>Pretty-print instead of minifying</>} onChange={setPrettify} />
 			</div>
 			<TextAreaField id="svg-source" label="SVG markup" value={source} onChange={setSource} placeholder="<svg …</svg>" rows={12} hint="Comments, metadata, editor namespaces, and empty groups are dropped; numeric attributes are rounded and path data is compacted." />
 			<ErrorNote message={result.error} />

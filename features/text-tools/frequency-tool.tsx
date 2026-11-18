@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { TextAreaField } from "@/features/text-tools/text-tool-shared";
 import { frequencyToCsv, frequencyToJson, wordFrequency } from "@/features/text-tools/frequency-utils";
-import { DownloadLink, ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName, selectClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, DownloadLink, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const sample = `Good documentation is short, concrete, and honest. Short paragraphs help readers scan. Concrete examples beat abstract rules, and honest limitations build trust. Every paragraph should earn its place: if a sentence does not add information, cut it.`;
 
@@ -42,14 +42,8 @@ export const FrequencyTool = () => {
 					Min word length
 					<input className={fieldClassName} id="frequency-min-length" max={20} min={1} onChange={(event) => setMinimumLength(Number(event.target.value))} type="number" value={minimumLength} />
 				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="frequency-case">
-					<input checked={ignoreCase} id="frequency-case" onChange={(event) => setIgnoreCase(event.target.checked)} type="checkbox" />
-					Ignore case
-				</label>
-				<label className="flex items-center gap-2 self-end text-xs font-semibold text-[#3c3d37]" htmlFor="frequency-stop">
-					<input checked={removeStopWords} id="frequency-stop" onChange={(event) => setRemoveStopWords(event.target.checked)} type="checkbox" />
-					Remove stop words
-				</label>
+				<CheckboxField checked={ignoreCase} id="frequency-case" label={<>Ignore case</>} onChange={setIgnoreCase} />
+				<CheckboxField checked={removeStopWords} id="frequency-stop" label={<>Remove stop words</>} onChange={setRemoveStopWords} />
 			</div>
 			<ErrorNote message={result.error} />
 			{result.report && (

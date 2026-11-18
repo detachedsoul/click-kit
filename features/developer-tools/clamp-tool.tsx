@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { buildClamp, clampPresets, sizeAtViewport, type ClampOptions } from "@/features/developer-tools/clamp-utils";
-import { ErrorNote, ResultBlock, StatGrid, ToolPanel, fieldClassName, hintClassName, labelClassName } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, ResultBlock, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 
 const numberInput = (id: string, label: string, value: number, onChange: (value: number) => void, step = 1) => (
 	<label className={labelClassName} htmlFor={id}>
@@ -30,10 +30,12 @@ export const ClampTool = () => {
 				{numberInput("clamp-min-vw", "Min viewport (px)", options.minViewport, (minViewport) => setOptions((current) => ({ ...current, minViewport })), 10)}
 				{numberInput("clamp-max-vw", "Max viewport (px)", options.maxViewport, (maxViewport) => setOptions((current) => ({ ...current, maxViewport })), 10)}
 				<span className="flex flex-col justify-end gap-2">
-					<label className="flex items-center gap-2 text-xs font-semibold text-[#3c3d37]" htmlFor="clamp-rem">
-						<input checked={options.useRem} id="clamp-rem" onChange={(event) => setOptions((current) => ({ ...current, useRem: event.target.checked }))} type="checkbox" />
-						Express values in rem
-					</label>
+					<CheckboxField
+						checked={options.useRem}
+						id="clamp-rem"
+						label="Express values in rem"
+						onChange={(useRem) => setOptions((current) => ({ ...current, useRem }))}
+					/>
 				</span>
 			</div>
 			<div className="flex flex-wrap items-center gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
 
 export const ToolPanel = ({ children }: { children: ReactNode }) => (
@@ -18,6 +18,68 @@ export const buttonClassName =
 	"min-h-9 cursor-pointer border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 export const primaryButtonClassName =
 	"inline-flex min-h-10 cursor-pointer items-center justify-center border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
+
+export const checkboxInputClassName = "checkbox-input";
+
+type CheckboxInputProps = {
+	id?: string;
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+	label: string;
+	disabled?: boolean;
+};
+
+/** A styled checkbox on its own, for table cells and grids where the label lives elsewhere. */
+export const CheckboxInput = ({ id, checked, onChange, label, disabled = false }: CheckboxInputProps) => (
+	<input
+		aria-label={label}
+		checked={checked}
+		className={checkboxInputClassName}
+		disabled={disabled}
+		id={id}
+		onChange={(event) => onChange(event.target.checked)}
+		type="checkbox"
+	/>
+);
+
+type CheckboxFieldProps = {
+	id?: string;
+	label: ReactNode;
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+	hint?: string;
+	disabled?: boolean;
+	className?: string;
+};
+
+/** Checkbox plus label that lines up with the panel's inputs and shares their focus ring. */
+export const CheckboxField = ({ id, label, checked, onChange, hint, disabled = false, className = "" }: CheckboxFieldProps) => {
+	const generatedId = useId();
+	const inputId = id ?? generatedId;
+	return (
+	<div className={`flex flex-col gap-1.5 ${className}`}>
+		<div className="flex items-start gap-2.5">
+			<input
+				aria-describedby={hint ? `${inputId}-hint` : undefined}
+				checked={checked}
+				className="checkbox-input"
+				disabled={disabled}
+				id={inputId}
+				onChange={(event) => onChange(event.target.checked)}
+				type="checkbox"
+			/>
+			<label className={`cursor-pointer select-none text-xs font-semibold leading-[18px] text-[#3c3d37] ${disabled ? "cursor-not-allowed opacity-60" : ""}`} htmlFor={inputId}>
+				{label}
+			</label>
+		</div>
+		{hint ? (
+			<p className={`${hintClassName} pl-[28px]`} id={`${inputId}-hint`}>
+				{hint}
+			</p>
+		) : null}
+	</div>
+	);
+};
 
 export const ErrorNote = ({ message }: { message: string }) =>
 	message ? (

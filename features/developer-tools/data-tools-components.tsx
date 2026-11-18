@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { SelectField } from "@/components/select-field";
 import { CopyTextButton, TextAreaField } from "@/features/text-tools/text-tool-shared";
+import { CheckboxField } from "@/features/developer-tools/tool-ui";
 import type { HashAlgorithm } from "@/features/developer-tools/additional-developer-utils";
 import {
 	csvToJson,
@@ -86,15 +87,7 @@ export const CsvJsonTool = () => {
 			</div>
 			<div className="grid grid-cols-[minmax(0,1fr)_minmax(170px,.4fr)] gap-4 max-[620px]:grid-cols-1">
 				{direction === "csv-to-json" && (
-					<label className="flex w-fit cursor-pointer items-center gap-2 self-center text-xs text-ink">
-						<input
-							className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-							type="checkbox"
-							checked={hasHeader}
-							onChange={(event) => setHasHeader(event.target.checked)}
-						/>
-						First row contains column names
-					</label>
+					<CheckboxField checked={hasHeader} className="w-fit self-center" label="First row contains column names" onChange={setHasHeader} />
 				)}
 				<div className="max-w-[220px] max-[620px]:max-w-none">
 					<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="csv-json-delimiter">
@@ -354,15 +347,7 @@ export const GitignoreGeneratorTool = () => {
 				<legend className="mb-3 text-xs font-semibold text-[#3c3d37]">Choose project and system templates</legend>
 				<div className="grid grid-cols-2 gap-2 max-[520px]:grid-cols-1">
 					{gitignoreTemplateOptions.map(({ id, label }) => (
-						<label className="flex cursor-pointer items-center gap-2 border border-line bg-[#fbfaf7] px-3 py-2.5 text-xs" key={id}>
-							<input
-								className="size-4 cursor-pointer accent-[#42584d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-								type="checkbox"
-								checked={selected.has(id)}
-								onChange={() => toggle(id)}
-							/>
-							{label}
-						</label>
+						<CheckboxField checked={selected.has(id)} className="border border-line bg-[#fbfaf7] px-3 py-2.5" key={id} label={label} onChange={() => toggle(id)} />
 					))}
 				</div>
 			</fieldset>
