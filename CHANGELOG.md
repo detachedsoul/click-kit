@@ -6,6 +6,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **convert** — add csv and excel conversion ([0bee559](https://github.com/detachedsoul/click-kit/commit/0bee559))
+- **productivity** — add a subscription tracker ([7f7bd9d](https://github.com/detachedsoul/click-kit/commit/7f7bd9d))
+- **pdf** — add a booklet maker and a word-level comparison ([9dff9a1](https://github.com/detachedsoul/click-kit/commit/9dff9a1))
 - **convert** — add powerpoint to markdown ([5b35a5b](https://github.com/detachedsoul/click-kit/commit/5b35a5b))
 - **productivity** — add a meeting cost meter ([805040d](https://github.com/detachedsoul/click-kit/commit/805040d))
 - **pdf** — add a margin adder ([b52a9f8](https://github.com/detachedsoul/click-kit/commit/b52a9f8))
@@ -58,6 +61,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **ui** — stop the pages-per-sheet buttons going white on white ([21c6dee](https://github.com/detachedsoul/click-kit/commit/21c6dee))
 - **image** — keep a preview from breaking when the canvas will not paint ([b07f77f](https://github.com/detachedsoul/click-kit/commit/b07f77f))
 - **a11y** — keep the heading outline sequential on the tools page ([eaa5932](https://github.com/detachedsoul/click-kit/commit/eaa5932))
 - **image** — make the redactor strength slider work ([3e67464](https://github.com/detachedsoul/click-kit/commit/3e67464))

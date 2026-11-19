@@ -7,6 +7,30 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "0bee559",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add csv and excel conversion",
+              "group": "Added"
+            },
+            {
+              "hash": "7f7bd9d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a subscription tracker",
+              "group": "Added"
+            },
+            {
+              "hash": "9dff9a1",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a booklet maker and a word-level comparison",
+              "group": "Added"
+            },
+            {
               "hash": "5b35a5b",
               "date": "2026-11-19",
               "type": "feat",
@@ -403,6 +427,14 @@
         {
           "group": "Fixed",
           "entries": [
+            {
+              "hash": "21c6dee",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "stop the pages-per-sheet buttons going white on white",
+              "group": "Fixed"
+            },
             {
               "hash": "b07f77f",
               "date": "2026-11-19",
