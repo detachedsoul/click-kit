@@ -73,6 +73,7 @@ import { UserAgentTool } from "@/features/developer-tools/user-agent-tool";
 import { ChunkTool } from "@/features/text-tools/chunk-tool";
 import { PostLengthTool } from "@/features/text-tools/post-length-tool";
 import { ShadowTool } from "@/features/developer-tools/shadow-tool";
+import SalaryCalculator from "@/features/calculators/salary-calculator";
 import { TeamTool } from "@/features/productivity-tools/team-tool";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -225,6 +226,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"text-chunker": ChunkTool,
 	"post-length": PostLengthTool,
 	"css-shadow": ShadowTool,
+	"salary-converter": SalaryCalculator,
 	"team-splitter": TeamTool,
 	"meeting-planner": MeetingPlanner,
 	"pace-calculator": PaceCalculator,

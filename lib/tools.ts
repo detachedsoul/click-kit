@@ -1,5 +1,6 @@
 import {
 	AlignLeft,
+	Banknote,
 	BarChart3,
 	Binary,
 	Braces,
@@ -143,6 +144,7 @@ export const tools: Tool[] = [
 	{ id: "age-calculator", name: "Age calculator", description: "Calculate an age on a date or the calendar time between two dates.", category: "calculators", slug: "age-calculator", keywords: ["birthday", "date", "years", "months", "days", "duration"], icon: Baby, status: "available" },
 	{ id: "unit-converter", name: "Unit converter", description: "Convert length, mass, temperature, volume, area, and time.", category: "calculators", slug: "unit-converter", keywords: ["length", "weight", "temperature", "volume", "area", "time", "units"], icon: Workflow, status: "available" },
 	{ id: "scientific-calculator", name: "Scientific calculator", description: "Calculate with trigonometry, logarithms, powers, statistics, combinatorics, scientific constants, and numerical integrals.", category: "calculators", slug: "scientific-calculator", keywords: ["math", "calculus", "integration", "trigonometry", "hyperbolic", "statistics", "combinations", "permutations", "logarithm", "scientific constants"], icon: Calculator, status: "available" },
+	{ id: "salary-converter", name: "Salary converter", description: "Turn a salary or wage into hourly, daily, weekly, monthly, and yearly pay using the hours you actually work.", category: "calculators", slug: "salary-converter", keywords: ["salary", "hourly rate", "wage", "annual pay", "monthly pay", "take-home", "income"], icon: Banknote, status: "available" },
 	{ id: "loan-calculator", name: "Loan & interest calculator", description: "Estimate monthly loan payments and total interest for a fixed-rate loan.", category: "calculators", slug: "loan-calculator", keywords: ["loan", "interest", "repayment", "monthly payment", "amortization"], icon: Workflow, status: "available" },
 	{ id: "tip-split-calculator", name: "Tip & bill splitter", description: "Add a tip to a bill and split the total evenly across a group.", category: "calculators", slug: "tip-split-calculator", keywords: ["tip", "bill", "split", "restaurant", "share"], icon: ListChecks, status: "available" },
 	{ id: "bmi-calculator", name: "BMI calculator", description: "Calculate body mass index from height and weight, with adult screening context.", category: "calculators", slug: "bmi-calculator", keywords: ["body mass index", "health", "weight", "height", "metric", "imperial"], icon: Baby, status: "available" },
