@@ -7,6 +7,38 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "5b35a5b",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add powerpoint to markdown",
+              "group": "Added"
+            },
+            {
+              "hash": "805040d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a meeting cost meter",
+              "group": "Added"
+            },
+            {
+              "hash": "b52a9f8",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a margin adder",
+              "group": "Added"
+            },
+            {
+              "hash": "ebe5995",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "previews, drag and drop, picture watermarks, and an editor",
+              "group": "Added"
+            },
+            {
               "hash": "e0d890d",
               "date": "2026-11-19",
               "type": "feat",
@@ -371,6 +403,14 @@
         {
           "group": "Fixed",
           "entries": [
+            {
+              "hash": "b07f77f",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "image",
+              "summary": "keep a preview from breaking when the canvas will not paint",
+              "group": "Fixed"
+            },
             {
               "hash": "eaa5932",
               "date": "2026-11-19",

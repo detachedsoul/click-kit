@@ -6,6 +6,10 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **convert** — add powerpoint to markdown ([5b35a5b](https://github.com/detachedsoul/click-kit/commit/5b35a5b))
+- **productivity** — add a meeting cost meter ([805040d](https://github.com/detachedsoul/click-kit/commit/805040d))
+- **pdf** — add a margin adder ([b52a9f8](https://github.com/detachedsoul/click-kit/commit/b52a9f8))
+- **pdf** — previews, drag and drop, picture watermarks, and an editor ([ebe5995](https://github.com/detachedsoul/click-kit/commit/ebe5995))
 - **pdf** — add a page rotator ([e0d890d](https://github.com/detachedsoul/click-kit/commit/e0d890d))
 - **convert** — add rtf to markdown ([2ee5035](https://github.com/detachedsoul/click-kit/commit/2ee5035))
 - **convert** — add markdown to html ([8426b60](https://github.com/detachedsoul/click-kit/commit/8426b60))
@@ -54,6 +58,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **image** — keep a preview from breaking when the canvas will not paint ([b07f77f](https://github.com/detachedsoul/click-kit/commit/b07f77f))
 - **a11y** — keep the heading outline sequential on the tools page ([eaa5932](https://github.com/detachedsoul/click-kit/commit/eaa5932))
 - **image** — make the redactor strength slider work ([3e67464](https://github.com/detachedsoul/click-kit/commit/3e67464))
 - **a11y** — raise text and field contrast to WCAG AA ([1aa4a50](https://github.com/detachedsoul/click-kit/commit/1aa4a50))
