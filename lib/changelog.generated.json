@@ -7,6 +7,54 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "1c54069",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "files",
+              "summary": "add a file splitter and joiner",
+              "group": "Added"
+            },
+            {
+              "hash": "75d9a67",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a before and after comparison",
+              "group": "Added"
+            },
+            {
+              "hash": "a44899a",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a contact sheet builder",
+              "group": "Added"
+            },
+            {
+              "hash": "278fac2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "ui",
+              "summary": "louder New badge and filters for the tool list",
+              "group": "Added"
+            },
+            {
+              "hash": "9ea9780",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "watermark with your own logo",
+              "group": "Added"
+            },
+            {
+              "hash": "16ee6a2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a 5.0 GPA scale",
+              "group": "Added"
+            },
+            {
               "hash": "07adb14",
               "date": "2026-11-19",
               "type": "feat",
@@ -58,6 +106,19 @@
               "scope": "a11y",
               "summary": "raise text and field contrast to WCAG AA",
               "group": "Fixed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "181a6dd",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh changelog and README for the five new image tools",
+              "group": "Maintenance"
             }
           ]
         }
