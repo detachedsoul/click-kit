@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **ui** — update open pages in place when a new build ships ([e38506c](https://github.com/detachedsoul/click-kit/commit/e38506c))
 - **pwa** — install prompt and new-tool notifications ([0babd8d](https://github.com/detachedsoul/click-kit/commit/0babd8d))
 - **calculators** — default the GPA calculator to 5.0 and plain A-F letters ([55774dc](https://github.com/detachedsoul/click-kit/commit/55774dc))
 - **files** — add a file splitter and joiner ([1c54069](https://github.com/detachedsoul/click-kit/commit/1c54069))
@@ -28,6 +29,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- refresh the generated changelog ([a868eaa](https://github.com/detachedsoul/click-kit/commit/a868eaa))
 - refresh the generated changelog ([d29b52c](https://github.com/detachedsoul/click-kit/commit/d29b52c))
 - refresh changelog and README for GPA scales, watermarks, and new tools ([a904401](https://github.com/detachedsoul/click-kit/commit/a904401))
 - refresh changelog and README for the five new image tools ([181a6dd](https://github.com/detachedsoul/click-kit/commit/181a6dd))

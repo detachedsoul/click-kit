@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "e38506c",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "ui",
+              "summary": "update open pages in place when a new build ships",
+              "group": "Added"
+            },
+            {
               "hash": "0babd8d",
               "date": "2026-11-19",
               "type": "feat",
@@ -144,6 +152,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "a868eaa",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
             {
               "hash": "d29b52c",
               "date": "2026-11-19",
