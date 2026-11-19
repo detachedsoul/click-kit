@@ -204,7 +204,7 @@ export const CompareTool = () => {
 									aria-valuemax={100}
 									aria-valuemin={0}
 									aria-valuenow={position}
-									aria-valuetext={`${position}% — ${position}% after, ${100 - position}% before`}
+									aria-valuetext={`${position}% before, ${100 - position}% after`}
 									className="grid size-11 cursor-grab touch-none place-items-center rounded-full border border-[#25282059] bg-white text-ink shadow-[0_2px_10px_#322c2033] transition-transform [@media(hover:hover)]:hover:scale-105 active:cursor-grabbing active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 									onKeyDown={nudge}
 									onPointerDown={(event) => {

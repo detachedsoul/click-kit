@@ -42,6 +42,7 @@ describe("comparison page", () => {
 		expect(handle).toHaveProperty("ariaOrientation", "horizontal");
 		expect(handle).toHaveProperty("tabIndex", 0);
 		expect(handle.getAttribute("title")).toBe("Drag to move the divider");
+		expect(handle.getAttribute("aria-valuetext")).toBe("50% before, 50% after");
 	});
 
 	it("nudges the handle with the keyboard", async () => {
