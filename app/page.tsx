@@ -19,7 +19,7 @@ const HomePage = () => {
 			<Shell className="grid grid-cols-[minmax(0,1fr)_330px] items-center gap-[clamp(40px,8vw,112px)] py-[76px] max-[900px]:grid-cols-[minmax(0,1fr)_255px] max-[900px]:gap-7 max-[900px]:py-[66px] max-[620px]:block max-[620px]:py-12">
 				<div className="py-[7px]">
 					<div className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[.1em] text-accent-dark before:h-px before:w-[25px] before:bg-accent">A little more useful, every day</div>
-					<h1 id="home-title" className="mb-[21px] mt-[22px] max-w-[760px] font-serif text-[clamp(76px,9vw,112px)] font-normal leading-[.78] tracking-[-.045em] max-[900px]:text-[clamp(76px,10vw,92px)] max-[620px]:mb-[17px] max-[620px]:mt-5 max-[620px]:text-[clamp(61px,14.5vw,86px)] max-[620px]:leading-[.8]">
+					<h1 id="home-title" className="mb-[21px] mt-[22px] max-w-[760px] font-serif text-[clamp(76px,9vw,112px)] font-normal leading-[.78] tracking-[-.045em] max-[900px]:text-[clamp(76px,10vw,92px)] max-[620px]:mb-[17px] max-[620px]:mt-5 max-[620px]:text-[clamp(46px,14.5vw,86px)] max-[620px]:leading-[.8]">
 						Good tools.<br /><span className="italic text-accent">Less fuss.</span>
 					</h1>
 					<p className="m-0 max-w-[480px] text-base leading-[1.7] text-[#5d6058] max-[620px]:max-w-[430px] max-[620px]:text-sm">Small, thoughtful browser tools for the digital chores in your day. No account, no detour — just the right tool, right when you need it.</p>

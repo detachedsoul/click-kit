@@ -202,7 +202,7 @@ const ToolsBrowser = () => {
 					{query.trim() ? ` · “${query.trim()}”` : ""}
 				</p>
 				{filtering && (
-					<button className="cursor-pointer text-xs text-[#50534c] underline underline-offset-2 hover:text-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={reset} type="button">
+					<button className="inline-flex min-h-9 cursor-pointer items-center px-1 text-xs text-[#50534c] underline underline-offset-2 hover:text-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={reset} type="button">
 						Clear filters
 					</button>
 				)}
