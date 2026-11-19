@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
-import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, MultiFileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { mergePdfs, readFileBytes, readPdfInfo } from "@/features/pdf-tools/pdf-engine";
-import { ACCEPTED_PDF_TYPES, pageWord, pdfBaseName, validatePdfFiles } from "@/features/pdf-tools/pdf-utils";
+import { renderPageThumbnail } from "@/features/pdf-tools/pdf-render";
+import { ACCEPTED_PDF_TYPES, pageWord, pdfBaseName, pdfFileName, validatePdfFiles } from "@/features/pdf-tools/pdf-utils";
 
 type Entry = { id: string; file: File; pages: number | null; problem: string };
-type Result = { blob: Blob; name: string; pages: number };
+type Result = { blob: Blob; defaultName: string; pages: number; previews: { page: number; thumb: string }[] };
+
+/** Enough of the merged document to see that the order came out right. */
+export const PREVIEW_PAGES = 8;
 
 let nextId = 0;
 
@@ -17,7 +21,18 @@ export const PdfMergeTool = () => {
 	const [result, setResult] = useState<Result | null>(null);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
+	const [customName, setCustomName] = useState("");
+	const alive = useRef(true);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
+	/** Typing in the name box renames the download straight away; an empty box keeps the default. */
+	const fileName = result ? pdfFileName(customName, result.defaultName) : "";
+
+	useEffect(
+		() => () => {
+			alive.current = false;
+		},
+		[],
+	);
 	const totalPages = entries.reduce((sum, entry) => sum + (entry.pages ?? 0), 0);
 	const totalBytes = entries.reduce((sum, entry) => sum + entry.file.size, 0);
 
@@ -70,11 +85,23 @@ export const PdfMergeTool = () => {
 			const sources = await Promise.all(entries.map((entry) => readFileBytes(entry.file)));
 			const bytes = await mergePdfs(sources);
 			const pages = entries.reduce((sum, entry) => sum + (entry.pages ?? 0), 0);
+			const merged = new Uint8Array(bytes);
 			setResult({
-				blob: new Blob([new Uint8Array(bytes)], { type: "application/pdf" }),
-				name: `${pdfBaseName(entries[0]?.file.name ?? "document")}-merged.pdf`,
+				blob: new Blob([merged.slice().buffer], { type: "application/pdf" }),
+				defaultName: `${pdfBaseName(entries[0]?.file.name ?? "document")}-merged`,
 				pages,
+				previews: [],
 			});
+			for (let page = 1; page <= Math.min(pages, PREVIEW_PAGES); page += 1) {
+				try {
+					const thumb = await renderPageThumbnail(merged, page, 120);
+					if (!alive.current) return;
+					setResult((current) => (current ? { ...current, previews: [...current.previews, { page, thumb }] } : current));
+				} catch {
+					// A page that will not draw still merges; the preview is a nicety.
+					if (!alive.current) return;
+				}
+			}
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : "Those PDFs could not be merged.");
 		} finally {
@@ -156,11 +183,42 @@ export const PdfMergeTool = () => {
 				<section className="flex flex-col gap-3 border-t border-line pt-[18px]">
 					<div className="flex flex-wrap items-center justify-between gap-3">
 						<h2 className="m-0 text-sm font-semibold">Merged PDF</h2>
-						<FileDownloadLink fileName={result.name} label={`Download ${result.name}`} url={resultUrl} />
+						<FileDownloadLink fileName={fileName} label={`Download ${fileName}`} url={resultUrl} />
+					</div>
+					<div>
+						<label className={labelClassName} htmlFor="merge-file-name">
+							Name for the file
+						</label>
+						<input
+							className={fieldClassName}
+							id="merge-file-name"
+							maxLength={100}
+							onChange={(event) => setCustomName(event.target.value)}
+							placeholder={`${pdfBaseName(entries[0]?.file.name ?? "document")}-merged`}
+							type="text"
+							value={customName}
+						/>
+						<p className={`${hintClassName} mt-2`}>{customName.trim() ? `Saved as ${fileName}` : `Leave empty to save as ${fileName}. The .pdf suffix is added for you.`}</p>
 					</div>
 					<p className="m-0 text-xs text-muted">
 						{pageWord(result.pages)} · {describeBytes(result.blob.size)} · from {entries.length} files
 					</p>
+					{result.previews.length ? (
+						<div>
+							<p className={`${hintClassName} mb-2`}>
+								First {result.previews.length === 1 ? "page" : `${result.previews.length} pages`} of the merged file, in order:
+							</p>
+							<ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2 p-0">
+								{result.previews.map((preview) => (
+									<li className="border border-line bg-[#fbfaf7] p-1" key={preview.page}>
+										{/* eslint-disable-next-line @next/next/no-img-element -- a rendered preview, not a layout image */}
+										<img alt={`Merged page ${preview.page}`} className="mx-auto block max-h-28 w-auto" src={preview.thumb} />
+										<p className="m-0 mt-1 text-center text-[11px] text-muted">{preview.page}</p>
+									</li>
+								))}
+							</ul>
+						</div>
+					) : null}
 				</section>
 			) : null}
 			<p className={hintClassName}>

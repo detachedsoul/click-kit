@@ -110,3 +110,36 @@ describe("pdf to images", () => {
 		expect(screen.getByRole("button", { name: "Convert pages to images" })).toHaveProperty("disabled", true);
 	});
 });
+
+describe("one image per page", () => {
+	it("previews every page it drew", async () => {
+		const user = userEvent.setup();
+		render(<PdfToImagesTool />);
+		await load(user, 3);
+		await user.click(screen.getByRole("button", { name: "Convert pages to images" }));
+		expect(await screen.findByAltText("Preview of page 1")).toBeTruthy();
+		expect(screen.getByAltText("Preview of page 3")).toBeTruthy();
+		expect(screen.queryByAltText("Preview of page 4")).toBeNull();
+	});
+
+	it("saves a single page on its own, beside the zip", async () => {
+		const user = userEvent.setup();
+		render(<PdfToImagesTool />);
+		await load(user, 3);
+		await user.click(screen.getByRole("button", { name: "Convert pages to images" }));
+		await screen.findByRole("link", { name: "Download deck-images.zip" });
+		const { link, text } = await download(/^Download page 2$/u);
+		expect(link).toHaveProperty("download", "deck-page-2.png");
+		expect(text).toBe("image-2-image/png-2");
+	});
+
+	it("names the single file when there is only one page", async () => {
+		const user = userEvent.setup();
+		render(<PdfToImagesTool />);
+		await load(user, 1);
+		await user.click(screen.getByRole("button", { name: "Convert pages to images" }));
+		expect(await screen.findByRole("link", { name: "Download deck-page-1.png" })).toBeTruthy();
+		expect(screen.queryByRole("link", { name: "Download deck-images.zip" })).toBeNull();
+		expect(screen.getByAltText("Preview of page 1")).toBeTruthy();
+	});
+});

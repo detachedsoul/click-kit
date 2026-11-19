@@ -8,6 +8,7 @@ import {
 	parseRangeGroups,
 	pdfBaseName,
 	pdfErrorMessage,
+	pdfFileName,
 	pdfOutputName,
 	splitKeywords,
 	validatePdfFile,
@@ -78,5 +79,36 @@ describe("pdf helpers", () => {
 		expect(validatePdfFiles([pdfFile("a.pdf"), pdfFile("b.pdf")])).toBe("");
 		expect(validatePdfFiles([pdfFile("a.txt", 10, "text/plain")])).toMatch(/a.txt: Choose a PDF/u);
 		expect(validatePdfFiles([pdfFile("a.pdf", 50 * 1024 * 1024), pdfFile("b.pdf", 50 * 1024 * 1024), pdfFile("c.pdf", 50 * 1024 * 1024), pdfFile("d.pdf", 50 * 1024 * 1024), pdfFile("e.pdf", 50 * 1024 * 1024)])).toMatch(/200 MB/u);
+	});
+});
+
+describe("file names you choose", () => {
+	it("adds the suffix once", () => {
+		expect(pdfFileName("handout", "merged")).toBe("handout.pdf");
+		expect(pdfFileName("handout.pdf", "merged")).toBe("handout.pdf");
+		expect(pdfFileName("HANDOUT.PDF", "merged")).toBe("HANDOUT.pdf");
+	});
+
+	it("keeps a name the file system will accept", () => {
+		expect(pdfFileName("Annual report / 2026", "merged")).toBe("Annual report - 2026.pdf");
+		expect(pdfFileName('what: "now"?', "merged")).toBe("what- -now.pdf");
+		expect(pdfFileName("a\\b", "merged")).toBe("a-b.pdf");
+	});
+
+	it("trims the ends and tidies the spacing", () => {
+		expect(pdfFileName("   spaced   out   ", "merged")).toBe("spaced out.pdf");
+		expect(pdfFileName("...dots...", "merged")).toBe("dots.pdf");
+	});
+
+	it("falls back when nothing is left", () => {
+		expect(pdfFileName("", "first-merged")).toBe("first-merged.pdf");
+		expect(pdfFileName("   ", "first-merged")).toBe("first-merged.pdf");
+		expect(pdfFileName("///", "first-merged")).toBe("first-merged.pdf");
+	});
+
+	it("keeps very long names to something sane", () => {
+		const long = pdfFileName("a".repeat(300), "merged");
+		expect(long.length).toBeLessThanOrEqual(94);
+		expect(long.endsWith(".pdf")).toBe(true);
 	});
 });

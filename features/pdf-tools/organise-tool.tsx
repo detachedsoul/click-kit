@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, RotateCcw, RotateCw, Trash2, Undo2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, GripVertical, RotateCcw, RotateCw, Trash2, Undo2 } from "lucide-react";
 import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { readFileBytes, readPdfInfo, rewritePages } from "@/features/pdf-tools/pdf-engine";
@@ -12,6 +12,15 @@ type Page = { source: number; turn: number; removed: boolean; thumb: string };
 
 export const MAX_PREVIEWS = 60;
 
+/** Moves one page to a new position, leaving the rest in order. */
+export const movePage = <T,>(list: T[], from: number, to: number): T[] => {
+	if (from === to || from < 0 || to < 0 || from >= list.length || to >= list.length) return list;
+	const next = [...list];
+	const [moved] = next.splice(from, 1);
+	next.splice(to, 0, moved);
+	return next;
+};
+
 const degreesLabel = (turn: number) => `${((turn % 360) + 360) % 360}°`;
 
 export const PdfOrganiseTool = () => {
@@ -20,6 +29,8 @@ export const PdfOrganiseTool = () => {
 	const [previews, setPreviews] = useState(0);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
+	const [dragging, setDragging] = useState<number | null>(null);
+	const [over, setOver] = useState<number | null>(null);
 	const [result, setResult] = useState<{ blob: Blob; name: string; note: string } | null>(null);
 	const alive = useRef(true);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
@@ -83,6 +94,15 @@ export const PdfOrganiseTool = () => {
 		});
 	};
 
+	/** Drop a dragged card on another to put the page there. */
+	const dropAt = (target: number) => {
+		if (dragging === null) return;
+		setResult(null);
+		setPages((current) => movePage(current, dragging, target));
+		setDragging(null);
+		setOver(null);
+	};
+
 	const rotateAll = (turn: number) => {
 		setResult(null);
 		setPages((current) => current.map((page) => (page.removed ? page : { ...page, turn: page.turn + turn })));
@@ -113,7 +133,7 @@ export const PdfOrganiseTool = () => {
 		<ToolPanel>
 			<FileField
 				accept={ACCEPTED_PDF_TYPES}
-				hint="Reorder, rotate, and remove pages. Nothing is redrawn — the pages themselves are copied over."
+				hint="Drag a page card to a new place, or use the arrow buttons. Rotate and remove as you like: nothing is redrawn — the pages themselves are copied over."
 				id="pdf-organise-file"
 				label="PDF to arrange"
 				onFile={chooseFile}
@@ -149,7 +169,32 @@ export const PdfOrganiseTool = () => {
 					</div>
 					<ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 p-0">
 						{pages.map((page, index) => (
-							<li className={`border border-line bg-[#fbfaf7] p-2 ${page.removed ? "opacity-50" : ""}`} key={page.source}>
+							<li
+								className={`border bg-[#fbfaf7] p-2 ${
+									dragging === index ? "border-accent opacity-60" : over === index ? "border-accent ring-2 ring-accent" : "border-line"
+								} ${page.removed ? "opacity-50" : ""}`}
+								draggable={!busy}
+								key={page.source}
+								onDragEnd={() => {
+									setDragging(null);
+									setOver(null);
+								}}
+								onDragOver={(event) => {
+									event.preventDefault();
+									if (dragging !== null && dragging !== index) setOver(index);
+								}}
+								onDragStart={(event) => {
+									setDragging(index);
+									setOver(null);
+									// Firefox needs some data on the drag to start at all.
+									event.dataTransfer?.setData("text/plain", String(index));
+									if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
+								}}
+								onDrop={(event) => {
+									event.preventDefault();
+									dropAt(index);
+								}}
+							>
 								<div className="flex min-h-40 items-center justify-center bg-white">
 									{page.thumb ? (
 										// eslint-disable-next-line @next/next/no-img-element -- a rendered preview, not a layout image
@@ -158,7 +203,8 @@ export const PdfOrganiseTool = () => {
 										<p className="m-0 text-[11px] text-muted">{index < MAX_PREVIEWS ? "Rendering…" : "No preview"}</p>
 									)}
 								</div>
-								<p className="m-0 mt-2 text-[11px] font-semibold text-[#3c3d37]">
+								<p className="m-0 mt-2 flex cursor-grab items-center gap-1 text-[11px] font-semibold text-[#3c3d37]" title="Drag this card to move the page">
+									<GripVertical aria-hidden="true" size={12} />
 									Page {page.source}
 									{page.turn ? ` · ${degreesLabel(page.turn)}` : ""}
 									{page.removed ? " · removed" : ""}
@@ -186,7 +232,7 @@ export const PdfOrganiseTool = () => {
 						))}
 					</ul>
 					<p className={hintClassName}>
-						Page order here is the order in the saved file. {pages.length > MAX_PREVIEWS ? `Only the first ${MAX_PREVIEWS} pages get a preview; every page can still be moved, turned, or removed.` : ""}
+						Drag cards to reorder, or use the arrows; page order here is the order in the saved file. {pages.length > MAX_PREVIEWS ? `Only the first ${MAX_PREVIEWS} pages get a preview; every page can still be moved, turned, or removed.` : ""}
 					</p>
 					<button className={primaryButtonClassName} disabled={busy || kept.length === 0} onClick={apply} type="button">
 						{busy ? "Saving…" : "Save rearranged PDF"}

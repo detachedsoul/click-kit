@@ -59,6 +59,7 @@ import {
 	Network,
 	PaintBucket,
 	Palette,
+	PenLine,
 	Percent,
 	Pipette,
 	Ratio,
@@ -280,6 +281,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-crop", name: "PDF margin trimmer", description: "Trim the white border off every PDF page, or cut in to the content, without redrawing anything.", category: "pdf", slug: "pdf-crop", keywords: ["crop pdf", "trim margins", "remove white border", "crop pages", "pdf borders"], icon: Crop, status: "available" },
 	{ id: "pdf-nup", name: "PDF n-up", description: "Put two, four, six, or nine pages on one sheet — handouts, booklets, and revision copies that use a fraction of the paper.", category: "pdf", slug: "pdf-nup", keywords: ["n-up", "pages per sheet", "multiple pages per sheet", "handout", "booklet", "imposition", "save paper"], icon: LayoutGrid, status: "available" },
 	{ id: "pdf-rotate", name: "PDF page rotator", description: "Turn a sideways scan upright — every page or just the ones you pick — by changing the page rotation, not by redrawing anything.", category: "pdf", slug: "pdf-rotate", keywords: ["rotate pdf", "turn pages", "sideways scan", "landscape to portrait", "pdf orientation"], icon: RotateCw, status: "available" },
+	{ id: "pdf-editor", name: "PDF editor", description: "Add notes, highlights, and cover boxes straight onto a PDF and save it — every page keeps its own fonts and artwork, because nothing is redrawn.", category: "pdf", slug: "pdf-editor", keywords: ["edit pdf", "annotate pdf", "add text to pdf", "highlight pdf", "notes on pdf", "sign"], icon: PenLine, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 

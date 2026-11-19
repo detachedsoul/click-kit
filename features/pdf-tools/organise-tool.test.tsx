@@ -1,8 +1,8 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PDFDocument } from "pdf-lib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PdfOrganiseTool } from "@/features/pdf-tools/organise-tool";
+import { movePage, PdfOrganiseTool } from "@/features/pdf-tools/organise-tool";
 
 vi.mock("@/features/pdf-tools/pdf-render", () => ({
 	renderPageThumbnail: vi.fn(async (_bytes: Uint8Array, page: number) => `data:image/jpeg;base64,page-${page}`),
@@ -129,5 +129,48 @@ describe("pdf page organiser", () => {
 		for (const page of [1, 2, 3]) await user.click(screen.getByRole("button", { name: `Remove page ${page}` }));
 		expect(screen.getAllByRole("alert").at(-1)?.textContent).toBe("Keep at least one page.");
 		expect(screen.getByRole("button", { name: "Save rearranged PDF" })).toHaveProperty("disabled", true);
+	});
+});
+
+describe("dragging pages", () => {
+	it("moves a page to the position it is dropped on", () => {
+		expect(movePage(["a", "b", "c"], 0, 2)).toEqual(["b", "c", "a"]);
+		expect(movePage(["a", "b", "c"], 2, 0)).toEqual(["c", "a", "b"]);
+		expect(movePage(["a", "b", "c"], 1, 1)).toEqual(["a", "b", "c"]);
+		expect(movePage(["a", "b", "c"], 0, 5)).toEqual(["a", "b", "c"]);
+	});
+
+	it("reorders the cards when one is dropped on another", async () => {
+		const user = userEvent.setup();
+		render(<PdfOrganiseTool />);
+		await load(user);
+		const cards = () => screen.getAllByText(/^Page \d/u).map((node) => node.textContent);
+		expect(cards()).toEqual(["Page 1", "Page 2", "Page 3"]);
+
+		const stored = new Map<string, string>();
+		const dataTransfer = { setData: (type: string, value: string) => stored.set(type, value), getData: (type: string) => stored.get(type) ?? "", effectAllowed: "" };
+		const [first, , third] = screen.getAllByText(/^Page \d/u).map((node) => node.closest("li") as HTMLLIElement);
+		fireEvent.dragStart(first, { dataTransfer });
+		fireEvent.dragOver(third, { dataTransfer });
+		fireEvent.drop(third, { dataTransfer });
+		fireEvent.dragEnd(third, { dataTransfer });
+
+		expect(cards()).toEqual(["Page 2", "Page 3", "Page 1"]);
+		// And the saved file follows the cards.
+		const doc = await save(user);
+		expect(widths(doc)).toEqual([400, 500, 300]);
+	});
+
+	it("marks the card being dragged", async () => {
+		const user = userEvent.setup();
+		render(<PdfOrganiseTool />);
+		await load(user);
+		const dataTransfer = { setData: vi.fn(), getData: vi.fn(() => ""), effectAllowed: "" };
+		const first = screen.getAllByText(/^Page \d/u)[0].closest("li") as HTMLLIElement;
+		fireEvent.dragStart(first, { dataTransfer });
+		expect(dataTransfer.setData).toHaveBeenCalledWith("text/plain", "0");
+		expect(first.className).toContain("opacity-60");
+		fireEvent.dragEnd(first, { dataTransfer });
+		expect(first.className).not.toContain("opacity-60");
 	});
 });

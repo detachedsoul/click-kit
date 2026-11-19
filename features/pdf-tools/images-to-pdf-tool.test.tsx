@@ -124,3 +124,18 @@ describe("images to pdf", () => {
 		expect(screen.getByRole("button", { name: "Create PDF" })).toHaveProperty("disabled", true);
 	});
 });
+
+describe("picture previews", () => {
+	it("shows each picture as it arrives, in order", async () => {
+		const user = userEvent.setup();
+		render(<ImagesToPdfTool />);
+		await load(user, [makePng(120, 80, "card.png"), makePng(60, 60, "stamp.png")]);
+		expect(await screen.findByAltText("Preview of card.png")).toBeTruthy();
+		expect(screen.getByAltText("Preview of stamp.png")).toBeTruthy();
+		// The previews are real object URLs, and each is revoked when the file goes.
+		expect(objectUrls.size).toBeGreaterThanOrEqual(2);
+		await user.click(screen.getByRole("button", { name: "Remove card.png" }));
+		expect(screen.queryByAltText("Preview of card.png")).toBeNull();
+		expect(URL.revokeObjectURL).toHaveBeenCalled();
+	});
+});

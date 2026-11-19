@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buttonClassName, ErrorNote, hintClassName, labelClassName, primaryButtonClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { createZip } from "@/features/image-tools/zip-utils";
@@ -34,7 +34,26 @@ export const PdfToImagesTool = () => {
 	const [progress, setProgress] = useState({ done: 0, total: 0 });
 	const [error, setError] = useState("");
 	const [result, setResult] = useState<{ blob: Blob; name: string; note: string } | null>(null);
+	const [images, setImages] = useState<{ page: number; name: string; blob: Blob; url: string }[]>([]);
+	const imagesRef = useRef<{ page: number; name: string; blob: Blob; url: string }[]>([]);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
+
+	const releaseImages = () => {
+		for (const image of imagesRef.current) URL.revokeObjectURL(image.url);
+		imagesRef.current = [];
+		setImages([]);
+	};
+
+	useEffect(() => {
+		imagesRef.current = images;
+	}, [images]);
+
+	useEffect(
+		() => () => {
+			for (const image of imagesRef.current) URL.revokeObjectURL(image.url);
+		},
+		[],
+	);
 
 	const selected = (): number[] | string => {
 		if (!pageCount) return "Choose a PDF first.";
@@ -48,6 +67,7 @@ export const PdfToImagesTool = () => {
 
 	const chooseFile = async (chosen: File | null) => {
 		setResult(null);
+		releaseImages();
 		setError("");
 		setPageCount(null);
 		setFile(chosen);
@@ -77,6 +97,7 @@ export const PdfToImagesTool = () => {
 		setBusy(true);
 		setError("");
 		setResult(null);
+		releaseImages();
 		setProgress({ done: 0, total: pages.length });
 		try {
 			const bytes = await readFileBytes(file);
@@ -86,16 +107,20 @@ export const PdfToImagesTool = () => {
 				quality: format === "image/png" ? undefined : Number(quality),
 				type: format,
 			});
-			const images: { name: string; bytes: Uint8Array }[] = [];
+			const made: { page: number; name: string; blob: Blob; url: string }[] = [];
+			const packed: { name: string; data: Uint8Array }[] = [];
 			for (const { page, blob } of drawn) {
-				images.push({ name: `${base}-page-${page}.${preset.extension}`, bytes: new Uint8Array(await blob.arrayBuffer()) });
-				setProgress({ done: images.length, total: pages.length });
+				const name = `${base}-page-${page}.${preset.extension}`;
+				made.push({ page, name, blob, url: URL.createObjectURL(blob) });
+				packed.push({ name, data: new Uint8Array(await blob.arrayBuffer()) });
+				setProgress({ done: made.length, total: pages.length });
 			}
-			if (images.length === 1) {
-				setResult({ blob: new Blob([images[0].bytes.slice().buffer], { type: format }), name: images[0].name, note: formatPageList(pages) });
+			setImages(made);
+			if (packed.length === 1) {
+				setResult({ blob: new Blob([packed[0].data.slice().buffer], { type: format }), name: packed[0].name, note: formatPageList(pages) });
 			} else {
-				const zip = await createZip(images.map((image) => ({ name: image.name, data: image.bytes })), { compress: false });
-				setResult({ blob: new Blob([zip.slice().buffer], { type: "application/zip" }), name: `${base}-images.zip`, note: `${images.length} ${preset.label} images` });
+				const zip = await createZip(packed, { compress: false });
+				setResult({ blob: new Blob([zip.slice().buffer], { type: "application/zip" }), name: `${base}-images.zip`, note: `${packed.length} ${preset.label} images` });
 			}
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : "These pages could not be turned into images.");
@@ -200,7 +225,27 @@ export const PdfToImagesTool = () => {
 			{result ? (
 				<div className="flex flex-wrap items-center gap-3 border border-line bg-[#f8f7f3] p-3">
 					<FileDownloadLink fileName={result.name} label={`Download ${result.name}`} url={resultUrl} />
-					<p className="m-0 text-xs text-muted">{result.note}</p>
+					<p className="m-0 text-xs text-muted">
+						{result.note}
+						{images.length > 1 ? " — each page can also be saved on its own below." : ""}
+					</p>
+				</div>
+			) : null}
+			{images.length ? (
+				<div>
+					<h2 className="m-0 text-sm font-semibold">Each page as an image</h2>
+					<ul className="m-0 mt-3 grid list-none grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-3 p-0">
+						{images.map((image) => (
+							<li className="flex flex-col gap-2 border border-line bg-[#fbfaf7] p-2" key={image.page}>
+								<span className="flex min-h-24 items-center justify-center bg-white">
+									{/* eslint-disable-next-line @next/next/no-img-element -- the converted page itself */}
+									<img alt={`Preview of page ${image.page}`} className="max-h-24 w-auto" src={image.url} />
+								</span>
+								<p className="m-0 text-center text-[11px] font-semibold text-[#3c3d37]">Page {image.page}</p>
+								<FileDownloadLink fileName={image.name} label={`Download page ${image.page}`} url={image.url} />
+							</li>
+						))}
+					</ul>
 				</div>
 			) : null}
 			{pageCount !== null ? (

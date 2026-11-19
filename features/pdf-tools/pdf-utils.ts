@@ -12,6 +12,22 @@ export const pdfBaseName = (name: string) => {
 
 export const pdfOutputName = (base: string, suffix: string) => `${pdfBaseName(base)}-${suffix}.pdf`;
 
+/**
+ * A name the browser will happily save. Anything that means something to a file system —
+ * slashes, colons, question marks, control characters — becomes a dash, and a .pdf suffix
+ * is added once, so a typed "handout.pdf" does not turn into "handout.pdf.pdf".
+ */
+export const pdfFileName = (input: string, fallback: string): string => {
+	const trimmed = input.trim().replace(/\.pdf$/iu, "");
+	const safe = trimmed
+		.replace(/[\\/:*?"<>|\u0000-\u001f]/gu, "-")
+		.replace(/\s+/gu, " ")
+		.replace(/^[.\s-]+|[.\s-]+$/gu, "")
+		.slice(0, 90)
+		.replace(/[.\s-]+$/gu, "");
+	return `${safe || pdfBaseName(fallback)}.pdf`;
+};
+
 export const pageWord = (count: number) => `${count} page${count === 1 ? "" : "s"}`;
 
 /**

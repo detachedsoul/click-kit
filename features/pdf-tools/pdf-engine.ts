@@ -501,3 +501,126 @@ export const rotatePages = (bytes: Uint8Array, options: RotateOptions = {}): Pro
 		}
 		return doc.save({ useObjectStreams: true });
 	});
+
+export type ImageWatermarkOptions = {
+	image: { bytes: Uint8Array; type: "image/png" | "image/jpeg" };
+	/** Share of the page's width the picture takes, 0.05 – 1. */
+	widthRatio?: number;
+	opacity?: number;
+};
+
+/**
+ * Lays a picture — a logo, a school crest, a signature — over every page in its own layer.
+ * The page underneath keeps its fonts, links, and artwork, because nothing of it is touched.
+ */
+export const addImageWatermark = (bytes: Uint8Array, options: ImageWatermarkOptions): Promise<Uint8Array> =>
+	guard(async () => {
+		const document = await openDocument(bytes);
+		if (!document.getPageCount()) throw new PdfInputError("This PDF has no pages.");
+		const image = options.image;
+		if (!image.bytes.length) throw new PdfInputError("Choose a picture to stamp with.");
+		const embedded = image.type === "image/jpeg" ? await document.embedJpg(image.bytes) : await document.embedPng(image.bytes);
+		if (!embedded.width || !embedded.height) throw new PdfInputError("That picture has no size to it.");
+		const ratio = Math.min(Math.max(options.widthRatio ?? 0.3, 0.02), 1);
+		const opacity = Math.min(Math.max(options.opacity ?? 0.3, 0.02), 1);
+		for (const page of document.getPages()) {
+			const { width, height } = page.getSize();
+			const drawnWidth = width * ratio;
+			const drawnHeight = (embedded.height / embedded.width) * drawnWidth;
+			page.drawImage(embedded, {
+				x: (width - drawnWidth) / 2,
+				y: (height - drawnHeight) / 2,
+				width: drawnWidth,
+				height: drawnHeight,
+				opacity,
+			});
+		}
+		return document.save({ useObjectStreams: true });
+	});
+
+export type EditKind = "text" | "highlight" | "cover";
+export type EditFont = "helvetica" | "times" | "courier";
+
+/**
+ * One mark on a page. Positions are fractions of the page — 0 is the left or top edge and
+ * 1 the right or bottom — so the same edit lands in the same place whatever size the page is.
+ */
+export type PdfEdit = {
+	kind: EditKind;
+	/** 1-based page number. */
+	page: number;
+	x: number;
+	y: number;
+	text?: string;
+	/** Text size in points, 6 – 96. */
+	size?: number;
+	font?: EditFont;
+	color?: "black" | "red" | "blue";
+	/** Width and height of a highlight or cover box, again as fractions of the page. */
+	width?: number;
+	height?: number;
+};
+
+/** "2 pages" — kept local so this module does not pull in the utils for one string. */
+const pageWordOf = (count: number) => `${count} page${count === 1 ? "" : "s"}`;
+
+const EDIT_COLOURS: Record<"black" | "red" | "blue", [number, number, number]> = {
+	black: [0.1, 0.1, 0.1],
+	red: [0.72, 0.16, 0.14],
+	blue: [0.14, 0.28, 0.65],
+};
+
+export const EDIT_BOX_DEFAULT = { width: 0.34, height: 0.06 };
+
+/**
+ * Adds notes, highlights, and cover boxes to the pages. The marks go on as their own layer:
+ * every page's existing content stream is copied through untouched, so the document keeps
+ * its own embedded fonts, links, and artwork, and the new words use an embedded standard font.
+ *
+ * A cover box hides what is underneath it but does not remove it from the file, which is why
+ * the tool calls it a cover and not a redaction.
+ */
+export const applyEdits = (bytes: Uint8Array, edits: PdfEdit[]): Promise<Uint8Array> =>
+	guard(async () => {
+		if (!edits.length) throw new PdfInputError("Add a note, a highlight, or a cover box first.");
+		const { StandardFonts, rgb } = await loadPdfLib();
+		const document = await openDocument(bytes);
+		const total = document.getPageCount();
+		if (!total) throw new PdfInputError("This PDF has no pages.");
+		const fonts = new Map<EditFont, Awaited<ReturnType<typeof document.embedFont>>>();
+		const fontFor = async (font: EditFont) => {
+			const existing = fonts.get(font);
+			if (existing) return existing;
+			const standard = font === "times" ? StandardFonts.TimesRoman : font === "courier" ? StandardFonts.Courier : StandardFonts.Helvetica;
+			const embedded = await document.embedFont(standard);
+			fonts.set(font, embedded);
+			return embedded;
+		};
+		const clamp = (value: number | undefined, fallback: number) => Math.min(Math.max(Number.isFinite(value) ? (value as number) : fallback, 0), 1);
+
+		for (const edit of edits) {
+			if (!Number.isInteger(edit.page) || edit.page < 1 || edit.page > total) throw new PdfInputError(`This PDF has ${pageWordOf(total)}, so page ${edit.page} does not exist.`);
+			const page = document.getPage(edit.page - 1);
+			const { width, height } = page.getSize();
+			const left = clamp(edit.x, 0) * width;
+			const top = clamp(edit.y, 0) * height;
+			const boxWidth = clamp(edit.width, EDIT_BOX_DEFAULT.width) * width;
+			const boxHeight = clamp(edit.height, EDIT_BOX_DEFAULT.height) * height;
+
+			if (edit.kind === "highlight") {
+				page.drawRectangle({ x: left, y: height - top - boxHeight, width: boxWidth, height: boxHeight, color: rgb(1, 0.86, 0.2), opacity: 0.35 });
+				continue;
+			}
+			if (edit.kind === "cover") {
+				page.drawRectangle({ x: left, y: height - top - boxHeight, width: boxWidth, height: boxHeight, color: rgb(1, 1, 1) });
+				continue;
+			}
+			const text = (edit.text ?? "").trim();
+			if (!text) throw new PdfInputError("Type something for the note before saving.");
+			const font = await fontFor(edit.font ?? "helvetica");
+			const size = Math.min(Math.max(edit.size ?? 13, 6), 96);
+			if (!isLatin(text, font)) throw new PdfInputError("The built-in note fonts cover Latin letters, digits, and common punctuation. Try shorter wording.");
+			page.drawText(text, { x: left, y: height - top, size, font, color: rgb(...EDIT_COLOURS[edit.color ?? "black"]) });
+		}
+		return document.save({ useObjectStreams: true });
+	});

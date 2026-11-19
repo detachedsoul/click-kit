@@ -1,10 +1,14 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PdfWatermarkTool } from "@/features/pdf-tools/watermark-tool";
 
 const objectUrls = new Map<string, Blob>();
+
+/** The smallest real PNG going: one transparent pixel, which pdf-lib accepts. */
+const PNG = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="), (character) => character.charCodeAt(0));
+const pngFile = (name = "crest.png") => new File([PNG], name, { type: "image/png" });
 
 beforeEach(() => {
 	objectUrls.clear();
@@ -90,6 +94,50 @@ describe("pdf watermark", () => {
 		await load(user);
 		await user.clear(screen.getByLabelText("Words to stamp"));
 		expect(screen.getByRole("button", { name: "Stamp the PDF" })).toHaveProperty("disabled", true);
+	});
+
+	it("stamps with a picture instead of words", async () => {
+		const user = userEvent.setup();
+		render(<PdfWatermarkTool />);
+		await load(user);
+		await user.click(screen.getByRole("button", { name: "A picture" }));
+		expect(screen.getByRole("button", { name: "Stamp the PDF" })).toHaveProperty("disabled", true);
+		await user.upload(screen.getByLabelText("Picture to stamp"), pngFile());
+		expect(await screen.findByAltText("Stamp picture crest.png")).toBeTruthy();
+		expect(screen.getByText("30% of the width")).toBeTruthy();
+		await user.selectOptions(screen.getByLabelText("Picture size"), "0.8");
+		expect(screen.getByText("80% of the width")).toBeTruthy();
+		const { link, doc } = await stampAndRead(user);
+		expect(link).toHaveProperty("download", "contract-stamped.pdf");
+		expect(doc.getPageCount()).toBe(2);
+		for (const page of doc.getPages()) {
+			// The picture goes on as its own XObject; the page's fonts are still there.
+			expect(page.node.Resources()?.toString()).toContain("XObject");
+			expect(page.node.Resources()?.toString()).toContain("Font");
+		}
+	});
+
+	it("drops the picture again on request", async () => {
+		const user = userEvent.setup();
+		render(<PdfWatermarkTool />);
+		await load(user);
+		await user.click(screen.getByRole("button", { name: "A picture" }));
+		await user.upload(screen.getByLabelText("Picture to stamp"), pngFile());
+		await screen.findByAltText("Stamp picture crest.png");
+		await user.click(screen.getByRole("button", { name: "Remove picture" }));
+		expect(screen.queryByAltText("Stamp picture crest.png")).toBeNull();
+		expect(screen.getByRole("button", { name: "Stamp the PDF" })).toHaveProperty("disabled", true);
+	});
+
+	it("refuses a file that is not a picture", async () => {
+		const user = userEvent.setup();
+		render(<PdfWatermarkTool />);
+		await load(user);
+		await user.click(screen.getByRole("button", { name: "A picture" }));
+		const input = screen.getByLabelText("Picture to stamp");
+		Object.defineProperty(input, "files", { configurable: true, value: [new File(["x"], "notes.txt", { type: "text/plain" })] });
+		fireEvent.change(input);
+		expect((await screen.findByRole("alert")).textContent).toContain("Choose a PNG, JPEG, WebP, or GIF picture.");
 	});
 
 	it("explains that the stamp font is latin only", async () => {

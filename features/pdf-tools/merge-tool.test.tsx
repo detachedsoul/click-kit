@@ -4,6 +4,10 @@ import { PDFDocument, StandardFonts } from "pdf-lib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 
+vi.mock("@/features/pdf-tools/pdf-render", () => ({
+	renderPageThumbnail: vi.fn(async (_bytes: Uint8Array, page: number) => `data:image/jpeg;base64,merged-page-${page}`),
+}));
+
 /** jsdom has no blob URLs and cannot fetch them, so keep the bytes the tool produced. */
 const objectUrls = new Map<string, Blob>();
 
@@ -105,6 +109,40 @@ describe("pdf merger", () => {
 		await waitFor(() => expect(screen.getByRole("button", { name: "Merge PDFs" })).toHaveProperty("disabled", false));
 		await user.click(screen.getByRole("button", { name: "Remove two.pdf" }));
 		expect(screen.queryByText("two.pdf")).toBeNull();
+	});
+
+	it("previews the first pages of the merged file, in order", async () => {
+		const user = userEvent.setup();
+		render(<PdfMergeTool />);
+		await upload(user, [await makePdf(1, "one.pdf"), await makePdf(2, "two.pdf", [400, 300])]);
+		await waitFor(() => expect(screen.getByRole("button", { name: "Merge PDFs" })).toHaveProperty("disabled", false));
+		await user.click(screen.getByRole("button", { name: "Merge PDFs" }));
+		expect(await screen.findByAltText("Merged page 1")).toHaveProperty("src", "data:image/jpeg;base64,merged-page-1");
+		expect(await screen.findByAltText("Merged page 3")).toBeTruthy();
+		expect(screen.queryByAltText("Merged page 4")).toBeNull();
+	});
+
+	it("saves under a name you choose", async () => {
+		const user = userEvent.setup();
+		render(<PdfMergeTool />);
+		await upload(user, [await makePdf(1, "one.pdf"), await makePdf(1, "two.pdf")]);
+		await waitFor(() => expect(screen.getByRole("button", { name: "Merge PDFs" })).toHaveProperty("disabled", false));
+		await user.click(screen.getByRole("button", { name: "Merge PDFs" }));
+		await screen.findByRole("link", { name: "Download one-merged.pdf" });
+		await user.type(screen.getByLabelText("Name for the file"), "Annual report / 2026");
+		expect(screen.getByText("Saved as Annual report - 2026.pdf")).toBeTruthy();
+		expect(screen.getByRole("link", { name: "Download Annual report - 2026.pdf" })).toBeTruthy();
+	});
+
+	it("falls back to the default name when the box is cleared", async () => {
+		const user = userEvent.setup();
+		render(<PdfMergeTool />);
+		await upload(user, [await makePdf(1, "one.pdf"), await makePdf(1, "two.pdf")]);
+		await waitFor(() => expect(screen.getByRole("button", { name: "Merge PDFs" })).toHaveProperty("disabled", false));
+		await user.click(screen.getByRole("button", { name: "Merge PDFs" }));
+		await screen.findByRole("link", { name: "Download one-merged.pdf" });
+		fireEvent.change(screen.getByLabelText("Name for the file"), { target: { value: "   " } });
+		expect(screen.getByRole("link", { name: "Download one-merged.pdf" })).toBeTruthy();
 	});
 
 	it("warns when a file is not a PDF", async () => {

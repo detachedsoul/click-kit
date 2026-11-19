@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
-import { ACCEPTED_IMAGE_TYPES, blobToBytes, canvasToBlob, describeBytes, FileDownloadLink, loadImage, MultiFileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
+import { ACCEPTED_IMAGE_TYPES, describeBytes, FileDownloadLink, MultiFileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
+import { MAX_IMAGE_BYTES, toEmbeddable } from "@/features/pdf-tools/image-embed";
 import { imagesToPdf, type PagePreset } from "@/features/pdf-tools/pdf-engine";
 import { pdfOutputName } from "@/features/pdf-tools/pdf-utils";
 
-type Entry = { id: string; file: File; problem: string };
-
-const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+type Entry = { id: string; file: File; problem: string; url: string };
 
 let nextId = 0;
 
@@ -25,38 +24,34 @@ const check = (file: File) => {
 	return "";
 };
 
-/** pdf-lib understands PNG and JPEG directly; anything else is drawn onto a canvas first. */
-const toEmbeddable = async (file: File): Promise<{ bytes: Uint8Array; type: "image/png" | "image/jpeg" }> => {
-	if (file.type === "image/jpeg") return { bytes: new Uint8Array(await file.arrayBuffer()), type: "image/jpeg" };
-	if (file.type === "image/png") return { bytes: new Uint8Array(await file.arrayBuffer()), type: "image/png" };
-	const url = URL.createObjectURL(file);
-	try {
-		const image = await loadImage(url);
-		const canvas = document.createElement("canvas");
-		canvas.width = image.naturalWidth || image.width;
-		canvas.height = image.naturalHeight || image.height;
-		const context = canvas.getContext("2d");
-		if (!context) throw new Error("This browser cannot prepare that image.");
-		context.drawImage(image, 0, 0);
-		return { bytes: await blobToBytes(await canvasToBlob(canvas, "image/png", 1)), type: "image/png" };
-	} finally {
-		URL.revokeObjectURL(url);
-	}
-};
-
 export const ImagesToPdfTool = () => {
 	const [entries, setEntries] = useState<Entry[]>([]);
 	const [preset, setPreset] = useState<PagePreset>("fit");
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
 	const [result, setResult] = useState<{ blob: Blob; name: string } | null>(null);
+	const entriesRef = useRef<Entry[]>([]);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
+
+	useEffect(() => {
+		entriesRef.current = entries;
+	}, [entries]);
+
+	/** Object URLs are made when the files arrive and released when they leave the list. */
+	useEffect(
+		() => () => {
+			for (const entry of entriesRef.current) URL.revokeObjectURL(entry.url);
+		},
+		[],
+	);
+
 	const totalBytes = entries.reduce((sum, entry) => sum + entry.file.size, 0);
 
 	const chooseFiles = (files: File[]) => {
 		setResult(null);
 		if (!files.length) return;
-		const pending = files.map((file) => ({ id: `image-${nextId++}`, file, problem: check(file) }));
+		for (const entry of entries) URL.revokeObjectURL(entry.url);
+		const pending: Entry[] = files.map((file) => ({ id: `image-${nextId++}`, file, problem: check(file), url: URL.createObjectURL(file) }));
 		const problem = pending.find((entry) => entry.problem);
 		setError(problem?.problem ? `${problem.file.name}: ${problem.problem}` : "");
 		setEntries(pending);
@@ -126,6 +121,10 @@ export const ImagesToPdfTool = () => {
 					<ul className="m-0 list-none space-y-2 p-0">
 						{entries.map((entry, index) => (
 							<li className="flex flex-wrap items-center gap-2 border border-line bg-[#fbfaf7] p-2" key={entry.id}>
+								<span className="flex h-14 w-14 shrink-0 items-center justify-center border border-line bg-white">
+									{/* eslint-disable-next-line @next/next/no-img-element -- a preview of the picked file */}
+									<img alt={`Preview of ${entry.file.name}`} className="max-h-12 w-auto" src={entry.url} />
+								</span>
 								<span className="min-w-0 flex-1 truncate font-mono text-[11px] text-ink" title={entry.file.name}>
 									{index + 1}. {entry.file.name}
 								</span>
@@ -141,6 +140,7 @@ export const ImagesToPdfTool = () => {
 									className={buttonClassName}
 									onClick={() => {
 										setResult(null);
+										URL.revokeObjectURL(entry.url);
 										setEntries((current) => current.filter((item) => item.id !== entry.id));
 									}}
 									type="button"
