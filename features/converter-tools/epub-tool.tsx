@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, ErrorNote, hintClassName, labelClassName, primaryButtonClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, ErrorNote, hintClassName, labelClassName, primaryButtonClassName, SegmentedControl, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { epubToMarkdown, readEpub, type EpubBook } from "@/features/converter-tools/epub";
 
@@ -104,7 +104,7 @@ export const EpubTool = () => {
 								Chapter
 							</label>
 							<select
-								className="mt-2 min-h-11 w-full border border-line bg-surface px-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+								className={`${selectClassName} mt-2`}
 								id="epub-chapter"
 								onChange={(event) => {
 									const index = Number(event.target.value);
