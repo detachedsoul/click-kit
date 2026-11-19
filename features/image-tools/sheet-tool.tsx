@@ -25,11 +25,17 @@ export const SheetTool = () => {
 	const layout = useMemo(() => {
 		if (!files.length) return null;
 		try {
-			return sheetLayout({ count: files.length, columns: clampColumns(columns, files.length), cell, gap, padding: 24, captionHeight: captions ? 22 : 0 });
+			return sheetLayout({ count: files.length, columns: clampColumns(columns), cell, gap, padding: 24, captionHeight: captions ? 22 : 0 });
 		} catch {
 			return null;
 		}
 	}, [captions, cell, columns, files.length, gap]);
+
+	/** Any layout change makes the last sheet stale, so it goes rather than sitting there mislabelled. */
+	const changeOption = <T,>(setter: (value: T) => void) => (value: T) => {
+		setResult(null);
+		setter(value);
+	};
 
 	const chooseFiles = (next: File[]) => {
 		setResult(null);
@@ -58,7 +64,7 @@ export const SheetTool = () => {
 		try {
 			const plan = sheetLayout({
 				count: files.length,
-				columns: clampColumns(columns, files.length),
+				columns: clampColumns(columns),
 				cell: clampCell(cell),
 				gap: clampGap(gap),
 				padding: 24,
@@ -117,7 +123,7 @@ export const SheetTool = () => {
 			<div className="grid gap-4 sm:grid-cols-3">
 				<label className={labelClassName} htmlFor="sheet-columns">
 					Columns
-					<select className={selectClassName} id="sheet-columns" onChange={(event) => setColumns(clampColumns(Number(event.target.value), files.length || 8))} value={columns}>
+					<select className={selectClassName} id="sheet-columns" onChange={(event) => changeOption(setColumns)(clampColumns(Number(event.target.value)))} value={columns}>
 						{[1, 2, 3, 4, 5, 6, 8].map((count) => (
 							<option key={count} value={count}>
 								{count}
@@ -127,15 +133,15 @@ export const SheetTool = () => {
 				</label>
 				<label className={labelClassName} htmlFor="sheet-cell">
 					Cell size (px)
-					<input className={fieldClassName} id="sheet-cell" max={1200} min={16} onChange={(event) => setCell(clampCell(Number(event.target.value)))} type="number" value={cell} />
+					<input className={fieldClassName} id="sheet-cell" max={1200} min={16} onChange={(event) => changeOption(setCell)(clampCell(Number(event.target.value)))} type="number" value={cell} />
 				</label>
 				<label className={labelClassName} htmlFor="sheet-gap">
 					Gap (px)
-					<input className={fieldClassName} id="sheet-gap" max={80} min={0} onChange={(event) => setGap(clampGap(Number(event.target.value)))} type="number" value={gap} />
+					<input className={fieldClassName} id="sheet-gap" max={80} min={0} onChange={(event) => changeOption(setGap)(clampGap(Number(event.target.value)))} type="number" value={gap} />
 				</label>
 				<label className={labelClassName} htmlFor="sheet-background">
 					Background
-					<select className={selectClassName} id="sheet-background" onChange={(event) => setBackground(event.target.value)} value={background}>
+					<select className={selectClassName} id="sheet-background" onChange={(event) => changeOption(setBackground)(event.target.value)} value={background}>
 						{SHEET_BACKGROUNDS.map((option) => (
 							<option key={option.id} value={option.id}>
 								{option.label}
@@ -145,7 +151,7 @@ export const SheetTool = () => {
 				</label>
 				<label className={labelClassName} htmlFor="sheet-format">
 					Output format
-					<select className={selectClassName} id="sheet-format" onChange={(event) => setFormat(event.target.value)} value={format}>
+					<select className={selectClassName} id="sheet-format" onChange={(event) => changeOption(setFormat)(event.target.value)} value={format}>
 						<option value="image/png">PNG (lossless)</option>
 						<option value="image/jpeg">JPEG (smaller)</option>
 						<option value="image/webp">WebP (smallest)</option>
@@ -154,11 +160,11 @@ export const SheetTool = () => {
 				{format !== "image/png" ? (
 					<label className={labelClassName} htmlFor="sheet-quality">
 						Quality ({quality}%)
-						<input className="mt-2 block h-11 w-full cursor-pointer accent-[#263b34]" id="sheet-quality" max={100} min={40} onChange={(event) => setQuality(Number(event.target.value))} step={5} type="range" value={quality} />
+						<input className="mt-2 block h-11 w-full cursor-pointer accent-[#263b34]" id="sheet-quality" max={100} min={40} onChange={(event) => changeOption(setQuality)(Number(event.target.value))} step={5} type="range" value={quality} />
 					</label>
 				) : null}
 			</div>
-			<CheckboxField checked={captions} hint="Prints each file name under its picture, shortened to fit." id="sheet-captions" label="Caption every picture with its file name" onChange={setCaptions} />
+			<CheckboxField checked={captions} hint="Prints each file name under its picture, shortened to fit." id="sheet-captions" label="Caption every picture with its file name" onChange={changeOption(setCaptions)} />
 			{files.length > 0 && layout ? (
 				<StatGrid
 					items={[

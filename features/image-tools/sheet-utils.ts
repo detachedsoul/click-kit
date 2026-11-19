@@ -13,8 +13,8 @@ export const MIN_COLUMNS = 1;
 export const MAX_COLUMNS = 8;
 export const MAX_SHEET_CELLS = 48;
 
-export const clampColumns = (value: number, count = MAX_SHEET_CELLS) =>
-	Math.max(MIN_COLUMNS, Math.min(MAX_COLUMNS, Math.max(1, count), Math.round(Number.isFinite(value) ? value : MIN_COLUMNS)));
+/** A column count is the person's choice, not a function of how many pictures are queued. */
+export const clampColumns = (value: number) => Math.max(MIN_COLUMNS, Math.min(MAX_COLUMNS, Math.round(Number.isFinite(value) ? value : MIN_COLUMNS)));
 
 /** Rows needed for a set number of pictures, with the last row filled as far as it can be. */
 export const sheetRows = (count: number, columns: number) => {
@@ -26,7 +26,7 @@ export const sheetRows = (count: number, columns: number) => {
 /** Where each cell sits, including its sizing caption strip. */
 export const sheetLayout = (options: SheetOptions) => {
 	const { count, cell, gap, padding, captionHeight } = options;
-	const columns = Math.max(1, Math.round(options.columns));
+	const columns = clampColumns(options.columns);
 	if (!Number.isFinite(cell) || cell < 16) throw new Error("Cell size must be at least 16 pixels.");
 	if (!Number.isFinite(gap) || gap < 0) throw new Error("Gap cannot be negative.");
 	const rows = sheetRows(count, columns);

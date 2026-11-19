@@ -23,9 +23,12 @@ describe("contact sheet", () => {
 		expect(sheetRows(4, 2)).toBe(2);
 		expect(sheetRows(5, 2)).toBe(3);
 		expect(() => sheetRows(0, 2)).toThrow(/at least one image/u);
-		expect(clampColumns(0, 5)).toBe(1);
-		expect(clampColumns(99, 5)).toBe(5);
-		expect(clampColumns(3, 0)).toBe(1);
+		expect(clampColumns(0)).toBe(1);
+		expect(clampColumns(99)).toBe(8);
+		expect(clampColumns(3)).toBe(3);
+		expect(clampColumns(Number.NaN)).toBe(1);
+		// Two pictures over four chosen columns still means four columns, one row.
+		expect(sheetLayout({ count: 2, columns: 4, cell: 100, gap: 0, padding: 0, captionHeight: 0 })).toMatchObject({ columns: 4, rows: 1, width: 400, height: 100 });
 		expect(clampCell(2)).toBe(16);
 		expect(clampCell(5000)).toBe(1200);
 		expect(clampGap(-4)).toBe(0);
