@@ -180,3 +180,69 @@ export const optimisePdf = (bytes: Uint8Array): Promise<Uint8Array> =>
 		const document = await openDocument(bytes);
 		return document.save({ useObjectStreams: true, addDefaultPage: false });
 	});
+
+export type WatermarkOptions = {
+	text: string;
+	opacity?: number;
+	size?: number;
+	color?: "grey" | "red" | "blue";
+	tiled?: boolean;
+};
+
+/** Can the stamp font actually draw these words? */
+const isLatin = (text: string, font: { widthOfTextAtSize: (text: string, size: number) => number }) => {
+	try {
+		font.widthOfTextAtSize(text, 12);
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+const WATERMARK_COLOURS: Record<"grey" | "red" | "blue", [number, number, number]> = {
+	grey: [0.45, 0.45, 0.45],
+	red: [0.75, 0.15, 0.15],
+	blue: [0.15, 0.3, 0.7],
+};
+
+/**
+ * Writes text across every page. Existing page content is untouched — the words go on in a
+ * separate layer — so the document's own fonts and artwork stay exactly as they were.
+ */
+export const addWatermark = (bytes: Uint8Array, options: WatermarkOptions): Promise<Uint8Array> =>
+	guard(async () => {
+		const text = options.text.trim();
+		if (!text) throw new PdfInputError("Type the words to stamp on the pages.");
+		const { StandardFonts, degrees, rgb } = await loadPdfLib();
+		const document = await openDocument(bytes);
+		const font = await document.embedFont(StandardFonts.HelveticaBold);
+		if (!isLatin(text, font)) throw new PdfInputError("The built-in stamp font only covers Latin letters, digits, and common punctuation. Try shorter wording.");
+		const colour = rgb(...WATERMARK_COLOURS[options.color ?? "grey"]);
+		const opacity = Math.min(Math.max(options.opacity ?? 0.16, 0.02), 1);
+		for (const page of document.getPages()) {
+			const { width, height } = page.getSize();
+			const size = options.size ?? Math.max(12, Math.min(width, height) / (text.length > 18 ? 12 : 8));
+			const textWidth = font.widthOfTextAtSize(text, size);
+			if (options.tiled) {
+				for (let y = size; y < height; y += size * 4) {
+					const offset = (Math.round(y / (size * 4)) % 2) * (textWidth / 2);
+					for (let x = -textWidth + offset; x < width; x += textWidth + size * 3) {
+						page.drawText(text, { x, y, size, font, color: colour, opacity, rotate: degrees(45) });
+					}
+				}
+				continue;
+			}
+			const angle = 45;
+			const radians = (angle * Math.PI) / 180;
+			page.drawText(text, {
+				x: width / 2 - (textWidth / 2) * Math.cos(radians) + (size / 2) * Math.sin(radians),
+				y: height / 2 - (textWidth / 2) * Math.sin(radians) - (size / 2) * Math.cos(radians),
+				size,
+				font,
+				color: colour,
+				opacity,
+				rotate: degrees(angle),
+			});
+		}
+		return document.save({ useObjectStreams: true });
+	});

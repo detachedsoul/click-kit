@@ -26,6 +26,7 @@ import {
 	FileSpreadsheet,
 	FileText,
 	FileType2,
+	Droplets,
 	Files,
 	Footprints,
 	Frame,
@@ -253,6 +254,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-to-images", name: "PDF to images", description: "Turn PDF pages into PNG, JPEG, or WebP pictures at screen or print resolution, one file or a zip.", category: "pdf", slug: "pdf-to-images", keywords: ["pdf to png", "pdf to jpg", "pdf to image", "render pdf", "export pages", "webp"], icon: FileImage, status: "available" },
 	{ id: "images-to-pdf", name: "Images to PDF", description: "Put photos, scans, and screenshots into one PDF, in the order you choose, on fitted or paper-sized pages.", category: "pdf", slug: "images-to-pdf", keywords: ["jpg to pdf", "png to pdf", "photos to pdf", "scan to pdf", "combine images", "picture pdf"], icon: FileImage, status: "available" },
 	{ id: "pdf-compress", name: "PDF compressor", description: "Make a PDF smaller — either keep the text sharp or redraw scanned pages at a lower resolution.", category: "pdf", slug: "pdf-compress", keywords: ["compress pdf", "shrink pdf", "reduce pdf size", "optimise pdf", "smaller pdf"], icon: FileArchive, status: "available" },
+	{ id: "pdf-watermark", name: "PDF watermark", description: "Stamp words like DRAFT or CONFIDENTIAL across every page, once in the middle or repeated, without touching the page content.", category: "pdf", slug: "pdf-watermark", keywords: ["watermark pdf", "draft stamp", "confidential", "stamp pdf", "brand pdf"], icon: Droplets, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
