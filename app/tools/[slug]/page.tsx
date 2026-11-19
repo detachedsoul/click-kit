@@ -71,6 +71,7 @@ import { PdfUnlockTool } from "@/features/pdf-tools/unlock-tool";
 import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
+import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -262,6 +263,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-text": PdfTextTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"subtitle-converter": SubtitleConverterTool,
+	"contacts-converter": ContactsConverterTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,

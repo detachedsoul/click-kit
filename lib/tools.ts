@@ -16,6 +16,7 @@ import {
 	CodeXml,
 	Columns2,
 	Component,
+	Contact,
 	Container,
 	Crosshair,
 	Crop,
@@ -264,6 +265,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-text", name: "PDF text extractor", description: "Pull the words out of a PDF in page order, copy them, or save them as a text file — with a plain answer when a file is only scans.", category: "pdf", slug: "pdf-text", keywords: ["extract text", "pdf to text", "copy text from pdf", "selectable text", "ocr"], icon: FileText, status: "available" },
 	{ id: "html-to-markdown", name: "HTML to Markdown", description: "Turn a web page or a pasted fragment into clean Markdown — or into plain text — with links, lists, tables, and code kept.", category: "convert", slug: "html-to-markdown", keywords: ["html to markdown", "web page to markdown", "convert html", "html to text", "markdown export"], icon: Braces, status: "available" },
 	{ id: "subtitle-converter", name: "Subtitles: SRT ↔ WebVTT", description: "Convert subtitle files between SubRip and WebVTT, shift the timing, or strip the times into a transcript.", category: "convert", slug: "subtitle-converter", keywords: ["srt to vtt", "vtt to srt", "subtitle converter", "captions", "transcript", "timing shift"], icon: Captions, status: "available" },
+	{ id: "contacts-converter", name: "vCard ↔ CSV contacts", description: "Turn a phone's .vcf address book into a spreadsheet, or a spreadsheet back into contacts a phone can import.", category: "convert", slug: "contacts-converter", keywords: ["vcard", "vcf to csv", "csv to vcf", "contacts", "address book", "export contacts"], icon: Contact, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
