@@ -94,6 +94,8 @@ const ToolsBrowser = () => {
 	);
 	const newCount = useMemo(() => tools.filter((tool) => isNewTool(tool.slug)).length, []);
 	const activeCategory = categories.find((item) => item.id === category);
+	// One heading names the visible set, so the cards below it are never an h1-to-h3 jump.
+	const resultsHeading = `${newOnly ? "Recently added" : (activeCategory?.name ?? "All")} tools${query.trim() ? ` matching “${query.trim()}”` : ""}`;
 	const filtering = category !== "all" || query.trim().length > 0 || newOnly || sort !== "curated";
 	const reset = () => {
 		setQuery("");
@@ -188,6 +190,7 @@ const ToolsBrowser = () => {
 			</div>
 
 			<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-xs text-muted">
+				<h2 className="sr-only">{resultsHeading}</h2>
 				<p aria-live="polite" className="m-0" role="status">
 					{filtered.length === tools.length ? `${tools.length} tools` : `${filtered.length} of ${tools.length} tools`}
 					{activeCategory ? ` · ${activeCategory.name}` : ""}
@@ -205,7 +208,7 @@ const ToolsBrowser = () => {
 				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{filtered.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
 			) : (
 				<div className="border border-line bg-surface p-8 text-center">
-					<p className="m-0 font-serif text-2xl">Nothing matches that yet.</p>
+					<h2 className="m-0 font-serif text-2xl">Nothing matches that yet.</h2>
 					<p className="mx-auto mb-4 mt-2 max-w-[420px] text-[13px] leading-[1.6] text-muted">
 						{newOnly && !query.trim()
 							? "Nothing new in this category yet. Turn off “Recently added”, or browse another category."
