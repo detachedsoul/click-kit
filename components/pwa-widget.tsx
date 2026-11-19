@@ -164,7 +164,7 @@ export const PwaWidget = () => {
 			{showCard ? (
 				<aside
 					aria-label="Install ClickKit"
-					className="fixed bottom-4 right-4 z-50 w-[min(94vw,382px)] border border-line bg-surface p-4 shadow-[0_22px_60px_#241f1626] max-[520px]:bottom-0 max-[520px]:right-0 max-[520px]:w-full max-[520px]:pb-[max(1rem,env(safe-area-inset-bottom))]"
+					className="fixed bottom-4 right-4 z-50 max-h-[calc(100vh-1rem)] w-[min(94vw,382px)] overflow-y-auto border border-line bg-surface p-4 shadow-[0_22px_60px_#241f1626] max-[520px]:bottom-0 max-[520px]:right-0 max-[520px]:w-full max-[520px]:pb-[max(1rem,env(safe-area-inset-bottom))]"
 				>
 					<div className="flex items-start gap-3">
 						<LogoMark size={38} />

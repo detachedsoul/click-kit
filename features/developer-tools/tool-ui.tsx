@@ -11,7 +11,7 @@ export const fieldClassName =
 	"mt-2 block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e] max-[520px]:h-12";
 export const selectClassName = "select-input";
 export const labelClassName = "block text-xs font-semibold text-[#3c3d37]";
-export const hintClassName = "m-0 text-[11px] leading-relaxed text-muted";
+export const hintClassName = "m-0 text-xs leading-relaxed text-muted";
 export const errorClassName = "m-0 whitespace-pre-wrap break-words text-xs text-[#8a3f30]";
 export const buttonClassName =
 	"min-h-9 cursor-pointer border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";

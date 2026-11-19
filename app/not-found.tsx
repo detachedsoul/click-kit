@@ -25,7 +25,7 @@ export default function NotFound() {
 				</h1>
 				<p className="m-0 max-w-[520px] text-sm leading-[1.7] text-[#60635b]">
 					The link may be out of date, or the tool may have moved. Everything ClickKit makes lives one click away — start from the categories below, or use the
-					search box in the header (press <kbd className="rounded-[3px] border border-line bg-surface px-[5px] py-px font-mono text-[11px]">⌘ K</kbd>).
+					search box in the header<span className="hidden sm:inline"> (press <kbd className="rounded-[3px] border border-line bg-surface px-[5px] py-px font-mono text-[11px]">⌘ K</kbd>)</span>.
 				</p>
 				<Link className="mt-6 inline-flex items-center gap-2 border border-forest bg-forest px-4 py-2.5 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href="/">
 					<ArrowLeft size={14} aria-hidden="true" /> Back to all tools
