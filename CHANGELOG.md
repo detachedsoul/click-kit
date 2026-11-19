@@ -6,6 +6,11 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **pdf** — add a page rotator ([e0d890d](https://github.com/detachedsoul/click-kit/commit/e0d890d))
+- **convert** — add rtf to markdown ([2ee5035](https://github.com/detachedsoul/click-kit/commit/2ee5035))
+- **convert** — add markdown to html ([8426b60](https://github.com/detachedsoul/click-kit/commit/8426b60))
+- **productivity** — add a task list saved in the browser ([b25713f](https://github.com/detachedsoul/click-kit/commit/b25713f))
+- **productivity** — add a habit tracker that remembers your streaks ([95c2c18](https://github.com/detachedsoul/click-kit/commit/95c2c18))
 - **pdf** — add an n-up handout builder ([fd1dc67](https://github.com/detachedsoul/click-kit/commit/fd1dc67))
 - **pdf** — add a pdf margin trimmer ([bb2f32a](https://github.com/detachedsoul/click-kit/commit/bb2f32a))
 - **convert** — add epub to markdown ([4419eea](https://github.com/detachedsoul/click-kit/commit/4419eea))

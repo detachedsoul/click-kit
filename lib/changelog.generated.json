@@ -7,6 +7,46 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "e0d890d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a page rotator",
+              "group": "Added"
+            },
+            {
+              "hash": "2ee5035",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add rtf to markdown",
+              "group": "Added"
+            },
+            {
+              "hash": "8426b60",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add markdown to html",
+              "group": "Added"
+            },
+            {
+              "hash": "b25713f",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a task list saved in the browser",
+              "group": "Added"
+            },
+            {
+              "hash": "95c2c18",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a habit tracker that remembers your streaks",
+              "group": "Added"
+            },
+            {
               "hash": "fd1dc67",
               "date": "2026-11-19",
               "type": "feat",
