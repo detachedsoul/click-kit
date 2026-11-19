@@ -72,6 +72,7 @@ import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { PdfResizeTool } from "@/features/pdf-tools/resize-tool";
 import { PdfCropTool } from "@/features/pdf-tools/crop-tool";
 import { PdfNupTool } from "@/features/pdf-tools/nup-tool";
+import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
@@ -273,6 +274,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-crop": PdfCropTool,
 	"pdf-nup": PdfNupTool,
 	"html-to-markdown": HtmlToMarkdownTool,
+	"markdown-to-html": MarkdownToHtmlTool,
 	"subtitle-converter": SubtitleConverterTool,
 	"contacts-converter": ContactsConverterTool,
 	"calendar-converter": CalendarConverterTool,
