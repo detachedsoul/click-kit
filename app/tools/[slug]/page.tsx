@@ -75,6 +75,7 @@ import { TeamTool } from "@/features/productivity-tools/team-tool";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
 import { ZipTool } from "@/features/image-tools/zip-tool";
+import { FramerTool } from "@/features/image-tools/framer-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
@@ -202,6 +203,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"image-metadata-remover": StripTool,
 	"placeholder-image": PlaceholderTool,
 	"zip-creator": ZipTool,
+	"image-framer": FramerTool,
 	"colour-shades": ShadesTool,
 	"user-agent-parser": UserAgentTool,
 	"text-chunker": ChunkTool,
