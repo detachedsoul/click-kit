@@ -1,5 +1,5 @@
 import type { PDFPage } from "pdf-lib";
-import { pdfErrorMessage } from "@/features/pdf-tools/pdf-utils";
+import { pdfErrorMessage, splitKeywords } from "@/features/pdf-tools/pdf-utils";
 
 /**
  * A thin, lazy layer over pdf-lib. Everything here copies pages rather than redrawing them,
@@ -43,7 +43,7 @@ const infoOf = (doc: Awaited<ReturnType<typeof openDocument>>): PdfInfo => {
 		producer: doc.getProducer() ?? null,
 		creator: doc.getCreator() ?? null,
 		subject: doc.getSubject() ?? null,
-		keywords: keywords ? keywords.split(",").map((word) => word.trim()).filter(Boolean) : [],
+		keywords: splitKeywords(keywords),
 	};
 };
 
@@ -76,7 +76,7 @@ const copyMetadata = (from: Awaited<ReturnType<typeof openDocument>>, to: Awaite
 	if (title) to.setTitle(title);
 	if (author) to.setAuthor(author);
 	if (subject) to.setSubject(subject);
-	if (keywords) to.setKeywords(keywords.split(",").map((word) => word.trim()).filter(Boolean));
+	if (keywords) to.setKeywords(splitKeywords(keywords));
 	if (creator) to.setCreator(creator);
 };
 
@@ -305,5 +305,30 @@ export const addHeadersAndFooters = (bytes: Uint8Array, options: HeaderFooterOpt
 			if (header) write(page, header, true, label);
 			if (footer) write(page, footer, false, label);
 		});
+		return document.save({ useObjectStreams: true });
+	});
+
+export type PdfMetadata = { title: string; author: string; subject: string; keywords: string };
+
+/**
+ * Replaces the document's own metadata. Only the info dictionary changes — every page,
+ * font, and link is copied through untouched.
+ */
+export const writeMetadata = (bytes: Uint8Array, metadata: PdfMetadata): Promise<Uint8Array> =>
+	guard(async () => {
+		const document = await openDocument(bytes);
+		const clean = (value: string) => value.trim();
+		const title = clean(metadata.title);
+		const author = clean(metadata.author);
+		const subject = clean(metadata.subject);
+		const keywords = clean(metadata.keywords)
+			.split(",")
+			.map((word) => word.trim())
+			.filter(Boolean);
+		document.setTitle(title);
+		document.setAuthor(author);
+		document.setSubject(subject);
+		document.setKeywords(keywords);
+		document.setModificationDate(new Date());
 		return document.save({ useObjectStreams: true });
 	});

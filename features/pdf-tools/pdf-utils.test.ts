@@ -9,6 +9,7 @@ import {
 	pdfBaseName,
 	pdfErrorMessage,
 	pdfOutputName,
+	splitKeywords,
 	validatePdfFile,
 	validatePdfFiles,
 } from "@/features/pdf-tools/pdf-utils";
@@ -55,6 +56,14 @@ describe("pdf helpers", () => {
 		expect(pdfErrorMessage(new Error("Failed to parse PDF document"))).toMatch(/not a readable PDF/u);
 		expect(pdfErrorMessage(new Error("boom"))).toMatch(/could not be read/u);
 		expect(pdfErrorMessage("plain string")).toMatch(/could not be read/u);
+	});
+
+	it("reads keywords written with commas or only spaces", () => {
+		expect(splitKeywords("invoice, tax, 2026")).toEqual(["invoice", "tax", "2026"]);
+		expect(splitKeywords("invoice tax 2026")).toEqual(["invoice", "tax", "2026"]);
+		expect(splitKeywords("machine learning, ai")).toEqual(["machine learning", "ai"]);
+		expect(splitKeywords("  ")).toEqual([]);
+		expect(splitKeywords(null)).toEqual([]);
 	});
 
 	it("checks files before they are read", () => {

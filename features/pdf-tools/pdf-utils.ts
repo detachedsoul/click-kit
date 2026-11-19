@@ -14,6 +14,21 @@ export const pdfOutputName = (base: string, suffix: string) => `${pdfBaseName(ba
 
 export const pageWord = (count: number) => `${count} page${count === 1 ? "" : "s"}`;
 
+/**
+ * Keywords as a list. Some writers put commas between them, others only a space (pdf-lib
+ * joins with a space), so a comma-separated list keeps its phrases and a bare list splits
+ * on whitespace.
+ */
+export const splitKeywords = (value: string | null | undefined) => {
+	const text = (value ?? "").trim();
+	if (!text) return [];
+	if (!/[,;]/u.test(text)) return text.split(/\s+/u).filter(Boolean);
+	return text
+		.split(/[,;]/u)
+		.map((part) => part.trim())
+		.filter(Boolean);
+};
+
 /** Human list of the pages a tool produced: "1, 2, 5–7". */
 export const formatPageList = (pages: number[]) => {
 	const sorted = [...new Set(pages)].sort((left, right) => left - right);
