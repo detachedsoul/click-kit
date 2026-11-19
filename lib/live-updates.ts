@@ -27,5 +27,18 @@ export const updateMessage = (remote: BuildSnapshot | null, pageTools: number) =
 	return "A newer build is available — updating…";
 };
 
+/**
+ * A tool page can hold a loaded picture, a draft, or a half-finished setup. Swapping the app under
+ * someone mid-edit throws that away, so those pages get a notice with a button instead.
+ */
+export const shouldAutoRefresh = (pathname: string | null) => !(pathname ?? "").startsWith("/tools/");
+
+/** Wording for the notice a tool page shows while it waits for permission to refresh. */
+export const waitingMessage = (remote: BuildSnapshot | null, pageTools: number) => {
+	const added = (remote?.tools ?? pageTools) - pageTools;
+	if (added > 0) return `${added} new tool${added === 1 ? "" : "s"} just landed.`;
+	return "A newer build is ready.";
+};
+
 export const upToDateMessage = "You are looking at the newest version.";
 export const offlineMessage = "Could not reach the server — still showing the copy on this device.";

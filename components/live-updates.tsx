@@ -1,9 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { ArrowUpRight, CheckCircle2, RefreshCw, Sparkles } from "lucide-react";
-import { FIRST_CHECK_MS, isStale, offlineMessage, parseSnapshot, POLL_INTERVAL_MS, updateMessage, upToDateMessage, type BuildSnapshot } from "@/lib/live-updates";
+import { ArrowUpRight, CheckCircle2, RefreshCw, Sparkles, X } from "lucide-react";
+import { FIRST_CHECK_MS, isStale, offlineMessage, parseSnapshot, POLL_INTERVAL_MS, shouldAutoRefresh, updateMessage, upToDateMessage, waitingMessage, type BuildSnapshot } from "@/lib/live-updates";
+import { alreadyAnnounced, markAnnounced, notificationsReady, showToolNotification } from "@/lib/notify";
+import { buildNotification } from "@/lib/pwa";
 
 type CheckState = "idle" | "checking" | "stale" | "current" | "offline";
 
@@ -48,16 +50,34 @@ type LiveUpdatesProps = { version: string; tools: number };
  */
 export const LiveUpdates = ({ version, tools }: LiveUpdatesProps) => {
 	const router = useRouter();
+	const pathname = usePathname();
 	const { state, remote, check } = useVersionCheck(version, tools);
 	const [isPending, startTransition] = useTransition();
+	const [waiting, setWaiting] = useState<BuildSnapshot | null>(null);
+	const [dismissed, setDismissed] = useState<string | null>(null);
+	// Tool pages keep whatever the person loaded, so they are never rebuilt under them.
+	const auto = shouldAutoRefresh(pathname);
 	// Once the refreshed layout hands us the new version, the notice clears itself.
 	const showNotice = state === "stale" && remote?.version !== version;
+
+	/** One alert per deploy, even though the tab keeps checking. */
+	const announce = useCallback((snapshot: BuildSnapshot) => {
+		const permission = typeof window !== "undefined" && "Notification" in window ? window.Notification.permission : "unsupported";
+		if (!notificationsReady("Notification" in globalThis, typeof navigator !== "undefined" && "serviceWorker" in navigator, permission)) return;
+		if (alreadyAnnounced(snapshot.version)) return;
+		const payload = buildNotification(snapshot.tools, tools);
+		if (!payload) return;
+		markAnnounced(snapshot.version);
+		void showToolNotification(payload);
+	}, [tools]);
 
 	useEffect(() => {
 		const run = () => {
 			void check().then((stale) => {
 				if (!stale) return;
-				startTransition(() => router.refresh());
+				announce(stale);
+				if (auto) startTransition(() => router.refresh());
+				else setWaiting(stale);
 			});
 		};
 		const first = window.setTimeout(run, FIRST_CHECK_MS);
@@ -76,18 +96,44 @@ export const LiveUpdates = ({ version, tools }: LiveUpdatesProps) => {
 			document.removeEventListener("visibilitychange", onVisible);
 			window.removeEventListener("online", onOnline);
 		};
-	}, [check, router]);
+	}, [announce, auto, check, router]);
 
-	if (!showNotice && !isPending) return null;
+	const waitingNotice = waiting && dismissed !== waiting.version ? waiting : null;
+	const notice = auto ? (showNotice ? remote : null) : waitingNotice;
+	if (!notice && !isPending) return null;
 
 	return (
 		<div
 			aria-live="polite"
-			className="fixed bottom-4 left-4 z-40 flex max-w-[min(92vw,340px)] items-start gap-2.5 border border-line bg-surface px-3 py-2.5 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014]"
+			className="fixed bottom-4 left-4 z-40 flex max-w-[min(92vw,360px)] items-start gap-2.5 border border-line bg-surface px-3 py-2.5 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014]"
 			role="status"
 		>
 			<Sparkles aria-hidden="true" className="mt-0.5 shrink-0 text-accent" size={14} />
-			<span>{updateMessage(remote, tools)}</span>
+			{waitingNotice ? (
+				<div className="flex flex-col gap-2">
+					<span>{waitingMessage(waitingNotice, tools)}</span>
+					<span className="text-muted">Refreshing starts the page fresh, so anything you have loaded here is cleared.</span>
+					<div className="flex flex-wrap items-center gap-3">
+						<button
+							className="inline-flex min-h-8 cursor-pointer items-center border border-forest bg-forest px-3 text-[11px] font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							onClick={() => startTransition(() => router.refresh())}
+							type="button"
+						>
+							Refresh now
+						</button>
+						<button
+							aria-label="Dismiss update notice"
+							className="grid size-8 cursor-pointer place-items-center text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							onClick={() => setDismissed(waitingNotice.version)}
+							type="button"
+						>
+							<X aria-hidden="true" size={13} />
+						</button>
+					</div>
+				</div>
+			) : (
+				<span>{updateMessage(remote, tools)}</span>
+			)}
 		</div>
 	);
 };

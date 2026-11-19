@@ -1,19 +1,28 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CheckForUpdates, LiveUpdates } from "@/components/live-updates";
 import { FIRST_CHECK_MS } from "@/lib/live-updates";
 
 const refresh = vi.hoisted(() => vi.fn());
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
+const pathname = vi.hoisted(() => ({ current: "/changelog" }));
+vi.mock("next/navigation", () => ({ usePathname: () => pathname.current, useRouter: () => ({ refresh }) }));
 
 const respondWith = (body: unknown, ok = true) => {
 	vi.stubGlobal("fetch", vi.fn(async () => ({ ok, json: async () => body })));
 };
 
+const showNotification = vi.fn(async () => undefined);
+
 beforeEach(() => {
 	refresh.mockClear();
-	vi.stubGlobal("serviceWorker", { getRegistration: vi.fn(async () => ({ update: vi.fn(async () => undefined) })) });
+	pathname.current = "/changelog";
+	window.sessionStorage.clear();
+	showNotification.mockClear();
+	Object.defineProperty(navigator, "serviceWorker", {
+		configurable: true,
+		value: { getRegistration: vi.fn(async () => ({ update: vi.fn(async () => undefined), showNotification })) },
+	});
 });
 
 afterEach(() => {
@@ -44,6 +53,73 @@ describe("live updates", () => {
 		});
 		expect(refresh).not.toHaveBeenCalled();
 		expect(container.textContent).toBe("");
+	});
+
+	it("never rebuilds a tool page under someone who is using it", async () => {
+		vi.useFakeTimers();
+		pathname.current = "/tools/image-compare";
+		respondWith({ version: "newcommit-136", tools: 136, commit: "newcommit", latestTool: "2026-11-19" });
+		render(<LiveUpdates tools={131} version="oldcommit-131" />);
+		await act(async () => {
+			vi.advanceTimersByTime(FIRST_CHECK_MS + 10);
+		});
+		expect(refresh).not.toHaveBeenCalled();
+		expect(screen.getByRole("status").textContent).toContain("5 new tools just landed.");
+		expect(screen.getByRole("status").textContent).toContain("anything you have loaded here is cleared");
+		expect(screen.getByRole("button", { name: "Refresh now" })).toBeTruthy();
+	});
+
+	it("refreshes a tool page only when the person clicks", async () => {
+		vi.useFakeTimers();
+		pathname.current = "/tools/image-compare";
+		respondWith({ version: "newcommit-136", tools: 136 });
+		render(<LiveUpdates tools={131} version="oldcommit-131" />);
+		await act(async () => {
+			vi.advanceTimersByTime(FIRST_CHECK_MS + 10);
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Refresh now" }));
+		expect(refresh).toHaveBeenCalledTimes(1);
+	});
+
+	it("can be dismissed on a tool page", async () => {
+		vi.useFakeTimers();
+		pathname.current = "/tools/word-counter";
+		respondWith({ version: "newcommit-136", tools: 136 });
+		render(<LiveUpdates tools={131} version="oldcommit-131" />);
+		await act(async () => {
+			vi.advanceTimersByTime(FIRST_CHECK_MS + 10);
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Dismiss update notice" }));
+		expect(screen.queryByRole("status")).toBeNull();
+		expect(refresh).not.toHaveBeenCalled();
+	});
+
+	it("fires one notification per deploy when alerts are allowed", async () => {
+		vi.useFakeTimers();
+		vi.stubGlobal("Notification", { permission: "granted" });
+		respondWith({ version: "newcommit-136", tools: 136 });
+		render(<LiveUpdates tools={131} version="oldcommit-131" />);
+		await act(async () => {
+			vi.advanceTimersByTime(FIRST_CHECK_MS + 10);
+		});
+		expect(showNotification).toHaveBeenCalledTimes(1);
+		expect(showNotification).toHaveBeenCalledWith("5 new tools just landed on ClickKit", expect.objectContaining({ data: { url: "/changelog" } }));
+		// The next poll finds the same deploy and stays silent.
+		await act(async () => {
+			vi.advanceTimersByTime(45_000);
+		});
+		expect(showNotification).toHaveBeenCalledTimes(1);
+	});
+
+	it("stays quiet when alerts were never granted", async () => {
+		vi.useFakeTimers();
+		vi.stubGlobal("Notification", { permission: "default" });
+		respondWith({ version: "newcommit-136", tools: 136 });
+		render(<LiveUpdates tools={131} version="oldcommit-131" />);
+		await act(async () => {
+			vi.advanceTimersByTime(FIRST_CHECK_MS + 10);
+		});
+		expect(showNotification).not.toHaveBeenCalled();
 	});
 
 	it("does nothing when the version endpoint is unreachable", async () => {
