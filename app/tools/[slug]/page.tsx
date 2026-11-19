@@ -63,6 +63,7 @@ import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
 import { PdfOrganiseTool } from "@/features/pdf-tools/organise-tool";
 import { PdfToImagesTool } from "@/features/pdf-tools/pdf-to-images-tool";
 import { ImagesToPdfTool } from "@/features/pdf-tools/images-to-pdf-tool";
+import { PdfCompressTool } from "@/features/pdf-tools/compress-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -246,6 +247,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-organise": PdfOrganiseTool,
 	"pdf-to-images": PdfToImagesTool,
 	"images-to-pdf": ImagesToPdfTool,
+	"pdf-compress": PdfCompressTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,

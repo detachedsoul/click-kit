@@ -132,7 +132,12 @@ const PRESET_SIZES: Record<Exclude<PagePreset, "fit">, [number, number]> = {
  * JPEG), so nothing is re-encoded. "fit" makes the page exactly the picture's size at
  * 72 dpi; a paper preset scales the picture down to sit inside the margins.
  */
-export const imagesToPdf = (images: { bytes: Uint8Array; type: "image/png" | "image/jpeg" }[], preset: PagePreset = "fit", margin = 24): Promise<Uint8Array> =>
+export const imagesToPdf = (
+	images: { bytes: Uint8Array; type: "image/png" | "image/jpeg" }[],
+	preset: PagePreset = "fit",
+	margin = 24,
+	options: { dpi?: number } = {},
+): Promise<Uint8Array> =>
 	guard(async () => {
 		if (!images.length) throw new PdfInputError("Add at least one image.");
 		const { PDFDocument } = await loadPdfLib();
@@ -142,8 +147,10 @@ export const imagesToPdf = (images: { bytes: Uint8Array; type: "image/png" | "im
 			const width = embedded.width;
 			const height = embedded.height;
 			if (preset === "fit") {
-				const page = doc.addPage([width, height]);
-				page.drawImage(embedded, { x: 0, y: 0, width, height });
+				// A picture drawn at 144 dpi represents half as many points as it has pixels.
+				const perPoint = (options.dpi ?? 72) / 72;
+				const page = doc.addPage([width / perPoint, height / perPoint]);
+				page.drawImage(embedded, { x: 0, y: 0, width: width / perPoint, height: height / perPoint });
 				continue;
 			}
 			const [pageWidth, pageHeight] = PRESET_SIZES[preset];
@@ -161,4 +168,15 @@ export const imagesToPdf = (images: { bytes: Uint8Array; type: "image/png" | "im
 			});
 		}
 		return doc.save({ useObjectStreams: true });
+	});
+
+/**
+ * Re-saves a document with cross-reference streams and shared object streams. Page
+ * content is copied verbatim, so text, fonts, and vectors are untouched; the saving comes
+ * from the file's structure, which is why it helps most on files built by older tools.
+ */
+export const optimisePdf = (bytes: Uint8Array): Promise<Uint8Array> =>
+	guard(async () => {
+		const document = await openDocument(bytes);
+		return document.save({ useObjectStreams: true, addDefaultPage: false });
 	});
