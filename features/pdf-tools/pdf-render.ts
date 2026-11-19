@@ -16,6 +16,8 @@ export type RenderOptions = {
 	maxSize?: number;
 	type?: "image/png" | "image/jpeg" | "image/webp";
 	quality?: number;
+	/** For documents that ask for a password before they will open. */
+	password?: string;
 };
 
 type PdfjsModule = typeof import("pdfjs-dist");
@@ -40,20 +42,21 @@ type PdfPage = Awaited<ReturnType<PdfDocument["getPage"]>>;
 /** Where the files copied by scripts/copy-pdf-worker.mjs live. */
 const ASSET_ROOT = "/pdfjs/";
 
-const sourceOptions = (bytes: Uint8Array) => ({
+const sourceOptions = (bytes: Uint8Array, password?: string) => ({
 	// A copy, because pdf.js may hand the buffer to its worker and we still need ours.
 	data: new Uint8Array(bytes),
 	cMapUrl: `${ASSET_ROOT}cmaps/`,
 	cMapPacked: true,
 	standardFontDataUrl: `${ASSET_ROOT}standard_fonts/`,
 	wasmUrl: `${ASSET_ROOT}wasm/`,
+	...(password ? { password } : {}),
 });
 
 /** Opens a document and one page in it; destroy the task to release the worker. */
-const openPage = async (bytes: Uint8Array, pageNumber: number) => {
+const openPage = async (bytes: Uint8Array, pageNumber: number, password?: string) => {
 	const pdfjs = await loadPdfjs();
 	// pdf.js may hand the buffer to its worker; give it a copy we do not need back.
-	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes));
+	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes, password));
 	const document: PdfDocument = await task.promise;
 	const page = await document.getPage(pageNumber);
 	return { page, task };
@@ -77,7 +80,7 @@ const drawPage = async (page: PdfPage, options: RenderOptions): Promise<Blob> =>
 
 /** Renders one page to an image blob. */
 export const renderPageImage = async (bytes: Uint8Array, pageNumber: number, options: RenderOptions = {}): Promise<Blob> => {
-	const { page, task } = await openPage(bytes, pageNumber);
+	const { page, task } = await openPage(bytes, pageNumber, options.password);
 	try {
 		return await drawPage(page, options);
 	} finally {
@@ -89,7 +92,7 @@ export const renderPageImage = async (bytes: Uint8Array, pageNumber: number, opt
 /** Renders several pages in one pass, so the document is only parsed once. */
 export const renderPageImages = async (bytes: Uint8Array, pageNumbers: number[], options: RenderOptions = {}): Promise<{ page: number; blob: Blob }[]> => {
 	const pdfjs = await loadPdfjs();
-	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes));
+	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes, options.password));
 	const document: PdfDocument = await task.promise;
 	try {
 		const out: { page: number; blob: Blob }[] = [];
@@ -113,6 +116,18 @@ export const renderPageThumbnail = async (bytes: Uint8Array, pageNumber: number,
 		reader.onerror = () => reject(new Error("This page could not be previewed."));
 		reader.readAsDataURL(blob);
 	});
+};
+
+/** How many pages a document has — and whether the password opens it at all. */
+export const pdfPageCount = async (bytes: Uint8Array, password?: string): Promise<number> => {
+	const pdfjs = await loadPdfjs();
+	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes, password));
+	try {
+		const document: PdfDocument = await task.promise;
+		return document.numPages;
+	} finally {
+		await task.destroy();
+	}
 };
 
 /** Every page's text, joined by a blank line. */
