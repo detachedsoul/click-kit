@@ -72,6 +72,7 @@ import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
+import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -264,6 +265,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"html-to-markdown": HtmlToMarkdownTool,
 	"subtitle-converter": SubtitleConverterTool,
 	"contacts-converter": ContactsConverterTool,
+	"calendar-converter": CalendarConverterTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
