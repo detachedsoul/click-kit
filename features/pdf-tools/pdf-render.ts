@@ -10,6 +10,8 @@
 export type RenderOptions = {
 	/** Output width in CSS pixels; height follows the page's own aspect ratio. */
 	width?: number;
+	/** Direct zoom on the page's own size: 1 keeps 72 dpi, 2 doubles it. */
+	scale?: number;
 	/** Hard cap on the rendered size, whichever dimension bites first. */
 	maxSize?: number;
 	type?: "image/png" | "image/jpeg" | "image/webp";
@@ -33,6 +35,7 @@ export const loadPdfjs = () => {
 
 type LoadingTask = ReturnType<PdfjsModule["getDocument"]>;
 type PdfDocument = Awaited<LoadingTask["promise"]>;
+type PdfPage = Awaited<ReturnType<PdfDocument["getPage"]>>;
 
 /** Where the files copied by scripts/copy-pdf-worker.mjs live. */
 const ASSET_ROOT = "/pdfjs/";
@@ -56,24 +59,47 @@ const openPage = async (bytes: Uint8Array, pageNumber: number) => {
 	return { page, task };
 };
 
+/** Draws one already-open page at the requested size and encodes it. */
+const drawPage = async (page: PdfPage, options: RenderOptions): Promise<Blob> => {
+	const base = page.getViewport({ scale: 1 });
+	const cap = options.maxSize ?? 4000;
+	const zoom = options.scale ?? Math.min((options.width ?? cap) / base.width, cap / base.height);
+	const viewport = page.getViewport({ scale: Math.min(Math.max(zoom, 0.1), 8) });
+	const canvas = globalThis.document.createElement("canvas");
+	canvas.width = Math.max(1, Math.min(Math.round(viewport.width), cap));
+	canvas.height = Math.max(1, Math.min(Math.round(viewport.height), cap));
+	await page.render({ canvas, viewport }).promise;
+	const type = options.type ?? "image/png";
+	const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, options.quality));
+	if (!blob) throw new Error("This page could not be drawn.");
+	return blob;
+};
+
 /** Renders one page to an image blob. */
 export const renderPageImage = async (bytes: Uint8Array, pageNumber: number, options: RenderOptions = {}): Promise<Blob> => {
 	const { page, task } = await openPage(bytes, pageNumber);
 	try {
-		const base = page.getViewport({ scale: 1 });
-		const cap = options.maxSize ?? 1600;
-		const wanted = options.width ?? cap;
-		const viewport = page.getViewport({ scale: Math.min(wanted / base.width, cap / base.height, 4) });
-		const canvas = globalThis.document.createElement("canvas");
-		canvas.width = Math.max(1, Math.round(viewport.width));
-		canvas.height = Math.max(1, Math.round(viewport.height));
-		await page.render({ canvas, viewport }).promise;
-		const type = options.type ?? "image/png";
-		const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, options.quality));
-		if (!blob) throw new Error("This page could not be drawn.");
-		return blob;
+		return await drawPage(page, options);
 	} finally {
 		page.cleanup();
+		await task.destroy();
+	}
+};
+
+/** Renders several pages in one pass, so the document is only parsed once. */
+export const renderPageImages = async (bytes: Uint8Array, pageNumbers: number[], options: RenderOptions = {}): Promise<{ page: number; blob: Blob }[]> => {
+	const pdfjs = await loadPdfjs();
+	const task: LoadingTask = pdfjs.getDocument(sourceOptions(bytes));
+	const document: PdfDocument = await task.promise;
+	try {
+		const out: { page: number; blob: Blob }[] = [];
+		for (const pageNumber of pageNumbers) {
+			const page = await document.getPage(pageNumber);
+			out.push({ page: pageNumber, blob: await drawPage(page, options) });
+			page.cleanup();
+		}
+		return out;
+	} finally {
 		await task.destroy();
 	}
 };
