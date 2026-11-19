@@ -153,6 +153,22 @@
           "group": "Maintenance",
           "entries": [
             {
+              "hash": "59f2f19",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "ui",
+              "summary": "drop build-and-repository notes from the site copy",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "2cfcbd5",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
               "hash": "a868eaa",
               "date": "2026-11-19",
               "type": "docs",

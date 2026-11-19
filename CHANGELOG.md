@@ -29,6 +29,8 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **ui** — drop build-and-repository notes from the site copy ([59f2f19](https://github.com/detachedsoul/click-kit/commit/59f2f19))
+- refresh the generated changelog ([2cfcbd5](https://github.com/detachedsoul/click-kit/commit/2cfcbd5))
 - refresh the generated changelog ([a868eaa](https://github.com/detachedsoul/click-kit/commit/a868eaa))
 - refresh the generated changelog ([d29b52c](https://github.com/detachedsoul/click-kit/commit/d29b52c))
 - refresh changelog and README for GPA scales, watermarks, and new tools ([a904401](https://github.com/detachedsoul/click-kit/commit/a904401))
