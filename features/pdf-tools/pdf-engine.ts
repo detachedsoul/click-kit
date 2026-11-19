@@ -371,3 +371,27 @@ export const resizePages = (bytes: Uint8Array, paper: PaperSize, margin = 18): P
 		}
 		return document.save({ useObjectStreams: true });
 	});
+
+export type CropInsets = { top: number; right: number; bottom: number; left: number };
+
+/** Points per millimetre, for the margin fields. */
+export const MM = 72 / 25.4;
+
+/**
+ * Trims the visible area of every page by a margin, in points. This sets the crop box —
+ * the page's content is untouched, so text stays selectable, fonts stay embedded, and the
+ * trimmed-away part is still there if someone opens the file in an editor later.
+ */
+export const cropPages = (bytes: Uint8Array, insets: CropInsets): Promise<Uint8Array> =>
+	guard(async () => {
+		const document = await openDocument(bytes);
+		for (const page of document.getPages()) {
+			const box = page.getMediaBox();
+			const width = box.width - insets.left - insets.right;
+			const height = box.height - insets.top - insets.bottom;
+			if (width < 12 || height < 12) throw new PdfInputError("Those margins leave no page behind — use smaller numbers.");
+			if (insets.left < 0 || insets.right < 0 || insets.top < 0 || insets.bottom < 0) throw new PdfInputError("Margins cannot be negative.");
+			page.setCropBox(box.x + insets.left, box.y + insets.bottom, width, height);
+		}
+		return document.save({ useObjectStreams: true });
+	});

@@ -70,6 +70,7 @@ import { PdfMetadataTool } from "@/features/pdf-tools/metadata-tool";
 import { PdfUnlockTool } from "@/features/pdf-tools/unlock-tool";
 import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { PdfResizeTool } from "@/features/pdf-tools/resize-tool";
+import { PdfCropTool } from "@/features/pdf-tools/crop-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
@@ -266,6 +267,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-unlock": PdfUnlockTool,
 	"pdf-text": PdfTextTool,
 	"pdf-resize": PdfResizeTool,
+	"pdf-crop": PdfCropTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"subtitle-converter": SubtitleConverterTool,
 	"contacts-converter": ContactsConverterTool,
