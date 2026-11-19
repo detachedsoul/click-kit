@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { ErrorNote, hintClassName, labelClassName, primaryButtonClassName, ResultBlock, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
@@ -16,20 +16,24 @@ import {
 } from "@/features/image-tools/image-file-shared";
 import { outputExtension, type Size } from "@/features/image-tools/crop-utils";
 import {
-	blurRadius,
+	clampStrength,
 	coveragePercent,
 	describeRegions,
 	isUsableRegion,
 	normaliseRegion,
-	pixelBlockSize,
+	DEFAULT_STRENGTH,
+	MAX_STRENGTH,
+	MIN_STRENGTH,
 	pointerToImage,
 	redactedFileName,
 	regionPercentStyle,
+	regionStrength,
 	REGION_MODES,
 	type Point,
 	type Region,
 	type RegionMode,
 } from "@/features/image-tools/redact-utils";
+import { drawRedactions } from "@/features/image-tools/redact-draw";
 
 type Result = { blob: Blob; fileName: string; width: number; height: number };
 
@@ -38,7 +42,7 @@ export const RedactTool = () => {
 	const [size, setSize] = useState<Size>({ width: 0, height: 0 });
 	const [regions, setRegions] = useState<Region[]>([]);
 	const [mode, setMode] = useState<RegionMode>("solid");
-	const [strength, setStrength] = useState(12);
+	const [strength, setStrength] = useState(DEFAULT_STRENGTH);
 	const [draft, setDraft] = useState<{ from: Point; to: Point } | null>(null);
 	const [format, setFormat] = useState("image/png");
 	const [result, setResult] = useState<Result | null>(null);
@@ -46,9 +50,32 @@ export const RedactTool = () => {
 	const [busy, setBusy] = useState(false);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const nextId = useRef(1);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const previewUrl = useObjectUrl(file);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
 	const preview = draft && size.width > 0 ? normaliseRegion(draft.from, draft.to, size) : null;
+
+	// Repaint the preview whenever an area or its strength changes, so the slider has a visible effect.
+	useEffect(() => {
+		if (!previewUrl || size.width < 1) return;
+		let cancelled = false;
+		const paint = async () => {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			const image = await loadImage(previewUrl);
+			if (cancelled) return;
+			canvas.width = size.width;
+			canvas.height = size.height;
+			const context = canvas.getContext("2d");
+			if (!context) return;
+			context.drawImage(image, 0, 0, size.width, size.height);
+			drawRedactions({ context, image, regions });
+		};
+		void paint();
+		return () => {
+			cancelled = true;
+		};
+	}, [previewUrl, regions, size]);
 
 	const chooseFile = async (nextFile: File | null) => {
 		setResult(null);
@@ -103,7 +130,7 @@ export const RedactTool = () => {
 		const region = normaliseRegion(draft.from, draft.to, size);
 		setDraft(null);
 		if (!isUsableRegion(region)) return;
-		setRegions((current) => [...current, { ...region, id: `region-${nextId.current++}`, mode }]);
+		setRegions((current) => [...current, { ...region, id: `region-${nextId.current++}`, mode, strength }]);
 		setResult(null);
 	};
 
@@ -120,35 +147,7 @@ export const RedactTool = () => {
 			const context = canvas.getContext("2d");
 			if (!context) throw new Error("Canvas image processing is not available in this browser.");
 			context.drawImage(image, 0, 0, size.width, size.height);
-			for (const region of regions) {
-				if (region.mode === "solid") {
-					context.fillStyle = "#000000";
-					context.fillRect(region.x, region.y, region.width, region.height);
-				} else if (region.mode === "pixelate") {
-					const block = pixelBlockSize(region, strength);
-					const small = document.createElement("canvas");
-					small.width = Math.max(1, Math.round(region.width / block));
-					small.height = Math.max(1, Math.round(region.height / block));
-					const smallContext = small.getContext("2d");
-					if (!smallContext) throw new Error("Canvas image processing is not available in this browser.");
-					smallContext.drawImage(image, region.x, region.y, region.width, region.height, 0, 0, small.width, small.height);
-					context.save();
-					context.imageSmoothingEnabled = false;
-					context.drawImage(small, 0, 0, small.width, small.height, region.x, region.y, region.width, region.height);
-					context.restore();
-				} else {
-					const radius = blurRadius(region, strength);
-					context.save();
-					context.beginPath();
-					context.rect(region.x, region.y, region.width, region.height);
-					context.clip();
-					context.filter = `blur(${radius}px)`;
-					// Draw a slightly larger area so the blur has real pixels to bleed in from the edges.
-					context.drawImage(image, region.x - radius * 2, region.y - radius * 2, region.width + radius * 4, region.height + radius * 4, region.x - radius * 2, region.y - radius * 2, region.width + radius * 4, region.height + radius * 4);
-					context.filter = "none";
-					context.restore();
-				}
-			}
+			drawRedactions({ context, image, regions });
 			const blob = await canvasToBlob(canvas, format, 0.92);
 			setResult({ blob, fileName: redactedFileName(file.name, outputExtension(format)), width: size.width, height: size.height });
 		} catch (caught) {
@@ -182,20 +181,23 @@ export const RedactTool = () => {
 							</select>
 						</label>
 						<label className={labelClassName} htmlFor="redact-strength">
-							Strength ({strength})
+							Strength for new areas ({strength}%)
 							<input
 								className="mt-2 block h-11 w-32 cursor-pointer accent-[#263b34]"
-								disabled={mode === "solid"}
 								id="redact-strength"
-								max={40}
-								min={4}
-								onChange={(event) => setStrength(Number(event.target.value))}
+								max={MAX_STRENGTH}
+								min={MIN_STRENGTH}
+								onChange={(event) => setStrength(clampStrength(Number(event.target.value)))}
+								step={5}
 								type="range"
 								value={strength}
 							/>
 						</label>
 					</div>
-					<p className={hintClassName}>{REGION_MODES.find((option) => option.id === mode)?.hint}</p>
+					<p className={hintClassName}>
+						{REGION_MODES.find((option) => option.id === mode)?.hint} Higher strength hides more — each area keeps its own setting, and the preview
+						updates as you drag.
+					</p>
 					<div
 						className="relative touch-none select-none border border-line bg-[#f8f7f3] p-1"
 						onPointerCancel={endDrag}
@@ -206,7 +208,12 @@ export const RedactTool = () => {
 						role="application"
 						aria-label="Drawing area: drag across the image to mark areas to hide"
 					>
-						<Image alt={`Redaction area: ${file.name}`} className="pointer-events-none block h-auto w-full" height={size.height} src={previewUrl} unoptimized width={size.width} draggable={false} />
+						<canvas
+							aria-label={`Redaction preview: ${file.name}`}
+							className="pointer-events-none block h-auto w-full"
+							ref={canvasRef}
+							role="img"
+						/>
 						{regions.map((region, index) => (
 							<span
 								className={`pointer-events-none absolute border-2 ${region.mode === "solid" ? "border-[#b64b31] bg-black/70" : region.mode === "pixelate" ? "border-[#873b28] bg-[#873b28]/25" : "border-[#263b34] bg-[#263b34]/20"}`}
@@ -246,7 +253,26 @@ export const RedactTool = () => {
 									<span className="text-ink">
 										{Math.round(region.x)}, {Math.round(region.y)} · {Math.round(region.width)} × {Math.round(region.height)} px
 									</span>
-									<label className="ml-auto flex items-center gap-1.5 text-[#5f6259]" htmlFor={`redact-mode-${region.id}`}>
+									{region.mode !== "solid" ? (
+										<label className="ml-auto flex items-center gap-1.5 text-[#5f6259]" htmlFor={`redact-strength-${region.id}`}>
+											<span className="sr-only">{`Strength for area ${index + 1}`}</span>
+											<input
+												aria-label={`Strength for area ${index + 1}`}
+												className="h-8 w-24 cursor-pointer accent-[#263b34]"
+												id={`redact-strength-${region.id}`}
+												max={MAX_STRENGTH}
+												min={MIN_STRENGTH}
+												onChange={(event) =>
+													setRegions((current) => current.map((item) => (item.id === region.id ? { ...item, strength: clampStrength(Number(event.target.value)) } : item)))
+												}
+												step={5}
+												type="range"
+												value={regionStrength(region)}
+											/>
+											<span className="font-mono text-[10px] text-[#5f6259]">{regionStrength(region)}%</span>
+										</label>
+									) : null}
+									<label className={`${region.mode !== "solid" ? "" : "ml-auto "}flex items-center gap-1.5 text-[#5f6259]`} htmlFor={`redact-mode-${region.id}`}>
 										<span className="sr-only">Mode for area {index + 1}</span>
 										<select
 											className="select-input mt-0 h-8 text-[11px]"
@@ -317,7 +343,7 @@ export const RedactTool = () => {
 						fileName="redaction-list.txt"
 						rows={5}
 						title="Redacted areas"
-						value={regions.map((region, index) => `#${index + 1} ${region.mode} at ${region.x},${region.y} — ${region.width}×${region.height} px`).join("\n")}
+						value={regions.map((region, index) => `#${index + 1} ${region.mode}${region.mode === "solid" ? "" : ` (${regionStrength(region)}%)`} at ${region.x},${region.y} — ${region.width}×${region.height} px`).join("\n")}
 					/>
 				</>
 			) : null}

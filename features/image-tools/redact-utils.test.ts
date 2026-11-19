@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
 	blurRadius,
+	clampStrength,
+	DEFAULT_STRENGTH,
+	MAX_STRENGTH,
+	MIN_STRENGTH,
+	regionStrength,
 	coveragePercent,
 	describeRegions,
 	isUsableRegion,
@@ -42,12 +47,26 @@ describe("redaction regions", () => {
 		expect(shrunk.x).toBe(900);
 	});
 
-	it("sizes the mosaic and blur effects", () => {
+	it("sizes the mosaic and blur effects so more strength hides more", () => {
 		const region = { id: "r", x: 0, y: 0, width: 120, height: 60, mode: "pixelate" as const };
-		expect(pixelBlockSize(region, 12)).toBe(5);
-		expect(pixelBlockSize(region, 500)).toBe(2);
-		expect(pixelBlockSize(region, 1)).toBe(30);
-		expect(blurRadius(region, 12)).toBe(5);
+		expect(pixelBlockSize(region, MIN_STRENGTH)).toBe(2);
+		expect(pixelBlockSize(region, 50)).toBe(15);
+		expect(pixelBlockSize(region, MAX_STRENGTH)).toBe(30);
+		expect(pixelBlockSize(region, 500)).toBe(30);
+		expect(pixelBlockSize(region, 50) >= pixelBlockSize(region, 20)).toBe(true);
+		expect(blurRadius(region, MIN_STRENGTH)).toBe(2);
+		expect(blurRadius(region, 75)).toBe(15);
+		expect(blurRadius(region, MAX_STRENGTH)).toBe(20);
+	});
+
+	it("keeps a strength per area, clamped to the slider", () => {
+		expect(clampStrength(0)).toBe(MIN_STRENGTH);
+		expect(clampStrength(500)).toBe(MAX_STRENGTH);
+		expect(clampStrength(Number.NaN)).toBe(DEFAULT_STRENGTH);
+		expect(regionStrength({ id: "a", x: 0, y: 0, width: 10, height: 10, mode: "blur" })).toBe(DEFAULT_STRENGTH);
+		expect(regionStrength({ id: "b", x: 0, y: 0, width: 10, height: 10, mode: "blur", strength: 30 })).toBe(30);
+		// An area's own strength wins over the default.
+		expect(pixelBlockSize({ id: "c", x: 0, y: 0, width: 100, height: 100, mode: "pixelate", strength: 100 })).toBe(50);
 	});
 
 	it("reports how much of the image is covered", () => {

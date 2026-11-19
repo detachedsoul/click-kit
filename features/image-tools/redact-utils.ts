@@ -2,7 +2,7 @@ import type { Size } from "@/features/image-tools/crop-utils";
 
 export type RegionMode = "solid" | "pixelate" | "blur";
 export type Point = { x: number; y: number };
-export type Region = { id: string; x: number; y: number; width: number; height: number; mode: RegionMode };
+export type Region = { id: string; x: number; y: number; width: number; height: number; mode: RegionMode; strength?: number };
 
 export const REGION_MODES: { id: RegionMode; label: string; hint: string }[] = [
 	{ id: "solid", label: "Solid block", hint: "Fills the area with black. The safest choice for text." },
@@ -45,13 +45,23 @@ export const resizeRegion = (region: Region, dx: number, dy: number, size: Size)
 	height: clamp(round(region.height + dy), MIN_REGION, size.height - region.y),
 });
 
-/** Pixel size of the mosaic blocks: bigger strength means bigger blocks. */
-export const pixelBlockSize = (region: Region, strength: number) => {
-	const bounded = clamp(strength, 2, 60);
-	return Math.max(2, Math.round(Math.min(region.width, region.height) / bounded));
-};
+export const MIN_STRENGTH = 5;
+export const MAX_STRENGTH = 100;
+export const DEFAULT_STRENGTH = 60;
 
-export const blurRadius = (region: Region, strength: number) => Math.max(2, Math.round(Math.min(region.width, region.height) / clamp(strength, 2, 60)));
+/** More strength always means more hiding. */
+export const clampStrength = (value: number) => clamp(round(Number.isFinite(value) ? value : DEFAULT_STRENGTH), MIN_STRENGTH, MAX_STRENGTH);
+
+/** An area keeps its own strength; older regions without one fall back to the default. */
+export const regionStrength = (region: Region) => clampStrength(region.strength ?? DEFAULT_STRENGTH);
+
+/** Edge of one mosaic block in image pixels: more strength, bigger blocks, fewer of them. */
+export const pixelBlockSize = (region: Region, strength = regionStrength(region)) =>
+	Math.max(2, round((Math.min(region.width, region.height) * clampStrength(strength)) / 200));
+
+/** Blur radius in image pixels: more strength, softer and wider. */
+export const blurRadius = (region: Region, strength = regionStrength(region)) =>
+	Math.max(2, round((Math.min(region.width, region.height) * clampStrength(strength)) / 300));
 
 export const coveragePercent = (regions: Region[], size: Size) => {
 	if (size.width < 1 || size.height < 1) return 0;
