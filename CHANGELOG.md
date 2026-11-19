@@ -22,11 +22,13 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **a11y** — keep the heading outline sequential on the tools page ([eaa5932](https://github.com/detachedsoul/click-kit/commit/eaa5932))
 - **image** — make the redactor strength slider work ([3e67464](https://github.com/detachedsoul/click-kit/commit/3e67464))
 - **a11y** — raise text and field contrast to WCAG AA ([1aa4a50](https://github.com/detachedsoul/click-kit/commit/1aa4a50))
 
 ### Maintenance
 
+- refresh the generated changelog ([d29b52c](https://github.com/detachedsoul/click-kit/commit/d29b52c))
 - refresh changelog and README for GPA scales, watermarks, and new tools ([a904401](https://github.com/detachedsoul/click-kit/commit/a904401))
 - refresh changelog and README for the five new image tools ([181a6dd](https://github.com/detachedsoul/click-kit/commit/181a6dd))
 

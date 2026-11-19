@@ -116,6 +116,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "eaa5932",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "a11y",
+              "summary": "keep the heading outline sequential on the tools page",
+              "group": "Fixed"
+            },
+            {
               "hash": "3e67464",
               "date": "2026-11-19",
               "type": "fix",
@@ -136,6 +144,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "d29b52c",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
             {
               "hash": "a904401",
               "date": "2026-11-19",
