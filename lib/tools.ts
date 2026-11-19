@@ -248,6 +248,7 @@ export const tools: Tool[] = [
 	{ id: "pomodoro-timer", name: "Pomodoro timer", description: "Focus for a while, then take a proper break.", category: "productivity", slug: "pomodoro-timer", keywords: ["focus", "countdown", "work"], icon: Timer, status: "available" },
 	{ id: "decision-matrix", name: "Decision matrix", description: "Compare options against weighted criteria and see which one wins, with a ranking you can copy.", category: "productivity", slug: "decision-matrix", keywords: ["decision", "matrix", "weighted", "compare", "choose", "score", "pros and cons"], icon: Scale, status: "available" },
 	{ id: "pdf-merge", name: "PDF merger", description: "Join several PDFs into one, in the order you choose, with fonts, images, and links left exactly as they were.", category: "pdf", slug: "pdf-merge", keywords: ["merge pdf", "combine pdf", "join pdf", "pdf binder", "append pdf"], icon: Files, status: "available" },
+	{ id: "pdf-split", name: "PDF splitter", description: "Break a PDF into separate files by page range, every few pages, or one file per page — pages are copied, never re-rendered.", category: "pdf", slug: "pdf-split", keywords: ["split pdf", "burst pdf", "separate pages", "extract pages", "page ranges", "pdf parts"], icon: Scissors, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
