@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, GitCommitHorizontal, Sparkles } from "lucide-react";
 import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
+import NotifyOptIn from "@/components/notify-opt-in";
 import changelog from "@/lib/changelog.generated.json";
 import { siteUrl } from "@/lib/site";
 import { categories, tools } from "@/lib/tools";
@@ -46,6 +47,10 @@ const ChangelogPage = () => {
 					weeks. Additions are dated the day they landed, so the badges elsewhere on the site always agree with this page.
 				</p>
 			</header>
+
+			<div className="mb-8">
+				<NotifyOptIn />
+			</div>
 
 			{recent.length > 0 ? (
 				<section aria-labelledby="fresh-title" className="border-t border-line py-8 max-[620px]:py-6">

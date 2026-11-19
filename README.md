@@ -22,6 +22,12 @@ New tools are tracked automatically. `lib/tool-dates.generated.json` maps every 
 
 `npm run changelog` turns the commit history into `lib/changelog.generated.json` and `CHANGELOG.md`, which the `/changelog` page renders day by day.
 
+## Install it, and get told when a tool lands
+
+`app/manifest.ts` plus `public/sw.js` make ClickKit installable: the service worker caches the shell so tools keep opening when the connection drops, and pages are fetched network-first so a new tool is never hidden behind a stale cache. A card in the corner (`components/pwa-widget.tsx`) invites people to install it — Chrome and Android through the browser's own prompt, iOS through the share-sheet instructions — and remembers a "Not now" for three weeks.
+
+The same card, and a compact switch on `/changelog`, ask for notification permission. After that, when a visit finds tools added since the last alert, the service worker shows one notification; tapping it opens the changelog, or the tool itself when only one is new. `public/sw.js` also handles a standard `push` event, so a push service can deliver `{ title, body, url }` to the same handler — that is the piece that needs a small server (VAPID keys plus somewhere to store subscriptions), since the site itself is static.
+
 Run `npm run sync-meta` after adding or renaming a tool, and commit both generated files — they are part of the build, not a runtime fetch.
 
 Have an idea, spotted a problem, or want to help improve a tool? [Report an issue](https://github.com/detachedsoul/click-kit/issues/new), [share a suggestion](https://github.com/detachedsoul/click-kit/issues), or [open a pull request](https://github.com/detachedsoul/click-kit/compare).

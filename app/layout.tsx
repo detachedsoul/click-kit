@@ -1,5 +1,6 @@
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import PwaWidget from "@/components/pwa-widget";
 import type { Metadata, Viewport } from "next";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site";
 import "@fontsource-variable/dm-sans/wght.css";
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
 	publisher: "ClickKit",
 	alternates: { canonical: "/" },
 	manifest: "/manifest.webmanifest",
+	appleWebApp: { capable: true, title: siteName, statusBarStyle: "default" },
 	icons: {
 		icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
 		apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
@@ -41,6 +43,8 @@ export const metadata: Metadata = {
 		googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
 	},
 	formatDetection: { telephone: false, address: false, email: false },
+	// Older iOS versions only honour the prefixed capability tag.
+	other: { "apple-mobile-web-app-capable": "yes", "mobile-web-app-capable": "yes" },
 };
 
 export const viewport: Viewport = {
@@ -84,6 +88,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
 			<SiteHeader />
 			<main id="main-content">{children}</main>
 			<SiteFooter />
+			<PwaWidget />
 			<script dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} type="application/ld+json" />
 		</body>
 	</html>
