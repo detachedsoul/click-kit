@@ -6,6 +6,11 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **productivity** — add a decision matrix ([ca84cf0](https://github.com/detachedsoul/click-kit/commit/ca84cf0))
+- **calculators** — add a recipe scaler ([9fcfdf4](https://github.com/detachedsoul/click-kit/commit/9fcfdf4))
+- **calculators** — add a salary converter ([5a0b69b](https://github.com/detachedsoul/click-kit/commit/5a0b69b))
+- **developer** — add a box shadow generator ([b995ff5](https://github.com/detachedsoul/click-kit/commit/b995ff5))
+- **text** — add a post length counter ([407f1c2](https://github.com/detachedsoul/click-kit/commit/407f1c2))
 - **ui** — update open pages in place when a new build ships ([e38506c](https://github.com/detachedsoul/click-kit/commit/e38506c))
 - **pwa** — install prompt and new-tool notifications ([0babd8d](https://github.com/detachedsoul/click-kit/commit/0babd8d))
 - **calculators** — default the GPA calculator to 5.0 and plain A-F letters ([55774dc](https://github.com/detachedsoul/click-kit/commit/55774dc))
@@ -29,6 +34,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- refresh the generated changelog ([812c1f9](https://github.com/detachedsoul/click-kit/commit/812c1f9))
 - **ui** — drop build-and-repository notes from the site copy ([59f2f19](https://github.com/detachedsoul/click-kit/commit/59f2f19))
 - refresh the generated changelog ([2cfcbd5](https://github.com/detachedsoul/click-kit/commit/2cfcbd5))
 - refresh the generated changelog ([a868eaa](https://github.com/detachedsoul/click-kit/commit/a868eaa))

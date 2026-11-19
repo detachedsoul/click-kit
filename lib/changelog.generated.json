@@ -7,6 +7,46 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "ca84cf0",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a decision matrix",
+              "group": "Added"
+            },
+            {
+              "hash": "9fcfdf4",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a recipe scaler",
+              "group": "Added"
+            },
+            {
+              "hash": "5a0b69b",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a salary converter",
+              "group": "Added"
+            },
+            {
+              "hash": "b995ff5",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add a box shadow generator",
+              "group": "Added"
+            },
+            {
+              "hash": "407f1c2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "text",
+              "summary": "add a post length counter",
+              "group": "Added"
+            },
+            {
               "hash": "e38506c",
               "date": "2026-11-19",
               "type": "feat",
@@ -152,6 +192,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "812c1f9",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
             {
               "hash": "59f2f19",
               "date": "2026-11-19",
