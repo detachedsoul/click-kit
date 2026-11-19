@@ -123,7 +123,7 @@ export const LiveUpdates = ({ version, tools }: LiveUpdatesProps) => {
 						</button>
 						<button
 							aria-label="Dismiss update notice"
-							className="grid size-8 cursor-pointer place-items-center text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="grid size-8 cursor-pointer place-items-center text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[520px]:size-10"
 							onClick={() => setDismissed(waitingNotice.version)}
 							type="button"
 						>

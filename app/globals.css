@@ -208,6 +208,12 @@
 	.min-h-10 {
 		min-height: 2.75rem;
 	}
+
+	/* Small copy buttons and download links were sized to their 11px labels. */
+	.min-h-\[34px\],
+	.min-h-\[37px\] {
+		min-height: 2.75rem;
+	}
 }
 
 /* iOS Safari zooms the whole page when a focused field is smaller than 16px. */

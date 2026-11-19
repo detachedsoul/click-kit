@@ -153,7 +153,7 @@ export const ResultBlock = ({ title, value, rows = 9, fileName, emptyMessage = "
 };
 
 export const StatGrid = ({ items }: { items: { label: string; value: string }[] }) => (
-	<dl className="m-0 grid grid-cols-2 gap-2 max-[520px]:grid-cols-1">
+	<dl className="m-0 grid grid-cols-2 gap-2">
 		{items.map(({ label, value }) => (
 			<div className="border border-line bg-[#fbfaf7] px-3 py-2" key={label}>
 				<dt className="text-[10px] uppercase tracking-[.08em] text-[#5f6259]">{label}</dt>

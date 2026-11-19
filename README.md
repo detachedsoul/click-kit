@@ -34,6 +34,10 @@ The same card, and a compact switch on `/changelog`, ask for notification permis
 
 Run `npm run sync-meta` after adding or renaming a tool, and commit both generated files — they are part of the build, not a runtime fetch.
 
+## Small screens
+
+The design is set in fixed pixel sizes, which read a step too small on a phone. One block at the bottom of `app/globals.css` raises every small size below 640px (`text-[8px]` through `text-[13px]`, `text-xs`, `text-sm`), takes `min-h-8`/`9`/`10` and the small download buttons up to a thumb-sized 44px, and forces form fields to 16px so iOS Safari does not zoom into them when they take focus. `features/ui/phone-scale.test.ts` keeps those rules in place. Prefer these shared sizes over new one-off pixel values, and check a tool at 360px wide before calling it done.
+
 ## Tests
 
 `npm test` runs Vitest across `features/**`, `lib/**`, and `components/**`; `npx tsc --noEmit`, `npx eslint .`, and `npm run build` should all come back clean before a change lands.
