@@ -76,6 +76,7 @@ import { ShadowTool } from "@/features/developer-tools/shadow-tool";
 import SalaryCalculator from "@/features/calculators/salary-calculator";
 import RecipeTool from "@/features/calculators/recipe-tool";
 import { TeamTool } from "@/features/productivity-tools/team-tool";
+import DecisionMatrixTool from "@/features/productivity-tools/decision-matrix";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
 import { ZipTool } from "@/features/image-tools/zip-tool";
@@ -235,6 +236,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,
+	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
 	"geometry-calculator": GeometryCalculator,

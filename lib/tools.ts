@@ -63,6 +63,7 @@ import {
 	SearchCode,
 	RotateCw,
 	Ruler,
+	Scale,
 	Shapes,
 	ShieldCheck,
 	Signature,
@@ -243,6 +244,7 @@ export const tools: Tool[] = [
 	{ id: "team-splitter", name: "Team splitter", description: "Shuffle a list of names into balanced random teams, by team count or people per team.", category: "productivity", slug: "team-splitter", keywords: ["teams", "groups", "shuffle", "random", "pair", "classroom", "workshop"], icon: UsersRound, status: "available" },
 	{ id: "password-generator", name: "Password generator", description: "Create a strong, random password on your device.", category: "productivity", slug: "password-generator", keywords: ["secure", "random", "privacy"], icon: LockKeyhole, status: "available" },
 	{ id: "pomodoro-timer", name: "Pomodoro timer", description: "Focus for a while, then take a proper break.", category: "productivity", slug: "pomodoro-timer", keywords: ["focus", "countdown", "work"], icon: Timer, status: "available" },
+	{ id: "decision-matrix", name: "Decision matrix", description: "Compare options against weighted criteria and see which one wins, with a ranking you can copy.", category: "productivity", slug: "decision-matrix", keywords: ["decision", "matrix", "weighted", "compare", "choose", "score", "pros and cons"], icon: Scale, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
