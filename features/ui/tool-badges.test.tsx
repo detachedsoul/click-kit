@@ -64,7 +64,11 @@ describe("changelog page", () => {
 		expect(screen.getByText("Release history")).toBeTruthy();
 		const entries = changelog.releases.flatMap((release) => release.groups.flatMap((group) => group.entries));
 		expect(entries.length).toBeGreaterThan(0);
-		for (const entry of entries.slice(0, 3)) expect(document.body.textContent).toContain(entry.hash);
+		for (const entry of entries.slice(0, 3)) expect(document.body.textContent).toContain(entry.summary);
+		// Release notes stay free of build and repository jargon.
+		expect(document.body.textContent).not.toContain("npm run");
+		expect(document.body.textContent).not.toContain("git history");
+		expect(document.body.textContent).not.toContain(entries[0].hash);
 	});
 
 	it("lists the tools each release day introduced", () => {

@@ -9,11 +9,11 @@ import { buildInfo } from "@/lib/build-info";
 import changelog from "@/lib/changelog.generated.json";
 import { siteUrl } from "@/lib/site";
 import { categories, tools } from "@/lib/tools";
-import { addedOnLabel, newToolCount, recentToolReleases, toolAddedOn, toolsAddedOn } from "@/lib/tool-recency";
+import { addedOnLabel, newToolCount, recentToolReleases, toolsAddedOn } from "@/lib/tool-recency";
 
 export const metadata: Metadata = {
 	title: "Changelog",
-	description: "Everything added, changed, and fixed in ClickKit, newest first — generated straight from the git history.",
+	description: "Everything added, changed, and fixed in ClickKit, newest first.",
 	alternates: { canonical: "/changelog" },
 	openGraph: { type: "website", title: "ClickKit changelog", description: "What's new in ClickKit, newest first.", url: `${siteUrl}/changelog` },
 };
@@ -46,8 +46,7 @@ const ChangelogPage = () => {
 				</nav>
 				<h1 className="mb-3 mt-6 font-serif text-[clamp(46px,6.5vw,76px)] font-normal leading-[.92] tracking-[-.04em]">What&apos;s new.</h1>
 				<p className="m-0 text-sm leading-[1.7] text-[#60635b]">
-					Every tool added, changed, or fixed, straight from the repository history. {totalTools} tools are ready today, {fresh} of them added in the last two
-					weeks. Additions are dated the day they landed, so the badges elsewhere on the site always agree with this page.
+					Every tool added, changed, or fixed, newest first. {totalTools} tools are ready today, {fresh} of them added in the last two weeks.
 				</p>
 			</header>
 
@@ -63,7 +62,7 @@ const ChangelogPage = () => {
 							<h2 className="m-0 flex items-center gap-2 font-serif text-[26px] font-normal leading-[1.05] tracking-[-.02em]" id="fresh-title">
 								<Sparkles aria-hidden="true" className="text-accent" size={18} /> New this fortnight
 							</h2>
-							<p className="mb-0 mt-1.5 text-xs text-muted">{recent.length} tools inside the two-week new-tools window.</p>
+							<p className="mb-0 mt-1.5 text-xs text-muted">{recent.length} tools added in the last two weeks.</p>
 						</div>
 						<Link className="inline-flex items-center gap-1.5 text-xs text-[#50534c] hover:text-accent-dark" href="/tools">
 							Browse all tools <ArrowUpRight aria-hidden="true" size={13} />
@@ -79,16 +78,14 @@ const ChangelogPage = () => {
 						<h2 className="m-0 font-serif text-[26px] font-normal leading-[1.05] tracking-[-.02em]" id="history-title">
 							Release history
 						</h2>
-						<p className="mb-0 mt-1.5 text-xs text-muted">One entry per commit, newest first.</p>
+						<p className="mb-0 mt-1.5 text-xs text-muted">Newest first.</p>
 					</div>
 					<a className="inline-flex items-center gap-1.5 text-xs text-[#50534c] hover:text-accent-dark" href="https://github.com/detachedsoul/click-kit/commits/main" rel="noreferrer" target="_blank">
-						<GitCommitHorizontal aria-hidden="true" size={14} /> Commit log
+						<GitCommitHorizontal aria-hidden="true" size={14} /> View on GitHub
 					</a>
 				</div>
 				{releases.length === 0 ? (
-					<p className="m-0 border border-line bg-surface p-4 text-xs text-muted">
-						No release notes yet. Run <code className="font-mono">npm run changelog</code> to rebuild them from git history.
-					</p>
+					<p className="m-0 border border-line bg-surface p-4 text-xs text-muted">No release notes yet — check back soon.</p>
 				) : null}
 				<ol className="m-0 flex list-none flex-col gap-8 p-0">
 					{releases.map((release) => {
@@ -123,10 +120,7 @@ const ChangelogPage = () => {
 											{group.entries.map((entry) => (
 												<li key={`${entry.hash}-${entry.summary}`}>
 													{entry.scope ? <span className="font-mono text-[11px] uppercase tracking-[.04em] text-[#5f6259]">{entry.scope} </span> : null}
-													{entry.summary}{" "}
-													<a className="font-mono text-[11px] text-[#5f6259] underline decoration-dotted hover:text-accent-dark" href={`https://github.com/detachedsoul/click-kit/commit/${entry.hash}`} rel="noreferrer" target="_blank">
-														{entry.hash}
-													</a>
+													{entry.summary}
 												</li>
 											))}
 										</ul>
@@ -136,16 +130,6 @@ const ChangelogPage = () => {
 						);
 					})}
 				</ol>
-				<p className="mb-0 mt-8 border border-line bg-[#f7f5ee] px-4 py-3 text-[11px] leading-relaxed text-muted">
-					Tool dates come from <code className="font-mono">npm run tool-dates</code>, which reads the commit that first introduced each entry in the
-					catalogue. The notes come from <code className="font-mono">npm run changelog</code>. Both are committed, so a deployment always shows the same
-					history it was built from.
-				</p>
-				{recent.length > 0 ? (
-					<p className="mb-0 mt-4 text-[11px] text-muted">
-						Newest entries: {recent.slice(0, 3).map((tool) => `${tool.name} (${toolAddedOn(tool.slug) ? addedOnLabel(toolAddedOn(tool.slug) as string) : "undated"})`).join(", ")}.
-					</p>
-				) : null}
 				<Link className="mt-6 inline-flex items-center gap-2 text-xs text-[#50534c] hover:text-accent-dark" href="/">
 					<ArrowLeft aria-hidden="true" size={13} /> Back to home
 				</Link>

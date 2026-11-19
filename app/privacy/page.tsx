@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 const points = [
 	{
 		title: "Your input stays on your device",
-		body: "Every tool on ClickKit runs as JavaScript in your browser. Text, files, images, and numbers you paste are processed locally and are never sent to a server.",
+		body: "Every tool on ClickKit runs in your browser. Text, files, images, and numbers you paste are processed on your device and are never sent to a server.",
 	},
 	{
 		title: "No accounts, no uploads",
-		body: "There is no sign-up, no login, and no storage bucket behind the tools. Nothing you enter is saved between visits unless your browser restores a form field for you.",
+		body: "There is no sign-up, no login, and nothing is stored behind the tools. Nothing you enter is saved between visits unless your browser restores a form field for you.",
 	},
 	{
 		title: "No analytics on what you paste",
