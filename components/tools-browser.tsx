@@ -1,11 +1,27 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Search, X } from "lucide-react";
+import { ArrowDownWideNarrow, Sparkles, Search, X } from "lucide-react";
 import ToolCard from "@/components/tool-card";
 import { categories, tools } from "@/lib/tools";
+import { isNewTool, toolAddedOn } from "@/lib/tool-recency";
 
 const STORAGE_KEY = "clickkit:tools-category";
+
+type SortOrder = "curated" | "newest" | "az";
+
+const SORT_OPTIONS: { id: SortOrder; label: string }[] = [
+	{ id: "curated", label: "Curated order" },
+	{ id: "newest", label: "Newest first" },
+	{ id: "az", label: "A to Z" },
+];
+
+const sortTools = (list: typeof tools, order: SortOrder) => {
+	if (order === "az") return [...list].sort((left, right) => left.name.localeCompare(right.name));
+	if (order === "newest")
+		return [...list].sort((left, right) => (toolAddedOn(right.slug) ?? "").localeCompare(toolAddedOn(left.slug) ?? ""));
+	return list;
+};
 
 const readSavedCategory = () => {
 	try {
@@ -39,6 +55,8 @@ const matchesQuery = (tool: (typeof tools)[number], query: string) => {
 
 const ToolsBrowser = () => {
 	const [query, setQuery] = useState("");
+	const [newOnly, setNewOnly] = useState(false);
+	const [sort, setSort] = useState<SortOrder>("curated");
 	const [selected, setSelected] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	// The last category lives in localStorage; the server snapshot keeps the static HTML on "all".
@@ -67,13 +85,20 @@ const ToolsBrowser = () => {
 	}, []);
 
 	const filtered = useMemo(
-		() => tools.filter((tool) => (category === "all" || tool.category === category) && matchesQuery(tool, query)),
-		[category, query],
+		() =>
+			sortTools(
+				tools.filter((tool) => (category === "all" || tool.category === category) && matchesQuery(tool, query) && (!newOnly || isNewTool(tool.slug))),
+				sort,
+			),
+		[category, newOnly, query, sort],
 	);
+	const newCount = useMemo(() => tools.filter((tool) => isNewTool(tool.slug)).length, []);
 	const activeCategory = categories.find((item) => item.id === category);
-	const filtering = category !== "all" || query.trim().length > 0;
+	const filtering = category !== "all" || query.trim().length > 0 || newOnly || sort !== "curated";
 	const reset = () => {
 		setQuery("");
+		setNewOnly(false);
+		setSort("curated");
 		chooseCategory("all");
 		inputRef.current?.focus();
 	};
@@ -129,12 +154,44 @@ const ToolsBrowser = () => {
 						);
 					})}
 				</div>
+				<div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
+					<span className="font-mono text-[10px] uppercase tracking-[.08em] text-muted">Quick filters</span>
+					<button
+						aria-pressed={newOnly}
+						className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+							newOnly ? "border-accent bg-accent text-white" : "border-[#e8c7a1] bg-[#fbeee0] text-[#7a4f1d] hover:border-accent hover:text-accent-dark"
+						}`}
+						onClick={() => setNewOnly((value) => !value)}
+						type="button"
+					>
+						<Sparkles aria-hidden="true" size={12} strokeWidth={2.4} />
+						Recently added
+						<span className={`font-mono text-[10px] ${newOnly ? "text-white" : "text-[#7a4f1d]"}`}>{newCount}</span>
+					</button>
+					<label className="ml-auto inline-flex items-center gap-2 text-[11px] text-muted" htmlFor="tools-sort">
+						<ArrowDownWideNarrow aria-hidden="true" size={13} />
+						Sort
+						<select
+							className="h-9 cursor-pointer border border-field bg-surface px-2 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							id="tools-sort"
+							onChange={(event) => setSort(event.target.value as SortOrder)}
+							value={sort}
+						>
+							{SORT_OPTIONS.map((option) => (
+								<option key={option.id} value={option.id}>
+									{option.label}
+								</option>
+							))}
+						</select>
+					</label>
+				</div>
 			</div>
 
 			<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-xs text-muted">
 				<p aria-live="polite" className="m-0" role="status">
 					{filtered.length === tools.length ? `${tools.length} tools` : `${filtered.length} of ${tools.length} tools`}
 					{activeCategory ? ` · ${activeCategory.name}` : ""}
+					{newOnly ? " · recently added" : ""}
 					{query.trim() ? ` · “${query.trim()}”` : ""}
 				</p>
 				{filtering && (
@@ -150,7 +207,9 @@ const ToolsBrowser = () => {
 				<div className="border border-line bg-surface p-8 text-center">
 					<p className="m-0 font-serif text-2xl">Nothing matches that yet.</p>
 					<p className="mx-auto mb-4 mt-2 max-w-[420px] text-[13px] leading-[1.6] text-muted">
-						No tool mentions “{query.trim() || activeCategory?.name}”. Try a shorter word, or browse everything ClickKit has.
+						{newOnly && !query.trim()
+							? "Nothing new in this category yet. Turn off “Recently added”, or browse another category."
+							: `No tool mentions “${query.trim() || activeCategory?.name}”. Try a shorter word, or browse everything ClickKit has.`}
 					</p>
 					<button
 						className="inline-flex min-h-10 cursor-pointer items-center border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

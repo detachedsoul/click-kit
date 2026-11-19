@@ -28,6 +28,13 @@ describe("new tool badges", () => {
 		expect(container.textContent).toBe("");
 	});
 
+	it("shows a banner badge with the added date on a tool page", () => {
+		if (!recent) return;
+		render(<NewBadge slug={recent.slug} variant="banner" />);
+		expect(document.body.textContent).toContain("Added");
+		expect(screen.getByText("New")).toBeTruthy();
+	});
+
 	it("shows the badge on a tool card", () => {
 		if (!recent) return;
 		render(<ToolCard tool={recent} />);

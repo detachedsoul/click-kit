@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import ToolsBrowser from "@/components/tools-browser";
 import { categories, tools } from "@/lib/tools";
+import { isNewTool } from "@/lib/tool-recency";
 
 const STORAGE_KEY = "clickkit:tools-category";
 
@@ -64,6 +65,36 @@ describe("tools browser", () => {
 		expect(grid[0].getAttribute("href")).toBe("/tools/loan-calculator");
 		await user.click(screen.getByRole("button", { name: "Clear filters" }));
 		expect(screen.getByRole("status").textContent).toBe(`${tools.length} tools`);
+	});
+
+	it("filters to recently added tools and back again", async () => {
+		const user = userEvent.setup();
+		render(<ToolsBrowser />);
+		const recentCount = tools.filter((tool) => isNewTool(tool.slug)).length;
+		const toggle = screen.getByRole("button", { name: /Recently added/u });
+		expect(toggle.getAttribute("aria-pressed")).toBe("false");
+		await user.click(toggle);
+		expect(screen.getByRole("button", { name: /Recently added/u }).getAttribute("aria-pressed")).toBe("true");
+		expect(screen.getByRole("status").textContent).toContain(`${recentCount} of ${tools.length} tools`);
+		expect(screen.getByRole("status").textContent).toContain("recently added");
+		expect(screen.getAllByRole("link")).toHaveLength(recentCount);
+		await user.click(screen.getByRole("button", { name: "Clear filters" }));
+		expect(screen.getByRole("status").textContent).toBe(`${tools.length} tools`);
+	});
+
+	it("sorts alphabetically and by newest first", async () => {
+		const user = userEvent.setup();
+		render(<ToolsBrowser />);
+		const sort = screen.getByLabelText("Sort");
+		const alphabetical = [...tools].sort((left, right) => left.name.localeCompare(right.name));
+		await user.selectOptions(sort, "az");
+		expect(screen.getAllByRole("link")[0].getAttribute("href")).toBe(`/tools/${alphabetical[0].slug}`);
+		await user.selectOptions(sort, "newest");
+		const firstNewest = tools.filter((tool) => isNewTool(tool.slug));
+		expect(firstNewest.length).toBeGreaterThan(1);
+		expect(screen.getAllByRole("link").slice(0, firstNewest.length).every((link) => firstNewest.some((tool) => `/tools/${tool.slug}` === link.getAttribute("href")))).toBe(true);
+		await user.selectOptions(sort, "curated");
+		expect(screen.getAllByRole("link")[0].getAttribute("href")).toBe(`/tools/${tools[0].slug}`);
 	});
 
 	it("offers a way back when nothing matches", async () => {
