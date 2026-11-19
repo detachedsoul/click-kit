@@ -86,6 +86,20 @@ describe("image & file tools", () => {
 		expect(document.body.textContent).toContain("Text uses your system sans-serif font");
 	});
 
+	it("switches the watermark between text and a logo image", async () => {
+		const user = userEvent.setup();
+		render(<WatermarkTool />);
+		expect(screen.getByLabelText("Watermark text")).toHaveProperty("value", "© Your name");
+		expect(screen.queryByLabelText("Watermark image")).toBeNull();
+		await user.click(screen.getByRole("button", { name: "Image or logo" }));
+		expect(screen.getByLabelText("Watermark image")).toHaveProperty("type", "file");
+		expect(screen.queryByLabelText("Watermark text")).toBeNull();
+		expect(screen.getByLabelText("Logo width (20% of the picture)")).toHaveProperty("value", "20");
+		expect(screen.getByRole("button", { name: "Stamp the logo" })).toHaveProperty("disabled", true);
+		await user.click(screen.getByRole("button", { name: "Text" }));
+		expect(screen.getByRole("button", { name: "Add watermark" })).toBeTruthy();
+	});
+
 	it("renders the filter controls at their neutral defaults", () => {
 		render(<FiltersTool />);
 		expect(screen.getByLabelText("Grayscale (0%)")).toHaveProperty("value", "0");

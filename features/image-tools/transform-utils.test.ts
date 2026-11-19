@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isUntouched, nextRotation, orientationLabel, rotatedSize } from "@/features/image-tools/rotate-utils";
-import { anchorPosition, clampFontSize, clampOpacity, tilePositions, watermarkFileName } from "@/features/image-tools/watermark-utils";
+import { anchorPosition, clampFontSize, clampLogoScaled, clampOpacity, logoBox, tilePositions, watermarkFileName, watermarkSummary } from "@/features/image-tools/watermark-utils";
 import { clampDimension, placeholderFileName, placeholderFontSize, placeholderSvg, PRESET_SIZES } from "@/features/image-tools/placeholder-utils";
 import { cssFilter, DEFAULT_FILTERS, describeFilters, filterFileName, isIdentity } from "@/features/image-tools/filters-utils";
 
@@ -51,6 +51,23 @@ describe("watermark layout", () => {
 		expect(points.length).toBeGreaterThan(6);
 		expect(points.some((point) => point.y > canvas.height / 2)).toBe(true);
 		expect(points.every((point) => Number.isInteger(point.x) && Number.isInteger(point.y))).toBe(true);
+	});
+
+	it("sizes a logo image without stretching it", () => {
+		expect(logoBox(canvas, { width: 400, height: 200 }, 20)).toEqual({ width: 200, height: 100 });
+		expect(logoBox(canvas, { width: 100, height: 400 }, 20)).toEqual({ width: 135, height: 540 });
+		const tall = logoBox(canvas, { width: 10, height: 100 }, 90);
+		expect(tall.height).toBe(540);
+		expect(tall.width).toBe(54);
+		expect(clampLogoScaled(500)).toBe(90);
+		expect(clampLogoScaled(0)).toBe(2);
+		expect(() => logoBox(canvas, { width: 0, height: 0 })).toThrow(/no readable size/u);
+		expect(() => logoBox({ width: 0, height: 0 }, { width: 10, height: 10 })).toThrow(/Load the picture/u);
+	});
+
+	it("summarises what is being stamped", () => {
+		expect(watermarkSummary("text", { text: "© Ada", tiled: false, anchorLabel: "Bottom right" })).toBe("© Ada · Bottom right");
+		expect(watermarkSummary("image", { text: "", logoName: "logo.png", tiled: true, anchorLabel: "Centre" })).toBe("logo.png · tiled");
 	});
 
 	it("clamps opacity and font size to something usable", () => {

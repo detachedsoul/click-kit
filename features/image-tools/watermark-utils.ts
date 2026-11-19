@@ -55,3 +55,33 @@ export const clampOpacity = (value: number) => Math.min(1, Math.max(0.05, value)
 export const clampFontSize = (value: number, canvas: Box) => Math.min(Math.max(1, Math.round(value)), Math.round(Math.min(canvas.width, canvas.height) / 2));
 
 export const watermarkFileName = (fileName: string, extension: string) => `${fileName.replace(/\.[^./\\]+$/u, "")}-watermarked.${extension}`;
+
+export type WatermarkSource = "text" | "image";
+
+export const WATERMARK_SOURCES: { id: WatermarkSource; label: string }[] = [
+	{ id: "text", label: "Text" },
+	{ id: "image", label: "Image or logo" },
+];
+
+/** Logo width as a percentage of the picture, clamped so a stamp can never swallow the photo. */
+export const clampLogoScaled = (percent: number) => Math.min(90, Math.max(2, Math.round(percent)));
+
+/** Size a logo keeps its own aspect ratio while spanning `percent` of the picture's width. */
+export const logoBox = (canvas: Box, logo: Box, percent = 20): Box => {
+	if (logo.width < 1 || logo.height < 1) throw new Error("This watermark image has no readable size.");
+	if (canvas.width < 1 || canvas.height < 1) throw new Error("Load the picture you want to watermark first.");
+	const scaled = clampLogoScaled(percent);
+	let width = Math.max(1, Math.round((canvas.width * scaled) / 100));
+	let height = Math.max(1, Math.round((logo.height * width) / logo.width));
+	const maxHeight = Math.round(canvas.height * 0.9);
+	if (height > maxHeight) {
+		height = maxHeight;
+		width = Math.max(1, Math.round((logo.width * height) / logo.height));
+	}
+	return { width, height };
+};
+
+export const watermarkSummary = (source: WatermarkSource, options: { text: string; logoName?: string | null; tiled: boolean; anchorLabel: string }) => {
+	if (source === "image") return `${options.logoName ?? "Logo"} · ${options.tiled ? "tiled" : options.anchorLabel}`;
+	return `${options.text.trim() || "Text"} · ${options.tiled ? "tiled" : options.anchorLabel}`;
+};
