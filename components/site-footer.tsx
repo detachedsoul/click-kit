@@ -11,7 +11,7 @@ const footerLinks = [
 ];
 
 const SiteFooter = () => (
-	<footer className="border-t border-line py-5 text-[11px] text-[#85857d]">
+	<footer className="border-t border-line py-5 text-[11px] text-[#5f6259]">
 		<Shell className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 max-[620px]:flex-col max-[620px]:items-start">
 			<span className="inline-flex items-center gap-2 font-bold text-[#41423c]">
 				<LogoMark size={18} />

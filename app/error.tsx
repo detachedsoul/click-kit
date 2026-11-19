@@ -24,7 +24,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
 					Try again
 				</button>
 				<Link
-					className="inline-flex min-h-10 items-center border border-line bg-surface px-4 text-xs font-medium text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+					className="inline-flex min-h-10 items-center border border-line bg-surface px-4 text-xs font-medium text-ink hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 					href="/"
 				>
 					All tools

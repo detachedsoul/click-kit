@@ -57,7 +57,7 @@ const SiteHeader = () => {
 					<Link href="/tools">Tools</Link><Link href="/changelog">Changelog</Link><Link href="/#categories">Categories</Link>
 				</nav>
 				<div className="relative ml-auto w-[min(310px,32vw)] max-[620px]:order-3 max-[620px]:mt-2.5 max-[620px]:w-full">
-					<Search className="pointer-events-none absolute left-3 top-[12px] text-[#85857e]" size={15} aria-hidden="true" />
+					<Search className="pointer-events-none absolute left-3 top-[12px] text-[#5f6259]" size={15} aria-hidden="true" />
 					<input
 						ref={inputRef}
 						className="h-[39px] w-full border border-line bg-surface py-0 pl-[37px] pr-[42px] text-[13px] outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] focus:border-accent focus:outline-accent max-[620px]:h-[42px]"
@@ -90,7 +90,7 @@ const SiteHeader = () => {
 					{query ? (
 						<button
 							aria-label="Clear search"
-							className="absolute right-2 top-[9px] grid size-6 cursor-pointer place-items-center rounded-[3px] text-[#898981] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:top-[11px]"
+							className="absolute right-2 top-[9px] grid size-6 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:top-[11px]"
 							onClick={() => {
 								clearQuery();
 								inputRef.current?.focus();
@@ -100,7 +100,7 @@ const SiteHeader = () => {
 							<X aria-hidden="true" size={14} />
 						</button>
 					) : (
-						<span aria-hidden="true" className="absolute right-2.5 top-[9px] hidden rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#898981] min-[621px]:block">⌘ K</span>
+						<span aria-hidden="true" className="absolute right-2.5 top-[9px] hidden rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#5f6259] min-[621px]:block">⌘ K</span>
 					)}
 					<span aria-live="polite" className="sr-only" role="status">
 						{query ? `${results.length} matching tool${results.length === 1 ? "" : "s"}` : ""}

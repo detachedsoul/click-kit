@@ -79,7 +79,7 @@ const StandardCalculator = () => {
 			<div className="flex min-w-0 flex-col gap-4">
 				<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="calculator-expression">Calculation</label>
 				<input
-					className="h-[76px] w-full min-w-0 border border-[#d9d7cd] bg-[#f8f7f3] px-4 text-right font-mono text-[clamp(24px,5vw,36px)] text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="h-[76px] w-full min-w-0 border border-field bg-[#f8f7f3] px-4 text-right font-mono text-[clamp(24px,5vw,36px)] text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="calculator-expression"
 					inputMode="decimal"
 					maxLength={200}
@@ -99,7 +99,7 @@ const StandardCalculator = () => {
 			</div>
 			<div className="grid grid-cols-4 gap-2" role="group" aria-label="Calculator keypad">
 				{keypad.map((key) => <button
-					className={`min-h-[54px] cursor-pointer border border-line px-2 text-sm font-medium transition-colors hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${key.kind === "equals" ? "border-forest bg-forest text-white hover:bg-[#354d44]" : key.kind === "operator" ? "bg-[#f0efe9] text-ink" : key.kind === "utility" ? "bg-[#e9ede3] text-forest" : "bg-surface text-ink"}`}
+					className={`min-h-[54px] cursor-pointer border border-line px-2 text-sm font-medium transition-colors hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${key.kind === "equals" ? "border-forest bg-forest text-white hover:bg-[#354d44]" : key.kind === "operator" ? "bg-[#f0efe9] text-ink" : key.kind === "utility" ? "bg-[#e9ede3] text-forest" : "bg-surface text-ink"}`}
 					key={key.value}
 					type="button"
 					aria-label={key.value === "backspace" ? "Delete last character" : undefined}

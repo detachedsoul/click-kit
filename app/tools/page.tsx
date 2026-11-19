@@ -31,7 +31,7 @@ export default function AllToolsPage() {
 		<Shell>
 			<script dangerouslySetInnerHTML={{ __html: JSON.stringify(listJsonLd) }} type="application/ld+json" />
 			<header className="max-w-[680px] py-[50px] pb-8 max-[620px]:py-[36px]">
-				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#777a70]">
+				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#5f6259]">
 					<Link className="hover:text-accent-dark" href="/">
 						Home
 					</Link>

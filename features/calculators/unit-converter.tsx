@@ -46,7 +46,7 @@ const UnitConverter = () => {
 						</SelectField>
 					</label>
 				</div>
-				<button className="mb-1 min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:justify-self-center" type="button" onClick={() => { setFromUnitId(toUnitId); setToUnitId(fromUnitId); }}>Swap units</button>
+				<button className="mb-1 min-h-10 cursor-pointer border border-line bg-[#f0efe9] px-3 text-xs text-ink hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:justify-self-center" type="button" onClick={() => { setFromUnitId(toUnitId); setToUnitId(fromUnitId); }}>Swap units</button>
 				<label className="block min-w-0 text-xs font-semibold text-[#3c3d37]" htmlFor="unit-to">To
 					<SelectField containerClassName="relative block w-full" className="cursor-pointer" id="unit-to" value={toUnitId} onChange={(event) => setToUnitId(event.target.value)}>
 						{currentCategory.units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.symbol})</option>)}

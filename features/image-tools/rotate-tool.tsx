@@ -21,7 +21,7 @@ import { outputExtension, stripExtension, type Size } from "@/features/image-too
 type Result = { blob: Blob; fileName: string; width: number; height: number };
 
 const actionClassName =
-	"inline-flex min-h-9 cursor-pointer items-center gap-2 border border-line bg-surface px-3 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50";
+	"inline-flex min-h-9 cursor-pointer items-center gap-2 border border-line bg-surface px-3 text-xs text-ink hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50";
 
 export const RotateTool = () => {
 	const [file, setFile] = useState<File | null>(null);

@@ -77,7 +77,7 @@ const HomePage = () => {
 					const count = tools.filter((tool) => tool.category === category.id).length;
 					return <Link className="flex min-h-[168px] flex-col items-start border-b border-r border-line bg-[#f7f5ee] p-[19px_16px_17px] transition-colors hover:bg-surface max-[620px]:min-h-[151px] max-[620px]:p-[15px_12px]" key={category.id} href={`/category/${category.id}`}>
 						<Icon className="text-accent" size={19} strokeWidth={1.7} aria-hidden="true" />
-						<h3 className="mb-1.5 mt-4 text-[13px] font-semibold tracking-[-.015em] max-[620px]:mt-3">{category.name}</h3><p className="m-0 text-[11px] leading-[1.5] text-muted">{category.description}</p><span className="mt-auto block pt-3 font-mono text-[10px] text-[#777b70]">{String(count).padStart(2, "0")} tools</span>
+						<h3 className="mb-1.5 mt-4 text-[13px] font-semibold tracking-[-.015em] max-[620px]:mt-3">{category.name}</h3><p className="m-0 text-[11px] leading-[1.5] text-muted">{category.description}</p><span className="mt-auto block pt-3 font-mono text-[10px] text-[#5f6259]">{String(count).padStart(2, "0")} tools</span>
 					</Link>;
 				})}</div>
 				<div className="mt-[23px] flex items-center gap-3 border border-[#d8dfd1] bg-[#e9ede3] px-[17px] py-[15px] text-xs leading-[1.55] text-[#50584e] max-[620px]:items-start max-[620px]:p-[14px]">

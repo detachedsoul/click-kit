@@ -8,7 +8,7 @@ export const ToolPanel = ({ children }: { children: ReactNode }) => (
 );
 
 export const fieldClassName =
-	"mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]";
+	"mt-2 block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]";
 export const selectClassName = "select-input";
 export const labelClassName = "block text-xs font-semibold text-[#3c3d37]";
 export const hintClassName = "m-0 text-[11px] leading-relaxed text-muted";
@@ -115,7 +115,7 @@ export const SegmentedControl = <T extends string>({ label, options, value, onCh
 		<div className="flex flex-wrap gap-2">
 			{options.map((option) => (
 				<button
-					className={`${buttonClassName} ${value === option.id ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`}
+					className={`${buttonClassName} ${value === option.id ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
 					key={option.id}
 					type="button"
 					aria-pressed={value === option.id}
@@ -156,7 +156,7 @@ export const StatGrid = ({ items }: { items: { label: string; value: string }[] 
 	<dl className="m-0 grid grid-cols-2 gap-2 max-[520px]:grid-cols-1">
 		{items.map(({ label, value }) => (
 			<div className="border border-line bg-[#fbfaf7] px-3 py-2" key={label}>
-				<dt className="text-[10px] uppercase tracking-[.08em] text-[#7a7c72]">{label}</dt>
+				<dt className="text-[10px] uppercase tracking-[.08em] text-[#5f6259]">{label}</dt>
 				<dd className="m-0 mt-1 break-all font-mono text-[13px] text-ink">{value}</dd>
 			</div>
 		))}

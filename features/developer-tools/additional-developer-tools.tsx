@@ -317,7 +317,7 @@ export const ColorConverterTool = () => {
 			<label className="block max-w-[520px] text-xs font-semibold text-[#3c3d37]" htmlFor="color-input">
 				Color value
 				<input
-					className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="mt-2 block h-11 w-full border border-field bg-surface px-3 font-mono text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="color-input"
 					value={source}
 					onChange={(event) => setSource(event.target.value)}
@@ -470,7 +470,7 @@ export const JwtDecoderTool = () => {
 								setVerification(null);
 								setVerificationError("");
 							}}
-							className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							className="mt-2 block h-11 w-full border border-field bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 							placeholder="Enter the exact shared secret"
 						/>
 					) : (
@@ -483,7 +483,7 @@ export const JwtDecoderTool = () => {
 								setVerification(null);
 								setVerificationError("");
 							}}
-							className="mt-2 block min-h-11 w-full resize-y border border-[#d9d7cd] bg-surface px-3 py-2 text-xs font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							className="mt-2 block min-h-11 w-full resize-y border border-field bg-surface px-3 py-2 text-xs font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 							placeholder="-----BEGIN PUBLIC KEY-----"
 							rows={3}
 						/>

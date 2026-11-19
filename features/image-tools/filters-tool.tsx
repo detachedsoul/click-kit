@@ -171,7 +171,7 @@ export const FiltersTool = () => {
 					{busy ? "Exporting…" : "Export filtered image"}
 				</button>
 				<button
-					className="min-h-10 cursor-pointer border border-line bg-surface px-4 text-xs text-ink hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
+					className="min-h-10 cursor-pointer border border-line bg-surface px-4 text-xs text-ink hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50"
 					disabled={isIdentity(values)}
 					onClick={() => setValues(DEFAULT_FILTERS)}
 					type="button"

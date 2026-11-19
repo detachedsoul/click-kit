@@ -40,7 +40,7 @@ export default function DensityTool() {
 			<label className={labelClassName} htmlFor="density-keywords">
 				Keywords and phrases (one per line, up to 20)
 				<textarea
-					className="mt-2 block h-24 w-full resize-y border border-[#d9d7cd] bg-surface px-3 py-2 font-mono text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="mt-2 block h-24 w-full resize-y border border-field bg-surface px-3 py-2 font-mono text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="density-keywords"
 					onChange={(event) => setKeywordInput(event.target.value)}
 					placeholder={"coffee\ncoffee subscription\nsmall lots"}

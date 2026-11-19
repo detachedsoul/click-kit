@@ -37,7 +37,7 @@ const ResultPanel = ({ title, value, rows = 9 }: { title: string; value: string;
 );
 
 const inputClassName =
-	"block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
+	"block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
 
 export const JsonDiffTool = () => {
 	const [left, setLeft] = useState('{\n  "name": "ClickKit",\n  "version": 1,\n  "tags": ["tools"]\n}');
@@ -123,7 +123,7 @@ export const YamlJsonTool = () => {
 			<div className="flex flex-wrap gap-2" role="group" aria-label="Conversion direction">
 				{(["yaml-to-json", "json-to-yaml"] as const).map((item) => (
 					<button
-						className={`min-h-9 cursor-pointer border px-3 text-xs ${direction === item ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`}
+						className={`min-h-9 cursor-pointer border px-3 text-xs ${direction === item ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
 						key={item}
 						type="button"
 						aria-pressed={direction === item}

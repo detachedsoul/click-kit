@@ -12,7 +12,7 @@ import {
 } from "@/features/productivity-tools/productivity-utils";
 
 const fieldClass =
-	"block h-11 w-full border border-[#d9d7cd] bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
+	"block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent";
 const actionClass =
 	"min-h-10 cursor-pointer bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:bg-[#b8b9b1]";
 const sectionClass = "flex flex-col gap-4 p-7 max-[760px]:p-[18px] max-[520px]:gap-3 max-[520px]:p-[14px]";

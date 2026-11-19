@@ -19,7 +19,7 @@ const GROUP_STYLES: Record<string, string> = {
 	Added: "bg-[#e6ecdf] text-[#4d6247]",
 	Changed: "bg-[#eae7dd] text-[#6b6553]",
 	Fixed: "bg-[#f3e2d5] text-[#8a4a2c]",
-	Maintenance: "bg-[#ecebe5] text-[#6e6f66]",
+	Maintenance: "bg-[#ecebe5] text-[#5f6259]",
 };
 
 const groupClass = (group: string) => GROUP_STYLES[group] ?? GROUP_STYLES.Maintenance;
@@ -33,7 +33,7 @@ const ChangelogPage = () => {
 	return (
 		<Shell>
 			<header className="max-w-[720px] py-[50px] pb-10 max-[620px]:py-[36px] max-[620px]:pb-8">
-				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#777a70]">
+				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#5f6259]">
 					<Link className="hover:text-accent-dark" href="/">
 						Home
 					</Link>
@@ -99,7 +99,7 @@ const ChangelogPage = () => {
 													href={`/tools/${tool.slug}`}
 												>
 													{tool.name}
-													<span className="text-[10px] text-[#a08a6b]">{categories.find((category) => category.id === tool.category)?.name}</span>
+													<span className="text-[10px] text-[#7a6136]">{categories.find((category) => category.id === tool.category)?.name}</span>
 												</Link>
 											</li>
 										))}
@@ -107,15 +107,15 @@ const ChangelogPage = () => {
 								) : null}
 								{release.groups.map((group) => (
 									<div className="mt-4" key={group.group}>
-										<h4 className="m-0 mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.08em] text-[#6b6d63]">
+										<h4 className="m-0 mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.08em] text-[#5f6259]">
 											<span className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[9px] tracking-[.02em] ${groupClass(group.group)}`}>{group.group}</span>
 										</h4>
 										<ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-[13px] leading-relaxed text-ink">
 											{group.entries.map((entry) => (
 												<li key={`${entry.hash}-${entry.summary}`}>
-													{entry.scope ? <span className="font-mono text-[11px] uppercase tracking-[.04em] text-[#8a8b80]">{entry.scope} </span> : null}
+													{entry.scope ? <span className="font-mono text-[11px] uppercase tracking-[.04em] text-[#5f6259]">{entry.scope} </span> : null}
 													{entry.summary}{" "}
-													<a className="font-mono text-[11px] text-[#8a8b80] underline decoration-dotted hover:text-accent-dark" href={`https://github.com/detachedsoul/click-kit/commit/${entry.hash}`} rel="noreferrer" target="_blank">
+													<a className="font-mono text-[11px] text-[#5f6259] underline decoration-dotted hover:text-accent-dark" href={`https://github.com/detachedsoul/click-kit/commit/${entry.hash}`} rel="noreferrer" target="_blank">
 														{entry.hash}
 													</a>
 												</li>

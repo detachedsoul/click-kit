@@ -23,7 +23,7 @@ export const UserAgentTool = () => {
 			<label className={labelClassName} htmlFor="ua-input">
 				User agent string
 				<textarea
-					className="mt-2 block min-h-[86px] w-full resize-y border border-[#d9d7cd] bg-surface px-3 py-2.5 font-mono text-xs leading-relaxed text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="mt-2 block min-h-[86px] w-full resize-y border border-field bg-surface px-3 py-2.5 font-mono text-xs leading-relaxed text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="ua-input"
 					onChange={(event) => setUserAgent(event.target.value)}
 					placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 …"

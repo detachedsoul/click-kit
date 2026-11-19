@@ -42,7 +42,7 @@ export default async function OpengraphImage() {
 						</div>
 					</div>
 				</div>
-				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid #dedbd1", paddingTop: 24, fontSize: 22, color: "#72756c" }}>
+				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid #dedbd1", paddingTop: 24, fontSize: 22, color: "#5f6259" }}>
 					<span>{siteUrl.replace(/^https?:\/\//u, "")}</span>
 					<span>Free · Private · In your browser</span>
 				</div>

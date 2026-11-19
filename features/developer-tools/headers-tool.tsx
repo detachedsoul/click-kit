@@ -32,7 +32,7 @@ export const HeadersTool = () => {
 		? result.security.score >= 80
 			? "text-[#315e43]"
 			: result.security.score >= 60
-				? "text-[#8a6a1f]"
+				? "text-[#6f5416]"
 				: "text-[#8a3028]"
 		: "";
 	return (
@@ -69,7 +69,7 @@ export const HeadersTool = () => {
 								<li className="flex flex-wrap items-baseline gap-2 text-xs" key={finding.label}>
 									<span
 										className={`font-mono text-[10px] uppercase tracking-[.08em] ${
-											finding.state === "pass" ? "text-[#315e43]" : finding.state === "warn" ? "text-[#8a6a1f]" : "text-[#8a3028]"
+											finding.state === "pass" ? "text-[#315e43]" : finding.state === "warn" ? "text-[#6f5416]" : "text-[#8a3028]"
 										}`}
 									>
 										{finding.state}

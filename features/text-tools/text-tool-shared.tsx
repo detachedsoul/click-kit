@@ -30,11 +30,11 @@ export const TextAreaField = ({
 	<div className="min-w-0">
 		<div className="mb-2 flex items-baseline justify-between gap-3">
 			<label className="text-xs font-semibold text-[#3c3d37]" htmlFor={id}>{label}</label>
-			{!readOnly && showCharacterCount && <span className="font-mono text-[10px] text-[#92928a]">{countGraphemes(value).toLocaleString()} characters</span>}
+			{!readOnly && showCharacterCount && <span className="font-mono text-[10px] text-[#5f6259]">{countGraphemes(value).toLocaleString()} characters</span>}
 		</div>
 		<textarea
 			id={id}
-			className="block min-h-[182px] w-full resize-y border border-[#d9d7cd] bg-surface px-4 py-[15px] text-sm leading-[1.72] text-ink outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] placeholder:text-[#96958c] focus:border-accent focus:outline-accent read-only:bg-[#f7f5ef] read-only:text-[#3e4139] max-[520px]:min-h-[150px] max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:text-xs"
+			className="block min-h-[182px] w-full resize-y border border-field bg-surface px-4 py-[15px] text-sm leading-[1.72] text-ink outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] placeholder:text-[#5f6259] focus:border-accent focus:outline-accent read-only:bg-[#f7f5ef] read-only:text-[#3e4139] max-[520px]:min-h-[150px] max-[520px]:px-[11px] max-[520px]:py-[11px] max-[520px]:text-xs"
 			value={value}
 			onChange={(event) => onChange(event.target.value)}
 			placeholder={placeholder}
@@ -75,7 +75,7 @@ export const CopyTextButton = ({ text }: { text: string }) => {
 
 	return (
 		<div className="flex items-center">
-			<button className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#aaa69a] hover:text-ink disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={handleCopy} disabled={!text}>
+			<button className="inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-[7px] border border-line bg-surface px-2.5 text-[11px] text-[#54554e] hover:border-[#5f6259] hover:text-ink disabled:cursor-not-allowed disabled:bg-[#f4f3ef] disabled:text-[#a7a69e]" type="button" onClick={handleCopy} disabled={!text}>
 				<Icon size={14} aria-hidden="true" /> {label}
 			</button>
 			<span className="sr-only" role="status" aria-live="polite">

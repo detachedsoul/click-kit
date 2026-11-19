@@ -82,10 +82,10 @@ const ToolsBrowser = () => {
 		<div className="flex flex-col gap-5 pb-[80px]">
 			<div className="flex flex-col gap-3">
 				<div className="relative max-w-[460px]">
-					<Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#85857e]" size={15} />
+					<Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5f6259]" size={15} />
 					<input
 						aria-label="Search all tools"
-						className="h-11 w-full border border-[#d9d7cd] bg-surface pl-9 pr-10 text-sm text-ink outline-2 outline-offset-2 outline-transparent transition-colors placeholder:text-[#96958c] focus:border-accent focus:outline-accent"
+						className="h-11 w-full border border-field bg-surface pl-9 pr-10 text-sm text-ink outline-2 outline-offset-2 outline-transparent transition-colors placeholder:text-[#5f6259] focus:border-accent focus:outline-accent"
 						onChange={(event) => setQuery(event.target.value)}
 						placeholder="Filter by name, keyword, or category…"
 						ref={inputRef}
@@ -95,7 +95,7 @@ const ToolsBrowser = () => {
 					{query ? (
 						<button
 							aria-label="Clear filter"
-							className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#898981] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 							onClick={() => {
 								setQuery("");
 								inputRef.current?.focus();
@@ -105,7 +105,7 @@ const ToolsBrowser = () => {
 							<X aria-hidden="true" size={14} />
 						</button>
 					) : (
-						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#898981]">
+						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#5f6259]">
 							/
 						</kbd>
 					)}
@@ -117,7 +117,7 @@ const ToolsBrowser = () => {
 							<button
 								aria-pressed={active}
 								className={`inline-flex min-h-9 cursor-pointer items-center gap-2 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-									active ? "border-forest bg-forest text-white" : "border-line bg-surface text-[#50534c] hover:border-[#aaa69a] hover:text-ink"
+									active ? "border-forest bg-forest text-white" : "border-line bg-surface text-[#50534c] hover:border-[#5f6259] hover:text-ink"
 								}`}
 								key={item.id}
 								onClick={() => chooseCategory(item.id)}

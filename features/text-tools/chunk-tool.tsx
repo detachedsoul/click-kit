@@ -88,7 +88,7 @@ export const ChunkTool = () => {
 						{result.chunks.map((chunk, index) => (
 							<li className="border border-line bg-[#fbfaf7] px-3 py-2.5" key={`${index}-${chunk.slice(0, 12)}`}>
 								<div className="mb-1.5 flex items-center justify-between gap-3">
-									<span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#7a7c72]">
+									<span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#5f6259]">
 										{index + 1} of {result.chunks.length} · {Array.from(chunk).length} chars
 									</span>
 									<CopyTextButton text={chunk} />

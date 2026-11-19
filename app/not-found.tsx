@@ -38,7 +38,7 @@ export default function NotFound() {
 				<div className="mt-4 flex flex-wrap gap-2">
 					{categories.map((category) => (
 						<Link
-							className="inline-flex items-center gap-2 border border-line bg-[#f8f7f2] px-3 py-2 text-xs transition-colors hover:border-[#aaa69a] hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="inline-flex items-center gap-2 border border-line bg-[#f8f7f2] px-3 py-2 text-xs transition-colors hover:border-[#5f6259] hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 							href={`/category/${category.id}`}
 							key={category.id}
 						>

@@ -38,7 +38,7 @@ export default function PrivacyPage() {
 	return (
 		<Shell>
 			<header className="max-w-[680px] py-[50px] pb-7 max-[620px]:py-[36px]">
-				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#777a70]">
+				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#5f6259]">
 					<Link className="hover:text-accent-dark" href="/">
 						Home
 					</Link>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 				Spotted something here that does not match how the site behaves? <a className="text-accent-dark underline hover:text-accent" href="https://github.com/detachedsoul/click-kit/issues/new" rel="noreferrer" target="_blank">Open an issue</a> and it
 				will be fixed.
 			</p>
-			<Link className="mb-[70px] inline-flex items-center gap-2 border border-line bg-surface px-4 py-2.5 text-xs hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href="/">
+			<Link className="mb-[70px] inline-flex items-center gap-2 border border-line bg-surface px-4 py-2.5 text-xs hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href="/">
 				<ArrowLeft aria-hidden="true" size={14} /> Back to the tools
 			</Link>
 		</Shell>

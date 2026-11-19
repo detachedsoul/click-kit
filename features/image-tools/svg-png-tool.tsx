@@ -113,7 +113,7 @@ export const SvgPngTool = () => {
 				]}
 			/>
 			{warnings.length > 0 ? (
-				<ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[11px] leading-relaxed text-[#8a6a1f]">
+				<ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[11px] leading-relaxed text-[#6f5416]">
 					{warnings.map((warning) => (
 						<li key={warning}>{warning}</li>
 					))}

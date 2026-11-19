@@ -63,7 +63,7 @@ export const SvgTool = () => {
 						]}
 					/>
 					{result.report.warnings.map((warning) => (
-						<p className="m-0 text-xs text-[#8a6a1f]" key={warning}>
+						<p className="m-0 text-xs text-[#6f5416]" key={warning}>
 							{warning}
 						</p>
 					))}

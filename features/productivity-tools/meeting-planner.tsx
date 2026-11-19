@@ -104,12 +104,12 @@ export const MeetingPlanner = () => {
 							<caption className="sr-only">Local hour in each selected time zone, hour by hour</caption>
 							<thead>
 								<tr className="bg-[#f7f5ee]">
-									<th className="border-b border-line px-3 py-2 font-mono text-[10px] uppercase tracking-[.06em] text-[#7a7c72]" scope="col">
+									<th className="border-b border-line px-3 py-2 font-mono text-[10px] uppercase tracking-[.06em] text-[#5f6259]" scope="col">
 										{label(baseZone)}
 									</th>
 									{zones.map((zone) => (
-										<th className="border-b border-line px-3 py-2 font-mono text-[10px] uppercase tracking-[.06em] text-[#7a7c72]" key={zone} scope="col">
-											{label(zone)} <span className="font-normal normal-case tracking-normal text-[#a09f95]">{shift(zone)}</span>
+										<th className="border-b border-line px-3 py-2 font-mono text-[10px] uppercase tracking-[.06em] text-[#5f6259]" key={zone} scope="col">
+											{label(zone)} <span className="font-normal normal-case tracking-normal text-[#5f6259]">{shift(zone)}</span>
 										</th>
 									))}
 								</tr>
@@ -125,11 +125,11 @@ export const MeetingPlanner = () => {
 											</th>
 											{slot.cells.map((cell) => (
 												<td
-													className={`border-b border-line px-3 py-1.5 font-mono text-[11px] ${cell.working ? "text-ink" : "text-[#a8a79d]"}`}
+													className={`border-b border-line px-3 py-1.5 font-mono text-[11px] ${cell.working ? "text-ink" : "text-[#5f6259]"}`}
 													key={cell.zoneId}
 												>
 													{formatHour(cell.hour, twelveHour ? "12" : "24")}
-													{cell.dayOffset !== 0 ? <span className="ml-1 text-[10px] text-[#b08a4e]">{cell.dayOffset > 0 ? "+1d" : "−1d"}</span> : null}
+													{cell.dayOffset !== 0 ? <span className="ml-1 text-[10px] text-[#7d5a1e]">{cell.dayOffset > 0 ? "+1d" : "−1d"}</span> : null}
 												</td>
 											))}
 										</tr>

@@ -282,11 +282,11 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 	return <Shell>
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
-			<nav className="flex items-center gap-[9px] text-[11px] text-[#777a70]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
+			<nav className="flex items-center gap-[9px] text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
 			<div className="mt-[26px] flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">
 				<span>{tool.status === "available" ? "Available now" : category.name}</span>
 				<NewBadge slug={tool.slug} />
-				{toolAddedOn(tool.slug) ? <span className="normal-case tracking-normal text-[#8a8b80]">Added {addedOnLabel(toolAddedOn(tool.slug) as string)}</span> : null}
+				{toolAddedOn(tool.slug) ? <span className="normal-case tracking-normal text-[#5f6259]">Added {addedOnLabel(toolAddedOn(tool.slug) as string)}</span> : null}
 			</div>
 			<h1 className="mb-2 mt-1.5 font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-[5px] max-[620px]:text-[clamp(48px,12vw,62px)]">{tool.name}</h1>
 			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{tool.description}</p>
