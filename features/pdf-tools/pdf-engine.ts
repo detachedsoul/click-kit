@@ -1,3 +1,4 @@
+import type { PDFPage } from "pdf-lib";
 import { pdfErrorMessage } from "@/features/pdf-tools/pdf-utils";
 
 /**
@@ -244,5 +245,65 @@ export const addWatermark = (bytes: Uint8Array, options: WatermarkOptions): Prom
 				rotate: degrees(angle),
 			});
 		}
+		return document.save({ useObjectStreams: true });
+	});
+
+export type HeaderFooterOptions = {
+	header?: string;
+	footer?: string;
+	align?: "left" | "center" | "right";
+	startAt?: number;
+	skipFirst?: boolean;
+	size?: number;
+};
+
+export type LabelContext = { page: number; pages: number; title: string; date: string };
+
+/** Fills {page}, {pages}, {title}, and {date} in a header or footer template. */
+export const fillLabel = (template: string, context: LabelContext) =>
+	template
+		.replace(/\{page\}/giu, String(context.page))
+		.replace(/\{pages\}/giu, String(context.pages))
+		.replace(/\{title\}/giu, context.title)
+		.replace(/\{date\}/giu, context.date)
+		.replace(/\s+/gu, " ")
+		.trim();
+
+/**
+ * Writes a header and/or footer on every page. The words go on as a separate layer, so the
+ * document's own fonts, images, and links are untouched.
+ */
+export const addHeadersAndFooters = (bytes: Uint8Array, options: HeaderFooterOptions): Promise<Uint8Array> =>
+	guard(async () => {
+		const header = (options.header ?? "").trim();
+		const footer = (options.footer ?? "").trim();
+		if (!header && !footer) throw new PdfInputError("Write something for the header or the footer.");
+		const { StandardFonts, rgb } = await loadPdfLib();
+		const document = await openDocument(bytes);
+		const font = await document.embedFont(StandardFonts.Helvetica);
+		const size = options.size ?? 9;
+		const pages = document.getPageCount();
+		const title = document.getTitle()?.trim() ?? "";
+		const date = new Date().toISOString().slice(0, 10);
+		const start = options.startAt ?? 1;
+		const align = options.align ?? "center";
+		const ink = rgb(0.25, 0.25, 0.25);
+
+		const write = (page: PDFPage, template: string, atTop: boolean, label: number) => {
+			const text = fillLabel(template, { page: label, pages: pages + start - 1, title, date });
+			if (!text) return;
+			if (!isLatin(text, font)) throw new PdfInputError("The built-in page-number font only covers Latin letters, digits, and common punctuation. Try shorter wording.");
+			const { width, height } = page.getSize();
+			const textWidth = font.widthOfTextAtSize(text, size);
+			const x = align === "left" ? 40 : align === "right" ? width - 40 - textWidth : (width - textWidth) / 2;
+			page.drawText(text, { x, y: atTop ? height - 32 : 24, size, font, color: ink });
+		};
+
+		document.getPages().forEach((page, index) => {
+			if (options.skipFirst && index === 0) return;
+			const label = start + index;
+			if (header) write(page, header, true, label);
+			if (footer) write(page, footer, false, label);
+		});
 		return document.save({ useObjectStreams: true });
 	});
