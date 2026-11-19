@@ -72,6 +72,7 @@ import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { PdfResizeTool } from "@/features/pdf-tools/resize-tool";
 import { PdfCropTool } from "@/features/pdf-tools/crop-tool";
 import { PdfNupTool } from "@/features/pdf-tools/nup-tool";
+import { PdfRotateTool } from "@/features/pdf-tools/rotate-tool";
 import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-tool";
 import { RtfTool } from "@/features/converter-tools/rtf-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
@@ -274,6 +275,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-resize": PdfResizeTool,
 	"pdf-crop": PdfCropTool,
 	"pdf-nup": PdfNupTool,
+	"pdf-rotate": PdfRotateTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"markdown-to-html": MarkdownToHtmlTool,
 	"rtf-to-text": RtfTool,

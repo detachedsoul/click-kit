@@ -477,3 +477,27 @@ export const nupPages = (bytes: Uint8Array, options: NupOptions = {}): Promise<U
 		}
 		return target.save({ useObjectStreams: true });
 	});
+
+export type RotateOptions = { angle?: 90 | 180 | 270; pages?: number[] | null };
+
+/**
+ * Turns pages in the page tree itself — the /Rotate entry the viewer already honours — so
+ * nothing is redrawn and text, links, and vectors stay exactly as they were.
+ */
+export const rotatePages = (bytes: Uint8Array, options: RotateOptions = {}): Promise<Uint8Array> =>
+	guard(async () => {
+		const angle = ((options.angle ?? 90) % 360 + 360) % 360;
+		if (angle !== 90 && angle !== 180 && angle !== 270) throw new PdfInputError("Choose a quarter, half, or three-quarter turn.");
+		const { degrees } = await loadPdfLib();
+		const doc = await openDocument(bytes);
+		const total = doc.getPageCount();
+		if (!total) throw new PdfInputError("This PDF has no pages.");
+		const targets = options.pages?.length ? options.pages : Array.from({ length: total }, (_page, index) => index + 1);
+		for (const pageNumber of targets) {
+			if (pageNumber < 1 || pageNumber > total) throw new PdfInputError(`This PDF has ${total} page${total === 1 ? "" : "s"}.`);
+			const page = doc.getPage(pageNumber - 1);
+			const current = ((page.getRotation().angle % 360) + 360) % 360;
+			page.setRotation(degrees((current + angle) % 360));
+		}
+		return doc.save({ useObjectStreams: true });
+	});
