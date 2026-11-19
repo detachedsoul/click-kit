@@ -68,6 +68,7 @@ import { PdfWatermarkTool } from "@/features/pdf-tools/watermark-tool";
 import { PdfPageNumbersTool } from "@/features/pdf-tools/page-numbers-tool";
 import { PdfMetadataTool } from "@/features/pdf-tools/metadata-tool";
 import { PdfUnlockTool } from "@/features/pdf-tools/unlock-tool";
+import { PdfTextTool } from "@/features/pdf-tools/text-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -256,6 +257,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-page-numbers": PdfPageNumbersTool,
 	"pdf-metadata": PdfMetadataTool,
 	"pdf-unlock": PdfUnlockTool,
+	"pdf-text": PdfTextTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
