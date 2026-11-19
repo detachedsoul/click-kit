@@ -6,6 +6,8 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **pdf** — add an n-up handout builder ([fd1dc67](https://github.com/detachedsoul/click-kit/commit/fd1dc67))
+- **pdf** — add a pdf margin trimmer ([bb2f32a](https://github.com/detachedsoul/click-kit/commit/bb2f32a))
 - **convert** — add epub to markdown ([4419eea](https://github.com/detachedsoul/click-kit/commit/4419eea))
 - **convert** — add word to markdown ([c1f5dbb](https://github.com/detachedsoul/click-kit/commit/c1f5dbb))
 - **convert** — add calendar to csv and back ([2315c31](https://github.com/detachedsoul/click-kit/commit/2315c31))

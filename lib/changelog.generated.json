@@ -7,6 +7,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "fd1dc67",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add an n-up handout builder",
+              "group": "Added"
+            },
+            {
+              "hash": "bb2f32a",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf margin trimmer",
+              "group": "Added"
+            },
+            {
               "hash": "4419eea",
               "date": "2026-11-19",
               "type": "feat",
