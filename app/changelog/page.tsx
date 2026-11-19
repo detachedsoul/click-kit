@@ -37,7 +37,7 @@ const ChangelogPage = () => {
 	return (
 		<Shell>
 			<header className="max-w-[720px] py-[50px] pb-10 max-[620px]:py-[36px] max-[620px]:pb-8">
-				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#5f6259]">
+				<nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]">
 					<Link className="hover:text-accent-dark" href="/">
 						Home
 					</Link>

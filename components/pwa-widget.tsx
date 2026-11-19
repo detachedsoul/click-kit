@@ -156,7 +156,7 @@ export const PwaWidget = () => {
 			{status ? (
 				<p
 					aria-live="polite"
-					className="fixed bottom-4 left-4 z-40 m-0 max-w-[min(92vw,340px)] border border-line bg-surface px-3 py-2 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014]"
+					className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 z-40 m-0 max-w-[min(92vw,340px)] border border-line bg-surface px-3 py-2 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014] max-[520px]:bottom-[max(5.5rem,calc(env(safe-area-inset-bottom)+5rem))]"
 				>
 					{status}
 				</p>
@@ -164,7 +164,7 @@ export const PwaWidget = () => {
 			{showCard ? (
 				<aside
 					aria-label="Install ClickKit"
-					className="fixed bottom-4 right-4 z-50 w-[min(94vw,382px)] border border-line bg-surface p-4 shadow-[0_22px_60px_#241f1626] max-[520px]:bottom-0 max-[520px]:right-0 max-[520px]:w-full"
+					className="fixed bottom-4 right-4 z-50 w-[min(94vw,382px)] border border-line bg-surface p-4 shadow-[0_22px_60px_#241f1626] max-[520px]:bottom-0 max-[520px]:right-0 max-[520px]:w-full max-[520px]:pb-[max(1rem,env(safe-area-inset-bottom))]"
 				>
 					<div className="flex items-start gap-3">
 						<LogoMark size={38} />
@@ -174,7 +174,7 @@ export const PwaWidget = () => {
 						</div>
 						<button
 							aria-label="Dismiss install prompt"
-							className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-[2px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-[2px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 							onClick={dismiss}
 							type="button"
 						>

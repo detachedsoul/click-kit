@@ -24,14 +24,14 @@ const ToolCard = ({ tool }: { tool: Tool }) => {
 				</span>
 				<span className="flex items-center gap-1.5">
 					<NewBadge slug={tool.slug} />
-					<span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-[.02em] max-[620px]:gap-1 max-[620px]:px-1.5 max-[620px]:text-[8px] ${isAvailable ? "bg-sage text-[#536b4e]" : "bg-[#efeee8] text-[#5f6259]"}`}>
+					<span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-[.02em] max-[620px]:gap-1 max-[620px]:px-1.5 max-[620px]:text-[10px] ${isAvailable ? "bg-sage text-[#536b4e]" : "bg-[#efeee8] text-[#5f6259]"}`}>
 						{isAvailable && <span className="size-1.5 rounded-full bg-[#6b8a61]" aria-hidden="true" />}
 						{isAvailable ? "Ready" : "In the works"}
 					</span>
 				</span>
 			</div>
 			<h3 className="mb-1.5 mt-4 text-[14px] font-semibold tracking-[-.02em] group-hover:text-accent-dark max-[620px]:mt-3 max-[620px]:text-xs">{tool.name}</h3>
-			<p className="m-0 pr-4 text-xs leading-[1.55] text-muted max-[620px]:text-[10px]">{tool.description}</p>
+			<p className="m-0 pr-4 text-xs leading-[1.55] text-muted">{tool.description}</p>
 			<ArrowUpRight className="absolute bottom-[17px] right-[16px] text-[#5f6259] transition-[color,transform] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-dark max-[620px]:bottom-3 max-[620px]:right-3" size={14} aria-hidden="true" />
 		</Link>
 	);

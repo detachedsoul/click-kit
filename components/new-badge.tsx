@@ -11,7 +11,7 @@ export const addedAgo = (slug: string) => {
 };
 
 const pill =
-	"inline-flex shrink-0 items-center gap-1 rounded-full bg-accent px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[.08em] text-white shadow-[0_1px_0_#873b28] max-[620px]:px-1.5 max-[620px]:text-[8px]";
+	"inline-flex shrink-0 items-center gap-1 rounded-full bg-accent px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-[.08em] text-white shadow-[0_1px_0_#873b28] max-[620px]:px-1.5 max-[620px]:text-[10px]";
 
 type NewBadgeProps = {
 	slug: string;

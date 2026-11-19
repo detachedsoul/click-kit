@@ -122,7 +122,7 @@ const ToolsBrowser = () => {
 					{query ? (
 						<button
 							aria-label="Clear filter"
-							className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[520px]:size-10"
 							onClick={() => {
 								setQuery("");
 								inputRef.current?.focus();
@@ -132,18 +132,22 @@ const ToolsBrowser = () => {
 							<X aria-hidden="true" size={14} />
 						</button>
 					) : (
-						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#5f6259]">
+						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#5f6259] sm:block">
 							/
 						</kbd>
 					)}
 				</div>
-				<div aria-label="Filter by category" className="flex flex-wrap gap-2" role="group">
+				<div
+					aria-label="Filter by category"
+					className="flex flex-wrap gap-2 max-[640px]:-mx-4 max-[640px]:flex-nowrap max-[640px]:gap-1.5 max-[640px]:overflow-x-auto max-[640px]:px-4 max-[640px]:pb-1 [scrollbar-width:thin]"
+					role="group"
+				>
 					{[{ id: "all", name: "All tools", count: tools.length }, ...categories.map((item) => ({ id: item.id, name: item.name, count: tools.filter((tool) => tool.category === item.id).length }))].map((item) => {
 						const active = category === item.id;
 						return (
 							<button
 								aria-pressed={active}
-								className={`inline-flex min-h-9 cursor-pointer items-center gap-2 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+								className={`inline-flex min-h-9 cursor-pointer items-center gap-2 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[640px]:shrink-0 ${
 									active ? "border-forest bg-forest text-white" : "border-line bg-surface text-[#50534c] hover:border-[#5f6259] hover:text-ink"
 								}`}
 								key={item.id}
@@ -170,11 +174,11 @@ const ToolsBrowser = () => {
 						Recently added
 						<span className={`font-mono text-[10px] ${newOnly ? "text-white" : "text-[#7a4f1d]"}`}>{newCount}</span>
 					</button>
-					<label className="ml-auto inline-flex items-center gap-2 text-[11px] text-muted" htmlFor="tools-sort">
+					<label className="ml-auto inline-flex items-center gap-2 text-[11px] text-muted max-[520px]:ml-0 max-[520px]:w-full max-[520px]:justify-between" htmlFor="tools-sort">
 						<ArrowDownWideNarrow aria-hidden="true" size={13} />
 						Sort
 						<select
-							className="h-9 cursor-pointer border border-field bg-surface px-2 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+							className="h-9 cursor-pointer border border-field bg-surface px-2 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent max-[520px]:h-11 max-[520px]:flex-1"
 							id="tools-sort"
 							onChange={(event) => setSort(event.target.value as SortOrder)}
 							value={sort}

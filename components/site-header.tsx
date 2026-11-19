@@ -53,14 +53,22 @@ const SiteHeader = () => {
 					<Link className="transition-colors hover:text-accent-dark" href="/changelog">Changelog</Link>
 					<Link className="transition-colors hover:text-accent-dark" href="/#categories">Categories</Link>
 				</nav>
-				<nav className="hidden items-center gap-4 text-xs text-[#55594f] max-[620px]:ml-auto max-[620px]:flex" aria-label="Main navigation">
-					<Link href="/tools">Tools</Link><Link href="/changelog">Changelog</Link><Link href="/#categories">Categories</Link>
+				<nav className="hidden items-center gap-0.5 text-[13px] font-medium text-[#4a4d45] max-[620px]:ml-auto max-[620px]:flex" aria-label="Main navigation">
+					{[
+						{ href: "/tools", label: "Tools" },
+						{ href: "/changelog", label: "Changelog" },
+						{ href: "/#categories", label: "Categories" },
+					].map((link) => (
+						<Link className="-mx-1 inline-flex min-h-11 items-center px-2 transition-colors hover:text-accent-dark" href={link.href} key={link.href}>
+							{link.label}
+						</Link>
+					))}
 				</nav>
 				<div className="relative ml-auto w-[min(310px,32vw)] max-[620px]:order-3 max-[620px]:mt-2.5 max-[620px]:w-full">
-					<Search className="pointer-events-none absolute left-3 top-[12px] text-[#5f6259]" size={15} aria-hidden="true" />
+					<Search className="pointer-events-none absolute left-3 top-[12px] text-[#5f6259] max-[620px]:top-[15px]" size={15} aria-hidden="true" />
 					<input
 						ref={inputRef}
-						className="h-[39px] w-full border border-line bg-surface py-0 pl-[37px] pr-[42px] text-[13px] outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] focus:border-accent focus:outline-accent max-[620px]:h-[42px]"
+						className="h-[39px] w-full border border-line bg-surface py-0 pl-[37px] pr-[42px] text-[13px] outline-2 outline-offset-2 outline-transparent transition-[border-color,outline-color] focus:border-accent focus:outline-accent max-[620px]:h-[46px] max-[620px]:pl-10 max-[620px]:pr-11"
 						role="combobox"
 						aria-label="Search tools"
 						aria-expanded={results.length > 0}
@@ -90,7 +98,7 @@ const SiteHeader = () => {
 					{query ? (
 						<button
 							aria-label="Clear search"
-							className="absolute right-2 top-[9px] grid size-6 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:top-[11px]"
+							className="absolute right-1 top-1/2 grid size-8 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[620px]:right-0.5 max-[620px]:size-10"
 							onClick={() => {
 								clearQuery();
 								inputRef.current?.focus();
@@ -108,10 +116,10 @@ const SiteHeader = () => {
 					{query && <div className="absolute left-0 right-0 top-[47px] z-40 border border-line bg-surface p-1.5 shadow-[0_16px_40px_#22231f17] max-[620px]:top-[50px]" id="tool-search-results" role="listbox" aria-label="Tool search results">
 						{results.length ? results.map((tool, index) => {
 							const category = categories.find((item) => item.id === tool.category);
-							return <Link className={`flex items-center justify-between gap-2.5 p-2.5 text-[13px] hover:bg-paper focus:bg-paper ${index === activeIndex ? "bg-paper" : ""}`} key={tool.id} id={`search-option-${tool.id}`} role="option" aria-selected={index === activeIndex} href={`/tools/${tool.slug}`} onClick={clearQuery}>
+							return <Link className={`flex min-h-11 items-center justify-between gap-2.5 p-2.5 text-[13px] hover:bg-paper focus:bg-paper ${index === activeIndex ? "bg-paper" : ""}`} key={tool.id} id={`search-option-${tool.id}`} role="option" aria-selected={index === activeIndex} href={`/tools/${tool.slug}`} onClick={clearQuery}>
 								<span>{tool.name}</span><small className="text-[11px] text-muted">{tool.status === "available" ? "Ready to use" : category?.name}</small>
 							</Link>;
-						}) : <div className="flex items-center justify-between gap-2.5 p-2.5 text-[13px]"><span>No matching tools</span><small className="text-[11px] text-muted">Try another term</small></div>}
+						}) : <div className="flex min-h-11 items-center justify-between gap-2.5 p-2.5 text-[13px]"><span>No matching tools</span><small className="text-[11px] text-muted">Try another term</small></div>}
 					</div>}
 				</div>
 			</Shell>

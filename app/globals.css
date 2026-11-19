@@ -156,3 +156,91 @@
 		@apply bg-accent/20 text-forest;
 	}
 }
+
+/*
+ * Phones read at arm's length. The fixed pixel sizes that suit a desktop panel are one
+ * step too small there, so below 640px each small size moves up a notch and controls
+ * keep a thumb-sized height. Sizes are duplicated deliberately: these are the exact
+ * utilities used across the app (see the type-scale contract test).
+ */
+@media (max-width: 640px) {
+	.text-\[8px\] {
+		font-size: 10px;
+	}
+
+	.text-\[9px\] {
+		font-size: 11px;
+	}
+
+	.text-\[10px\] {
+		font-size: 11.5px;
+	}
+
+	.text-\[11px\] {
+		font-size: 12.5px;
+	}
+
+	.text-\[12px\] {
+		font-size: 13px;
+	}
+
+	.text-\[13px\] {
+		font-size: 14px;
+	}
+
+	.text-\[15px\] {
+		font-size: 16px;
+	}
+
+	.text-xs {
+		font-size: 0.8125rem;
+	}
+
+	.text-sm {
+		font-size: 0.9375rem;
+	}
+
+	.min-h-8 {
+		min-height: 2.5rem;
+	}
+
+	.min-h-9,
+	.min-h-10 {
+		min-height: 2.75rem;
+	}
+}
+
+/* iOS Safari zooms the whole page when a focused field is smaller than 16px. */
+@media (max-width: 640px) {
+	input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+	select,
+	textarea {
+		font-size: 16px !important;
+	}
+}
+
+@media (max-width: 640px) {
+	.checkbox-input,
+	.radio-input {
+		width: 20px;
+		height: 20px;
+	}
+
+	.select-input {
+		height: 3rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

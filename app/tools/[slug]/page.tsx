@@ -308,7 +308,7 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 	return <Shell>
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
-			<nav className="flex items-center gap-[9px] text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
+			<nav className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
 			<div className="mt-[26px] flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">
 				<span>{tool.status === "available" ? "Available now" : category.name}</span>
 				<NewBadge slug={tool.slug} variant="banner" />

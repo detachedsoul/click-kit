@@ -55,7 +55,7 @@ const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) =
 	return <Shell>
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
-			<nav className="flex items-center gap-[9px] text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><ChevronRight size={12} /><span>{category.name}</span></nav>
+			<nav className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><ChevronRight size={12} /><span>{category.name}</span></nav>
 			<h1 className="mb-2 mt-[26px] font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-[21px] max-[620px]:text-[clamp(48px,12vw,62px)]">{category.name}</h1>
 			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{category.description}</p>
 		</header>

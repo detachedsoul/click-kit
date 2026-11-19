@@ -43,7 +43,7 @@ const HomePage = () => {
 			<Shell>
 				<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
 					<div><h2 id="tools-title" className="m-0 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">A good place to start</h2><p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">The little helpers people reach for most.</p></div>
-					<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark max-[620px]:text-[11px]" href="#categories">Browse by category <ArrowRight size={14} /></Link>
+					<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark" href="#categories">Browse by category <ArrowRight size={14} /></Link>
 				</div>
 				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{featuredTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
 			</Shell>
@@ -58,7 +58,7 @@ const HomePage = () => {
 							<h2 className="mb-0 mt-2 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]" id="new-title">Recently added</h2>
 							<p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">{recentTools.length} new tools in the last two weeks{latestAdded ? ` · latest ${addedOnLabel(latestAdded)}` : ""}.</p>
 						</div>
-						<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark max-[620px]:text-[11px]" href="/changelog">
+						<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark" href="/changelog">
 							What&apos;s new <ArrowRight size={14} aria-hidden="true" />
 						</Link>
 					</div>

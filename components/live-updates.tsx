@@ -105,7 +105,7 @@ export const LiveUpdates = ({ version, tools }: LiveUpdatesProps) => {
 	return (
 		<div
 			aria-live="polite"
-			className="fixed bottom-4 left-4 z-40 flex max-w-[min(92vw,360px)] items-start gap-2.5 border border-line bg-surface px-3 py-2.5 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014]"
+			className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 z-40 flex max-w-[min(92vw,360px)] items-start gap-2.5 border border-line bg-surface px-3 py-2.5 text-[11px] leading-[1.5] text-ink shadow-[0_10px_24px_#322c2014] max-[520px]:bottom-auto max-[520px]:left-3 max-[520px]:right-3 max-[520px]:top-3 max-[520px]:max-w-none"
 			role="status"
 		>
 			<Sparkles aria-hidden="true" className="mt-0.5 shrink-0 text-accent" size={14} />
