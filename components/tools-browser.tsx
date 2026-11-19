@@ -69,8 +69,8 @@ const ToolsBrowser = () => {
 
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
-			const target = event.target as HTMLElement | null;
-			const typing = target ? target.closest("input, textarea, select, [contenteditable='true']") !== null : false;
+			const target = event.target instanceof HTMLElement ? event.target : null;
+			const typing = target?.closest("input, textarea, select, [contenteditable='true']") !== null;
 			if (event.key === "/" && !typing) {
 				event.preventDefault();
 				inputRef.current?.focus();

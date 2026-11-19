@@ -55,8 +55,6 @@ export const viewport: Viewport = {
 		{ media: "(prefers-color-scheme: dark)", color: "#263b34" },
 	],
 	colorScheme: "light",
-	// Lets the installed app paint under the notch and gives env(safe-area-inset-*) a value.
-	viewportFit: "cover",
 };
 
 const siteJsonLd = {

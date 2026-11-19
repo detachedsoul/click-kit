@@ -19,8 +19,8 @@ const SiteHeader = () => {
 
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
-			const target = event.target as HTMLElement | null;
-			const typing = target ? target.closest("input, textarea, select, [contenteditable='true']") !== null : false;
+			const target = event.target instanceof HTMLElement ? event.target : null;
+			const typing = target?.closest("input, textarea, select, [contenteditable='true']") !== null;
 			if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
 				event.preventDefault();
 				inputRef.current?.focus();
@@ -42,9 +42,10 @@ const SiteHeader = () => {
 		setActiveIndex(0);
 	};
 
+	// Opaque, not frosted: a backdrop blur makes iOS Safari rasterise the header's own text and soften it.
 	return (
-		<header className="sticky top-0 z-20 h-[72px] border-b border-line bg-paper/95 backdrop-blur-[14px] max-[620px]:static max-[620px]:h-auto">
-			<Shell className="flex h-full items-center gap-[38px] max-[900px]:gap-6 max-[620px]:min-h-[63px] max-[620px]:flex-wrap max-[620px]:gap-0 max-[620px]:pb-3">
+		<header className="sticky top-0 z-20 border-b border-line bg-paper max-[620px]:static">
+			<Shell className="flex h-[72px] items-center gap-[38px] max-[900px]:gap-6 max-[620px]:h-auto max-[620px]:min-h-[63px] max-[620px]:flex-wrap max-[620px]:gap-0 max-[620px]:pb-3">
 				<Link className="inline-flex shrink-0 items-center whitespace-nowrap text-[21px] font-bold tracking-[-1.2px] max-[620px]:text-[19px]" href="/" aria-label="ClickKit home">
 					<LogoLockup size={30} className="max-[620px]:[&_svg]:size-[27px]" />
 				</Link>
