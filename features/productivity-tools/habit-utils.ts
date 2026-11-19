@@ -4,6 +4,8 @@
  * living in, not to a UTC offset somewhere else.
  */
 
+import { parseDay, shiftDay } from "@/features/productivity-tools/local-day";
+
 export type Habit = { id: string; name: string; days: string[] };
 
 export const HABIT_KEY = "clickkit.habits.v1";
@@ -11,21 +13,7 @@ export const WINDOW_DAYS = 7;
 export const MAX_HABITS = 12;
 export const MAX_NAME = 48;
 
-const pad = (value: number) => String(value).padStart(2, "0");
-
-/** A local calendar date, never the UTC one — at 00:30 in Lagos this must still read today. */
-export const isoDay = (date: Date): string =>
-	`${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-
-export const todayIso = (now: Date = new Date()): string => isoDay(now);
-
-export const parseDay = (iso: string): Date => new Date(`${iso}T00:00:00`);
-
-export const shiftDay = (iso: string, delta: number): string => {
-	const date = parseDay(iso);
-	date.setDate(date.getDate() + delta);
-	return isoDay(date);
-};
+export { isoDay, parseDay, shiftDay, todayIso } from "@/features/productivity-tools/local-day";
 
 /** The last `count` days as dates, oldest first, ending on `today`. */
 export const lastDays = (today: string, count: number = WINDOW_DAYS): string[] =>
