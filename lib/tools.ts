@@ -4,6 +4,7 @@ import {
 	Banknote,
 	BarChart3,
 	Binary,
+	BookOpen,
 	Braces,
 	Boxes,
 	Calculator,
@@ -268,6 +269,7 @@ export const tools: Tool[] = [
 	{ id: "contacts-converter", name: "vCard ↔ CSV contacts", description: "Turn a phone's .vcf address book into a spreadsheet, or a spreadsheet back into contacts a phone can import.", category: "convert", slug: "contacts-converter", keywords: ["vcard", "vcf to csv", "csv to vcf", "contacts", "address book", "export contacts"], icon: Contact, status: "available" },
 	{ id: "calendar-converter", name: "Calendar ↔ CSV", description: "Turn an .ics calendar into a spreadsheet of events, or a spreadsheet back into a calendar file your phone can import.", category: "convert", slug: "calendar-converter", keywords: ["ics to csv", "csv to ics", "ical", "calendar export", "events", "schedule"], icon: CalendarRange, status: "available" },
 	{ id: "docx-to-markdown", name: "Word to Markdown", description: "Turn a .docx into Markdown or plain text, keeping headings, lists, emphasis, and tables — read straight out of the file in your browser.", category: "convert", slug: "docx-to-markdown", keywords: ["docx to markdown", "word to text", "word to md", "docx converter", "document to markdown"], icon: FileType2, status: "available" },
+	{ id: "epub-to-markdown", name: "EPUB to Markdown", description: "Turn a whole book, or one chapter, into Markdown in reading order — unpacked in your browser, never uploaded.", category: "convert", slug: "epub-to-markdown", keywords: ["epub to markdown", "ebook converter", "epub to text", "book to md", "chapters"], icon: BookOpen, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
