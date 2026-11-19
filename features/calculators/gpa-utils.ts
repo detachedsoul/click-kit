@@ -1,6 +1,26 @@
-export const gradeOptions = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"] as const;
+/** Every grade on the plus/minus scale. */
+export const detailedGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"] as const;
 
-export type Grade = (typeof gradeOptions)[number];
+/** Plain letters, as used in Nigeria and many other systems. E only exists on the 5.0 scale. */
+export const simpleGrades = ["A", "B", "C", "D", "E", "F"] as const;
+
+export const gradeOptions = detailedGrades;
+
+export type Grade = (typeof detailedGrades)[number] | (typeof simpleGrades)[number];
+
+export type GradeSet = "simple" | "detailed";
+
+export const GRADE_SETS: { id: GradeSet; label: string; note: string }[] = [
+	{ id: "simple", label: "Plain letters (A–F)", note: "No plus or minus — the usual A, B, C, D, E, F in Nigeria." },
+	{ id: "detailed", label: "With plus and minus (A+ to F)", note: "Finer steps for schools that award A− or B+." },
+];
+
+/** The letters a student can pick on this scale and grade set. */
+export const gradesFor = (scale: GpaScale = 5, set: GradeSet = "simple"): Grade[] =>
+	set === "detailed" ? [...detailedGrades] : scale === 5 ? [...simpleGrades] : ["A", "B", "C", "D", "F"];
+
+/** Fold a plus/minus grade down to the plain letter it sits inside. */
+export const simplifyGrade = (grade: Grade): Grade => grade.charAt(0) as Grade;
 
 const fourPoint: Record<Grade, number> = {
 	"A+": 4,
@@ -15,6 +35,7 @@ const fourPoint: Record<Grade, number> = {
 	"D+": 1.3,
 	D: 1,
 	"D-": 0.7,
+	E: 0,
 	F: 0,
 };
 
@@ -34,6 +55,7 @@ const fivePoint: Record<Grade, number> = {
 	"D+": 2.3,
 	D: 2,
 	"D-": 1.7,
+	E: 1,
 	F: 0,
 };
 
@@ -42,18 +64,18 @@ export type GpaScale = 4 | 4.3 | 5;
 export type GpaScaleInfo = { value: GpaScale; label: string; note: string };
 
 export const GPA_SCALES: GpaScaleInfo[] = [
-	{ value: 4, label: "4.0 scale (A+ = 4.0)", note: "The common US and Canadian scale." },
-	{ value: 4.3, label: "4.3 scale (A+ = 4.3)", note: "Gives A+ slightly more than an A." },
 	{ value: 5, label: "5.0 scale (A = 5.0)", note: "Used by most Nigerian and many African universities." },
+	{ value: 4, label: "4.0 scale (A = 4.0)", note: "The common US and Canadian scale." },
+	{ value: 4.3, label: "4.3 scale (A+ = 4.3)", note: "Gives A+ slightly more than an A." },
 ];
 
 const scaleTable = (scale: GpaScale) => (scale === 5 ? fivePoint : scale === 4.3 ? fourThreePoint : fourPoint);
 
 export const gradePoint = (grade: Grade, scale: GpaScale = 4) => scaleTable(scale)[grade];
 
-/** Every grade's points on one scale, in descending order, e.g. "A 5 · B 4 · C 3 · D 2 · F 0" for the letters. */
-export const scaleSummary = (scale: GpaScale = 4) =>
-	(["A", "B", "C", "D", "F"] as Grade[])
+/** Every letter's points on one scale, e.g. "A 5.0 · B 4.0 · C 3.0 · D 2.0 · F 0.0". */
+export const scaleSummary = (scale: GpaScale = 5, set: GradeSet = "simple") =>
+	gradesFor(scale, set)
 		.map((grade) => `${grade} ${scaleTable(scale)[grade].toFixed(1)}`)
 		.join(" · ");
 
