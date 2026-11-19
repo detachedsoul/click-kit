@@ -119,3 +119,46 @@ export const rewritePages = (
 		});
 		return target.save({ useObjectStreams: true });
 	});
+
+export type PagePreset = "fit" | "a4" | "letter";
+
+const PRESET_SIZES: Record<Exclude<PagePreset, "fit">, [number, number]> = {
+	a4: [595.28, 841.89],
+	letter: [612, 792],
+};
+
+/**
+ * Builds a PDF from pictures, one page each. Images are embedded as they are (JPEG stays
+ * JPEG), so nothing is re-encoded. "fit" makes the page exactly the picture's size at
+ * 72 dpi; a paper preset scales the picture down to sit inside the margins.
+ */
+export const imagesToPdf = (images: { bytes: Uint8Array; type: "image/png" | "image/jpeg" }[], preset: PagePreset = "fit", margin = 24): Promise<Uint8Array> =>
+	guard(async () => {
+		if (!images.length) throw new PdfInputError("Add at least one image.");
+		const { PDFDocument } = await loadPdfLib();
+		const doc = await PDFDocument.create();
+		for (const image of images) {
+			const embedded = image.type === "image/jpeg" ? await doc.embedJpg(image.bytes) : await doc.embedPng(image.bytes);
+			const width = embedded.width;
+			const height = embedded.height;
+			if (preset === "fit") {
+				const page = doc.addPage([width, height]);
+				page.drawImage(embedded, { x: 0, y: 0, width, height });
+				continue;
+			}
+			const [pageWidth, pageHeight] = PRESET_SIZES[preset];
+			const landscape = width > height;
+			const base = landscape ? ([pageHeight, pageWidth] as [number, number]) : ([pageWidth, pageHeight] as [number, number]);
+			const page = doc.addPage(base);
+			const room = { width: base[0] - margin * 2, height: base[1] - margin * 2 };
+			const zoom = Math.min(room.width / width, room.height / height, 1);
+			const drawn = { width: width * zoom, height: height * zoom };
+			page.drawImage(embedded, {
+				x: (base[0] - drawn.width) / 2,
+				y: (base[1] - drawn.height) / 2,
+				width: drawn.width,
+				height: drawn.height,
+			});
+		}
+		return doc.save({ useObjectStreams: true });
+	});
