@@ -1,6 +1,69 @@
 {
   "releases": [
     {
+      "date": "2026-11-19",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "07adb14",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a batch image converter",
+              "group": "Added"
+            },
+            {
+              "hash": "4725d31",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image colour picker",
+              "group": "Added"
+            },
+            {
+              "hash": "6d297f4",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image splitter",
+              "group": "Added"
+            },
+            {
+              "hash": "9d957e7",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image redactor",
+              "group": "Added"
+            },
+            {
+              "hash": "0cc0035",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a screenshot framer",
+              "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "1aa4a50",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "a11y",
+              "summary": "raise text and field contrast to WCAG AA",
+              "group": "Fixed"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "date": "2026-11-18",
       "groups": [
         {
@@ -42,6 +105,19 @@
               "scope": "image",
               "summary": "keep the palette page to two copy blocks",
               "group": "Changed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "781925a",
+              "date": "2026-11-18",
+              "type": "chore",
+              "scope": "",
+              "summary": "sync tool dates and changelog",
+              "group": "Maintenance"
             }
           ]
         }
