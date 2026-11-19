@@ -71,6 +71,7 @@ import { PlaceholderTool } from "@/features/image-tools/placeholder-tool";
 import { ShadesTool } from "@/features/developer-tools/shades-tool";
 import { UserAgentTool } from "@/features/developer-tools/user-agent-tool";
 import { ChunkTool } from "@/features/text-tools/chunk-tool";
+import { PostLengthTool } from "@/features/text-tools/post-length-tool";
 import { TeamTool } from "@/features/productivity-tools/team-tool";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -221,6 +222,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"colour-shades": ShadesTool,
 	"user-agent-parser": UserAgentTool,
 	"text-chunker": ChunkTool,
+	"post-length": PostLengthTool,
 	"team-splitter": TeamTool,
 	"meeting-planner": MeetingPlanner,
 	"pace-calculator": PaceCalculator,
