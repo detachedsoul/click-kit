@@ -7,6 +7,158 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "4419eea",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add epub to markdown",
+              "group": "Added"
+            },
+            {
+              "hash": "c1f5dbb",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add word to markdown",
+              "group": "Added"
+            },
+            {
+              "hash": "2315c31",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add calendar to csv and back",
+              "group": "Added"
+            },
+            {
+              "hash": "4921d6d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add vcard and csv contact conversion",
+              "group": "Added"
+            },
+            {
+              "hash": "7f6fddc",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add a subtitle converter for srt and webvtt",
+              "group": "Added"
+            },
+            {
+              "hash": "13ff511",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add html to markdown",
+              "group": "Added"
+            },
+            {
+              "hash": "886d1b6",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf text extractor",
+              "group": "Added"
+            },
+            {
+              "hash": "741e088",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf page resizer",
+              "group": "Added"
+            },
+            {
+              "hash": "ea0bc90",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add pdf unlock for password-protected files",
+              "group": "Added"
+            },
+            {
+              "hash": "596e7c4",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf metadata editor",
+              "group": "Added"
+            },
+            {
+              "hash": "49ad59e",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add page numbers and running headers",
+              "group": "Added"
+            },
+            {
+              "hash": "c4b2fe1",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf watermarker",
+              "group": "Added"
+            },
+            {
+              "hash": "439c70d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf compressor with a sharp mode and a scan mode",
+              "group": "Added"
+            },
+            {
+              "hash": "41baefb",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add images to pdf with fitted and paper page sizes",
+              "group": "Added"
+            },
+            {
+              "hash": "c86788a",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add pdf to images with png, jpeg and webp output",
+              "group": "Added"
+            },
+            {
+              "hash": "88e36ea",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a page organiser with live thumbnails",
+              "group": "Added"
+            },
+            {
+              "hash": "c0436f6",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf splitter with ranges, chunks and burst",
+              "group": "Added"
+            },
+            {
+              "hash": "1e5f214",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a pdf merger with a reorderable list",
+              "group": "Added"
+            },
+            {
+              "hash": "c9863ff",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "shared pdf plumbing that copies pages, not pictures",
+              "group": "Added"
+            },
+            {
               "hash": "ca84cf0",
               "date": "2026-11-19",
               "type": "feat",
