@@ -8,6 +8,7 @@ import {
 	Boxes,
 	Calculator,
 	CalendarRange,
+	Captions,
 	CaseSensitive,
 	ChefHat,
 	Clock3,
@@ -262,6 +263,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-unlock", name: "PDF unlock", description: "Open a password-protected PDF with the password you have, and save a copy that opens without one.", category: "pdf", slug: "pdf-unlock", keywords: ["unlock pdf", "remove password", "password protected", "decrypt pdf", "open pdf"], icon: FileKey2, status: "available" },
 	{ id: "pdf-text", name: "PDF text extractor", description: "Pull the words out of a PDF in page order, copy them, or save them as a text file — with a plain answer when a file is only scans.", category: "pdf", slug: "pdf-text", keywords: ["extract text", "pdf to text", "copy text from pdf", "selectable text", "ocr"], icon: FileText, status: "available" },
 	{ id: "html-to-markdown", name: "HTML to Markdown", description: "Turn a web page or a pasted fragment into clean Markdown — or into plain text — with links, lists, tables, and code kept.", category: "convert", slug: "html-to-markdown", keywords: ["html to markdown", "web page to markdown", "convert html", "html to text", "markdown export"], icon: Braces, status: "available" },
+	{ id: "subtitle-converter", name: "Subtitles: SRT ↔ WebVTT", description: "Convert subtitle files between SubRip and WebVTT, shift the timing, or strip the times into a transcript.", category: "convert", slug: "subtitle-converter", keywords: ["srt to vtt", "vtt to srt", "subtitle converter", "captions", "transcript", "timing shift"], icon: Captions, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
