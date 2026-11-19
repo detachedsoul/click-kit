@@ -1,6 +1,6 @@
 /* ClickKit service worker: installable app shell plus new-tool notifications. */
 
-const VERSION = "clickkit-v1";
+const VERSION = "clickkit-v2";
 const OFFLINE_URLS = ["/", "/tools"];
 
 self.addEventListener("install", (event) => {
@@ -24,7 +24,14 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
 	const request = event.request;
-	if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
+	const url = new URL(request.url);
+	if (request.method !== "GET" || url.origin !== self.location.origin) return;
+
+	// Never cache live data: the version endpoint and Next's in-place refresh payloads must
+	// always come from the network, or an open tab would keep seeing the build it started on.
+	const isData = url.pathname.startsWith("/api/");
+	const isRouterPayload = request.headers.get("RSC") === "1" || url.searchParams.has("_rsc");
+	if (isData || isRouterPayload) return;
 
 	// Pages: network first, so a new tool is never hidden behind a stale cache.
 	if (request.mode === "navigate") {

@@ -1,6 +1,8 @@
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 import PwaWidget from "@/components/pwa-widget";
+import LiveUpdates from "@/components/live-updates";
+import { buildInfo } from "@/lib/build-info";
 import type { Metadata, Viewport } from "next";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site";
 import "@fontsource-variable/dm-sans/wght.css";
@@ -79,7 +81,9 @@ const siteJsonLd = {
 	],
 };
 
-const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+	const build = buildInfo();
+	return (
 	<html className="min-w-[320px] scroll-smooth bg-paper" lang="en">
 		<body className="m-0 min-h-screen bg-paper font-sans text-[15px] font-normal text-ink antialiased">
 			<a className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:border focus:border-forest focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-semibold" href="#main-content">
@@ -89,9 +93,11 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
 			<main id="main-content">{children}</main>
 			<SiteFooter />
 			<PwaWidget />
+			<LiveUpdates tools={build.tools} version={build.version} />
 			<script dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} type="application/ld+json" />
 		</body>
 	</html>
-);
+	);
+};
 
 export default RootLayout;

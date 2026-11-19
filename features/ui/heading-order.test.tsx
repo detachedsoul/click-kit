@@ -1,5 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+// The changelog's live-update control needs a router; jsdom has no app router mounted.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }) }));
 import HomePage from "@/app/page";
 import AllToolsPage from "@/app/tools/page";
 import ChangelogPage from "@/app/changelog/page";

@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowUpRight, GitCommitHorizontal, Sparkles } from "lucide-r
 import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
 import NotifyOptIn from "@/components/notify-opt-in";
+import { CheckForUpdates } from "@/components/live-updates";
+import { buildInfo } from "@/lib/build-info";
 import changelog from "@/lib/changelog.generated.json";
 import { siteUrl } from "@/lib/site";
 import { categories, tools } from "@/lib/tools";
@@ -30,6 +32,7 @@ const ChangelogPage = () => {
 	const recent = recentToolReleases().flatMap((release) => release.tools);
 	const fresh = newToolCount();
 	const totalTools = tools.filter((tool) => tool.status === "available").length;
+	const build = buildInfo();
 
 	return (
 		<Shell>
@@ -48,7 +51,8 @@ const ChangelogPage = () => {
 				</p>
 			</header>
 
-			<div className="mb-8">
+			<div className="mb-8 flex flex-col gap-3">
+				<CheckForUpdates tools={build.tools} version={build.version} />
 				<NotifyOptIn />
 			</div>
 

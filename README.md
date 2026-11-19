@@ -22,6 +22,10 @@ New tools are tracked automatically. `lib/tool-dates.generated.json` maps every 
 
 `npm run changelog` turns the commit history into `lib/changelog.generated.json` and `CHANGELOG.md`, which the `/changelog` page renders day by day.
 
+## Pages that stay current without a reload
+
+Every deploy publishes its identity at `/api/version` — the newest generated changelog commit plus the catalogue size. The root layout hands that same string to `components/live-updates.tsx`, so an open tab knows which build it is looking at. It re-checks 8 seconds after load and then every 45 seconds (and immediately when the tab is focused or the connection returns); when the served build differs, it calls `router.refresh()`, which re-renders the server components in place — new changelog entries and tool lists appear without a reload, and scroll position, filters, and tool state survive. A small status line says what changed, and the changelog adds a manual "Check for new entries" button. The service worker deliberately never caches `/api/` responses or Next's RSC payloads, so an in-place refresh always reaches the newest deployment.
+
 ## Install it, and get told when a tool lands
 
 `app/manifest.ts` plus `public/sw.js` make ClickKit installable: the service worker caches the shell so tools keep opening when the connection drops, and pages are fetched network-first so a new tool is never hidden behind a stale cache. A card in the corner (`components/pwa-widget.tsx`) invites people to install it — Chrome and Android through the browser's own prompt, iOS through the share-sheet instructions — and remembers a "Not now" for three weeks.
