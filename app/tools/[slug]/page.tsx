@@ -69,6 +69,7 @@ import { PdfPageNumbersTool } from "@/features/pdf-tools/page-numbers-tool";
 import { PdfMetadataTool } from "@/features/pdf-tools/metadata-tool";
 import { PdfUnlockTool } from "@/features/pdf-tools/unlock-tool";
 import { PdfTextTool } from "@/features/pdf-tools/text-tool";
+import { PdfResizeTool } from "@/features/pdf-tools/resize-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
@@ -264,6 +265,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-metadata": PdfMetadataTool,
 	"pdf-unlock": PdfUnlockTool,
 	"pdf-text": PdfTextTool,
+	"pdf-resize": PdfResizeTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"subtitle-converter": SubtitleConverterTool,
 	"contacts-converter": ContactsConverterTool,
