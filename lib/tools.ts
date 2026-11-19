@@ -1,5 +1,6 @@
 import {
 	AlignLeft,
+	ArrowLeftRight,
 	Banknote,
 	BarChart3,
 	Binary,
@@ -89,7 +90,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity" | "pdf";
+export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity" | "pdf" | "convert";
 export type ToolStatus = "available" | "planned";
 
 export type Tool = {
@@ -109,6 +110,7 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 	{ id: "developer", name: "Developer tools", description: "Small, sharp helpers for working with code.", icon: Code2 },
 	{ id: "image", name: "Image & files", description: "Inspect, crop, convert, and shrink images and files — all processed in your browser.", icon: Image },
 	{ id: "productivity", name: "Productivity", description: "Simple tools to help you get into a good rhythm.", icon: ListChecks },
+	{ id: "convert", name: "Converters", description: "Move words and notes from one format to another, without handing the file to anyone.", icon: ArrowLeftRight },
 	{ id: "pdf", name: "PDF & documents", description: "Join, split, tidy, and convert PDFs without uploading them anywhere.", icon: FileType2 },
 ];
 
@@ -259,6 +261,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-metadata", name: "PDF metadata editor", description: "Change the title, author, subject, and keywords a PDF carries — and clear details you would rather not share.", category: "pdf", slug: "pdf-metadata", keywords: ["pdf metadata", "pdf title", "pdf author", "document properties", "remove metadata"], icon: FileCog, status: "available" },
 	{ id: "pdf-unlock", name: "PDF unlock", description: "Open a password-protected PDF with the password you have, and save a copy that opens without one.", category: "pdf", slug: "pdf-unlock", keywords: ["unlock pdf", "remove password", "password protected", "decrypt pdf", "open pdf"], icon: FileKey2, status: "available" },
 	{ id: "pdf-text", name: "PDF text extractor", description: "Pull the words out of a PDF in page order, copy them, or save them as a text file — with a plain answer when a file is only scans.", category: "pdf", slug: "pdf-text", keywords: ["extract text", "pdf to text", "copy text from pdf", "selectable text", "ocr"], icon: FileText, status: "available" },
+	{ id: "html-to-markdown", name: "HTML to Markdown", description: "Turn a web page or a pasted fragment into clean Markdown — or into plain text — with links, lists, tables, and code kept.", category: "convert", slug: "html-to-markdown", keywords: ["html to markdown", "web page to markdown", "convert html", "html to text", "markdown export"], icon: Braces, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
