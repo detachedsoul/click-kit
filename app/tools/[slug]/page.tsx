@@ -80,6 +80,7 @@ import { RedactTool } from "@/features/image-tools/redact-tool";
 import { SplitTool } from "@/features/image-tools/split-tool";
 import { EyedropperTool } from "@/features/image-tools/eyedropper-tool";
 import { BatchTool } from "@/features/image-tools/batch-tool";
+import { SheetTool } from "@/features/image-tools/sheet-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
@@ -212,6 +213,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"image-splitter": SplitTool,
 	"image-colour-picker": EyedropperTool,
 	"image-batch-converter": BatchTool,
+	"image-contact-sheet": SheetTool,
 	"colour-shades": ShadesTool,
 	"user-agent-parser": UserAgentTool,
 	"text-chunker": ChunkTool,
