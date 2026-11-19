@@ -146,3 +146,22 @@ describe("pdf n-up tool", () => {
 		expect(doc.getPageCount()).toBe(1);
 	});
 });
+
+describe("pages-per-sheet buttons", () => {
+	it("never paints an unselected button white on white", async () => {
+		const user = userEvent.setup();
+		render(<PdfNupTool />);
+		await load(user);
+		const selected = screen.getByRole("button", { name: "4 up" });
+		const other = screen.getByRole("button", { name: "2 up" });
+		// A light background only ever comes with dark text; the solid button is the only
+		// one allowed to say text-white.
+		expect(other.className).toContain("bg-surface");
+		expect(other.className).toContain("text-ink");
+		expect(other.className).not.toContain("text-white");
+		expect(other.className).not.toContain("bg-forest");
+		expect(selected.className).toContain("bg-forest");
+		expect(selected.className).toContain("text-white");
+		expect(selected.getAttribute("aria-pressed")).toBe("true");
+	});
+});

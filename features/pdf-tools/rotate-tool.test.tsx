@@ -115,3 +115,14 @@ describe("pdf page rotator", () => {
 		expect(doc.getPage(0).node.Resources()?.toString()).toContain("Font");
 	});
 });
+
+describe("turn buttons", () => {
+	it("keeps the unselected turns dark on light", async () => {
+		const user = userEvent.setup();
+		render(<PdfRotateTool />);
+		await load(user);
+		const other = screen.getByRole("button", { name: "180°" });
+		expect(other.className).toContain("text-ink");
+		expect(other.className).not.toContain("text-white");
+	});
+});

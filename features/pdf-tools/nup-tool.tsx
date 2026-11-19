@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, ErrorNote, hintClassName, labelClassName, primaryButtonClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, choiceButtonClassName, ErrorNote, hintClassName, labelClassName, primaryButtonClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { NUP_GRIDS, PAPER_SIZES, type PaperSize, nupLayout, nupPages, readFileBytes, readPdfInfo } from "@/features/pdf-tools/pdf-engine";
 import { ACCEPTED_PDF_TYPES, pageWord, pdfOutputName, validatePdfFile } from "@/features/pdf-tools/pdf-utils";
@@ -79,7 +79,7 @@ export const PdfNupTool = () => {
 							{COUNTS.map((count) => (
 								<button
 									aria-pressed={perSheet === count}
-									className={`${primaryButtonClassName} ${perSheet === count ? "" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
+									className={choiceButtonClassName(perSheet === count)}
 									key={count}
 									onClick={() => {
 										setPerSheet(count);

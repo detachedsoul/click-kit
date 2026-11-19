@@ -118,3 +118,17 @@ describe("pdf margin adder", () => {
 		expect(screen.getByText(/2 pages given 10 × 0 mm of margin/u)).toBeTruthy();
 	});
 });
+
+describe("margin presets", () => {
+	it("keeps the presets that are not chosen dark on light", async () => {
+		const user = userEvent.setup();
+		render(<PdfMarginTool />);
+		await load(user);
+		await user.click(screen.getByRole("button", { name: "10 mm" }));
+		const chosen = screen.getByRole("button", { name: "10 mm" });
+		const other = screen.getByRole("button", { name: "20 mm" });
+		expect(chosen.className).toContain("bg-forest");
+		expect(other.className).toContain("bg-surface");
+		expect(other.className).not.toContain("text-white");
+	});
+});

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { readFileBytes, readPdfInfo, rotatePages } from "@/features/pdf-tools/pdf-engine";
 import { ACCEPTED_PDF_TYPES, pageWord, parsePageRange, pdfOutputName, validatePdfFile } from "@/features/pdf-tools/pdf-utils";
@@ -95,7 +95,7 @@ export const PdfRotateTool = () => {
 							{TURNS.map((option) => (
 								<button
 									aria-pressed={turn === option.id}
-									className={`${primaryButtonClassName} ${turn === option.id ? "" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
+									className={choiceButtonClassName(turn === option.id)}
 									key={option.id}
 									onClick={() => {
 										setTurn(option.id);

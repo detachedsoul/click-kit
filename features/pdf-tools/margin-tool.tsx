@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { addMargins, type CropInsets, MM, readFileBytes, readPdfInfo } from "@/features/pdf-tools/pdf-engine";
 import { ACCEPTED_PDF_TYPES, pageWord, pdfFileName, validatePdfFile } from "@/features/pdf-tools/pdf-utils";
@@ -96,7 +96,7 @@ export const PdfMarginTool = () => {
 						<div className="mt-2 flex flex-wrap gap-2">
 							{PRESETS.map((preset) => (
 								<button
-									className={`${primaryButtonClassName} ${Object.values(margins).every((value) => value === String(preset.value)) ? "" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
+									className={choiceButtonClassName(Object.values(margins).every((value) => value === String(preset.value)))}
 									key={preset.label}
 									onClick={() => {
 										setMargins({ top: String(preset.value), right: String(preset.value), bottom: String(preset.value), left: String(preset.value) });
