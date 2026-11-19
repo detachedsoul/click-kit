@@ -24,6 +24,7 @@
     "env-validator": null,
     "favicon-generator": "2026-11-18",
     "file-checksum": null,
+    "file-splitter": "2026-11-19",
     "file-type-identifier": "2026-11-18",
     "find-replace": null,
     "fluid-clamp": null,
