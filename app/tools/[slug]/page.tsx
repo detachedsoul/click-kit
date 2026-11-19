@@ -83,6 +83,7 @@ import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool"
 import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
 import { DocxTool } from "@/features/converter-tools/docx-tool";
 import { EpubTool } from "@/features/converter-tools/epub-tool";
+import { PptxTool } from "@/features/converter-tools/pptx-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -289,6 +290,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"calendar-converter": CalendarConverterTool,
 	"docx-to-markdown": DocxTool,
 	"epub-to-markdown": EpubTool,
+	"pptx-to-markdown": PptxTool,
 	"habit-tracker": HabitTracker,
 	"task-list": TaskList,
 	"meeting-cost": MeetingCostMeter,
