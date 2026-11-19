@@ -20,9 +20,52 @@ const fourPoint: Record<Grade, number> = {
 
 const fourThreePoint: Record<Grade, number> = { ...fourPoint, "A+": 4.3 };
 
-export type GpaScale = 4 | 4.3;
+/** The 5.0 scale used by most Nigerian and many African universities: A = 5, B = 4, C = 3, D = 2, F = 0. */
+const fivePoint: Record<Grade, number> = {
+	"A+": 5,
+	A: 5,
+	"A-": 4.7,
+	"B+": 4.3,
+	B: 4,
+	"B-": 3.7,
+	"C+": 3.3,
+	C: 3,
+	"C-": 2.7,
+	"D+": 2.3,
+	D: 2,
+	"D-": 1.7,
+	F: 0,
+};
 
-export const gradePoint = (grade: Grade, scale: GpaScale = 4) => (scale === 4.3 ? fourThreePoint : fourPoint)[grade];
+export type GpaScale = 4 | 4.3 | 5;
+
+export type GpaScaleInfo = { value: GpaScale; label: string; note: string };
+
+export const GPA_SCALES: GpaScaleInfo[] = [
+	{ value: 4, label: "4.0 scale (A+ = 4.0)", note: "The common US and Canadian scale." },
+	{ value: 4.3, label: "4.3 scale (A+ = 4.3)", note: "Gives A+ slightly more than an A." },
+	{ value: 5, label: "5.0 scale (A = 5.0)", note: "Used by most Nigerian and many African universities." },
+];
+
+const scaleTable = (scale: GpaScale) => (scale === 5 ? fivePoint : scale === 4.3 ? fourThreePoint : fourPoint);
+
+export const gradePoint = (grade: Grade, scale: GpaScale = 4) => scaleTable(scale)[grade];
+
+/** Every grade's points on one scale, in descending order, e.g. "A 5 · B 4 · C 3 · D 2 · F 0" for the letters. */
+export const scaleSummary = (scale: GpaScale = 4) =>
+	(["A", "B", "C", "D", "F"] as Grade[])
+		.map((grade) => `${grade} ${scaleTable(scale)[grade].toFixed(1)}`)
+		.join(" · ");
+
+/** "4.0", "4.3", or "5.0" — one decimal so the maximum reads like people write it. */
+export const formatScale = (scale: GpaScale) => scale.toFixed(1);
+
+export const parseScale = (value: string | number): GpaScale => {
+	const parsed = Number(value);
+	if (parsed === 5) return 5;
+	if (parsed === 4.3) return 4.3;
+	return 4;
+};
 
 export type GpaCourse = { id: string; name: string; grade: Grade; credits: number };
 
