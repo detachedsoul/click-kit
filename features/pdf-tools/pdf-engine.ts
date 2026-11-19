@@ -332,3 +332,42 @@ export const writeMetadata = (bytes: Uint8Array, metadata: PdfMetadata): Promise
 		document.setModificationDate(new Date());
 		return document.save({ useObjectStreams: true });
 	});
+
+export type PaperSize = "a4" | "letter" | "legal" | "a5";
+
+export const PAPER_SIZES: Record<PaperSize, { width: number; height: number; label: string }> = {
+	a4: { width: 595.28, height: 841.89, label: "A4" },
+	letter: { width: 612, height: 792, label: "US Letter" },
+	legal: { width: 612, height: 1008, label: "US Legal" },
+	a5: { width: 419.53, height: 595.28, label: "A5" },
+};
+
+/**
+ * Puts every page on one paper size, scaling the page content to fit and centring it. The
+ * content itself — text runs, fonts, images, vectors — is the original stream with a scale
+ * and a translation in front, so nothing is re-encoded or re-rendered.
+ */
+export const resizePages = (bytes: Uint8Array, paper: PaperSize, margin = 18): Promise<Uint8Array> =>
+	guard(async () => {
+		const document = await openDocument(bytes);
+		const preset = PAPER_SIZES[paper];
+		if (!preset) throw new PdfInputError("Choose a paper size.");
+		for (const page of document.getPages()) {
+			const rotation = ((page.getRotation().angle % 360) + 360) % 360;
+			const sideways = rotation === 90 || rotation === 270;
+			const { width, height } = page.getSize();
+			const visual = sideways ? { width: height, height: width } : { width, height };
+			// A landscape page stays landscape: the paper turns with it.
+			const turned = visual.width > visual.height;
+			const box = {
+				width: (turned ? preset.height : preset.width) - margin * 2,
+				height: (turned ? preset.width : preset.height) - margin * 2,
+			};
+			const zoom = Math.min(box.width / width, box.height / height);
+			const drawn = { width: width * zoom, height: height * zoom };
+			page.setSize(box.width + margin * 2, box.height + margin * 2);
+			page.scaleContent(zoom, zoom);
+			page.translateContent((box.width + margin * 2 - drawn.width) / 2, (box.height + margin * 2 - drawn.height) / 2);
+		}
+		return document.save({ useObjectStreams: true });
+	});
