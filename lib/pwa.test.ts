@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { INSTALL_DISMISS_DAYS, installInstructions, isIosDevice, isStandaloneMode, latestToolDate, shouldOfferInstall, supportsNotifications, toolNotification, unseenTools } from "@/lib/pwa";
+import { buildNotification, INSTALL_DISMISS_DAYS, installInstructions, isIosDevice, isStandaloneMode, latestToolDate, parseSeen, seenSnapshot, shouldOfferInstall, supportsNotifications, toolNotification, unseenTools } from "@/lib/pwa";
+import { tools } from "@/lib/tools";
 import { recentTools, toolAddedOn } from "@/lib/tool-recency";
 
 const now = new Date("2026-11-18T12:00:00Z");
@@ -30,14 +31,43 @@ describe("install prompt", () => {
 });
 
 describe("new tool notifications", () => {
-	it("finds tools added after the last seen date", () => {
+	it("finds tools added since the last notification", () => {
 		const recent = recentTools(now);
-		expect(recent.length).toBeGreaterThan(0);
-		const newest = toolAddedOn(recent[0].slug) as string;
-		expect(unseenTools(newest, now)).toEqual([]);
+		expect(recent.length).toBeGreaterThan(1);
+		expect(unseenTools(JSON.stringify(seenSnapshot()), now)).toEqual([]);
 		expect(unseenTools(null, now).length).toBe(recent.length);
 		expect(unseenTools("2020-01-01", now).length).toBe(recent.length);
 		expect(unseenTools("2999-01-01", now)).toEqual([]);
+	});
+
+	it("announces every tool from a same-day batch, not just the first", () => {
+		const recent = recentTools(now);
+		const newestDate = toolAddedOn(recent[0].slug) as string;
+		const sameDay = recent.filter((tool) => toolAddedOn(tool.slug) === newestDate);
+		expect(sameDay.length).toBeGreaterThan(1);
+		// An old date-only watermark reading "this day" still leaves that day's batch unseen.
+		expect(unseenTools(newestDate, now).map((tool) => tool.slug)).toEqual(expect.arrayContaining(sameDay.map((tool) => tool.slug)));
+	});
+
+	it("remembers exact slugs so a shipped tool is never announced twice", () => {
+		const recent = recentTools(now);
+		const [first, second] = recent;
+		const seen = JSON.stringify({ slugs: [first.slug], at: toolAddedOn(first.slug) });
+		const unseen = unseenTools(seen, now).map((tool) => tool.slug);
+		expect(unseen).not.toContain(first.slug);
+		expect(unseen).toContain(second.slug);
+		expect(parseSeen(JSON.stringify(seenSnapshot())).slugs).toEqual(tools.map((tool) => tool.slug));
+		expect(parseSeen("2026-11-18")).toEqual({ slugs: [], at: "2026-11-18" });
+		expect(parseSeen(null)).toEqual({ slugs: [], at: null });
+		expect(parseSeen("{}")).toEqual({ slugs: [], at: null });
+	});
+
+	it("notifies about a deploy that added tools while the tab stayed open", () => {
+		expect(buildNotification(136, 131)?.title).toBe("5 new tools just landed on ClickKit");
+		expect(buildNotification(132, 131)?.title).toBe("A new tool just landed on ClickKit");
+		expect(buildNotification(131, 131)).toBeNull();
+		expect(buildNotification(120, 131)).toBeNull();
+		expect(buildNotification(140, 131)?.url).toBe("/changelog");
 	});
 
 	it("writes a notification for one tool or several", () => {

@@ -2,7 +2,8 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { Bell, BellRing } from "lucide-react";
-import { latestToolDate, NOTIFY_SEEN_KEY, notifyPermissionCopy } from "@/lib/pwa";
+import { NOTIFY_SEEN_KEY, notifyPermissionCopy, seenSnapshot } from "@/lib/pwa";
+import { showToolNotification } from "@/lib/notify";
 
 const readPermission = (): NotificationPermission | "unsupported" =>
 	typeof window !== "undefined" && "Notification" in window ? Notification.permission : "unsupported";
@@ -26,23 +27,17 @@ export const NotifyOptIn = () => {
 			setStatus(notifyPermissionCopy(result));
 			return;
 		}
-		const newest = latestToolDate();
 		try {
-			if (newest) window.localStorage.setItem(NOTIFY_SEEN_KEY, newest);
+			window.localStorage.setItem(NOTIFY_SEEN_KEY, JSON.stringify(seenSnapshot()));
 		} catch {
-			// Storage can be blocked; the watermark simply starts from today next time.
+			// Storage can be blocked; the watermark simply starts from the current catalogue next time.
 		}
-		try {
-			const registration = await navigator.serviceWorker?.getRegistration();
-			await registration?.showNotification("Alerts are on", {
-				body: "We will ping you when the next tool ships — one notification per release.",
-				icon: "/icon-192.png",
-				tag: "clickkit-alerts-on",
-			});
-			setStatus("Alerts on. One notification per release, nothing else.");
-		} catch {
-			setStatus("Alerts on. One notification per release, nothing else.");
-		}
+		await showToolNotification({
+			title: "Alerts are on",
+			body: "We will ping you when the next tool ships — one notification per release.",
+			url: "/changelog",
+		});
+		setStatus("Alerts on. One notification per release, nothing else.");
 	};
 
 	if (permission === "unsupported") return null;

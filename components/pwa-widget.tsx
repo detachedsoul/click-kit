@@ -9,15 +9,15 @@ import {
 	installInstructions,
 	isIosDevice,
 	isStandaloneMode,
-	latestToolDate,
 	NOTIFY_SEEN_KEY,
 	notifyPermissionCopy,
+	seenSnapshot,
 	shouldOfferInstall,
 	supportsNotifications,
 	toolNotification,
 	unseenTools,
 } from "@/lib/pwa";
-import { toolAddedOn } from "@/lib/tool-recency";
+import { showToolNotification } from "@/lib/notify";
 import { tools } from "@/lib/tools";
 
 type InstallPromptEvent = Event & {
@@ -51,7 +51,6 @@ const readStandalone = () =>
 /** Install card plus the new-tool notification opt-in, mounted once in the root layout. */
 export const PwaWidget = () => {
 	const promptRef = useRef<InstallPromptEvent | null>(null);
-	const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
 	const [open, setOpen] = useState(false);
 	const [ios] = useState(() => typeof navigator !== "undefined" && isIosDevice(navigator.userAgent));
 	const [installed, setInstalled] = useState(readStandalone);
@@ -66,24 +65,9 @@ export const PwaWidget = () => {
 		if (!unseen.length) return;
 		const payload = toolNotification(unseen);
 		if (!payload) return;
-		const newest = unseen.map((tool) => toolAddedOn(tool.slug)).filter(Boolean).sort().pop() ?? latestToolDate();
-		try {
-			const registration = registrationRef.current ?? (await navigator.serviceWorker?.getRegistration());
-			if (registration) {
-				await registration.showNotification(payload.title, {
-					body: payload.body,
-					icon: "/icon-192.png",
-					badge: "/icon-192.png",
-					tag: "clickkit-new-tools",
-					data: { url: payload.url },
-				});
-			} else if ("Notification" in window) {
-				new Notification(payload.title, { body: payload.body, icon: "/icon-192.png" });
-			}
-			if (newest) writeStore(NOTIFY_SEEN_KEY, newest);
-		} catch {
-			// Notifications can be blocked by the OS even when the browser allows them.
-		}
+		const shown = await showToolNotification(payload);
+		// Record the exact slugs we covered, so a same-day batch is not collapsed into one date.
+		if (shown) writeStore(NOTIFY_SEEN_KEY, JSON.stringify(seenSnapshot()));
 	}, []);
 
 	useEffect(() => {
@@ -92,8 +76,7 @@ export const PwaWidget = () => {
 		const register = async () => {
 			if (!("serviceWorker" in navigator)) return;
 			try {
-				const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-				registrationRef.current = registration;
+				await navigator.serviceWorker.register("/sw.js", { scope: "/" });
 				await navigator.serviceWorker.ready;
 				await announceNewTools();
 			} catch {
@@ -155,8 +138,8 @@ export const PwaWidget = () => {
 		const result = await Notification.requestPermission();
 		setPermission(result);
 		if (result === "granted") {
-			const newest = latestToolDate();
-			if (newest) writeStore(NOTIFY_SEEN_KEY, newest);
+			// Everything on the site right now is already known; only later arrivals are news.
+			writeStore(NOTIFY_SEEN_KEY, JSON.stringify(seenSnapshot()));
 			setStatus("Alerts on — we will ping you when the next tool lands.");
 			await announceNewTools();
 		} else {
