@@ -7,6 +7,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "0babd8d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pwa",
+              "summary": "install prompt and new-tool notifications",
+              "group": "Added"
+            },
+            {
+              "hash": "55774dc",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "default the GPA calculator to 5.0 and plain A-F letters",
+              "group": "Added"
+            },
+            {
               "hash": "1c54069",
               "date": "2026-11-19",
               "type": "feat",
@@ -100,6 +116,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "3e67464",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "image",
+              "summary": "make the redactor strength slider work",
+              "group": "Fixed"
+            },
+            {
               "hash": "1aa4a50",
               "date": "2026-11-19",
               "type": "fix",
@@ -112,6 +136,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "a904401",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh changelog and README for GPA scales, watermarks, and new tools",
+              "group": "Maintenance"
+            },
             {
               "hash": "181a6dd",
               "date": "2026-11-19",

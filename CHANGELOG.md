@@ -6,6 +6,8 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **pwa** — install prompt and new-tool notifications ([0babd8d](https://github.com/detachedsoul/click-kit/commit/0babd8d))
+- **calculators** — default the GPA calculator to 5.0 and plain A-F letters ([55774dc](https://github.com/detachedsoul/click-kit/commit/55774dc))
 - **files** — add a file splitter and joiner ([1c54069](https://github.com/detachedsoul/click-kit/commit/1c54069))
 - **image** — add a before and after comparison ([75d9a67](https://github.com/detachedsoul/click-kit/commit/75d9a67))
 - **image** — add a contact sheet builder ([a44899a](https://github.com/detachedsoul/click-kit/commit/a44899a))
@@ -20,10 +22,12 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **image** — make the redactor strength slider work ([3e67464](https://github.com/detachedsoul/click-kit/commit/3e67464))
 - **a11y** — raise text and field contrast to WCAG AA ([1aa4a50](https://github.com/detachedsoul/click-kit/commit/1aa4a50))
 
 ### Maintenance
 
+- refresh changelog and README for GPA scales, watermarks, and new tools ([a904401](https://github.com/detachedsoul/click-kit/commit/a904401))
 - refresh changelog and README for the five new image tools ([181a6dd](https://github.com/detachedsoul/click-kit/commit/181a6dd))
 
 ## 18 November 2026
