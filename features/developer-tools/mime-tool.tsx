@@ -30,10 +30,10 @@ export const MimeLookupTool = () => {
 						<li className="border border-line bg-[#fbfaf7] px-4 py-3" key={item.mime}>
 							<div className="flex flex-wrap items-baseline gap-2">
 								<span className="font-mono text-[13px] font-semibold text-ink">{item.mime}</span>
-								<span className="ml-auto font-mono text-[10px] uppercase tracking-[.08em] text-[#7a7c72]">{item.kind}</span>
+								<span className="ml-auto font-mono text-[10px] uppercase tracking-[.08em] text-[#5f6259]">{item.kind}</span>
 							</div>
 							<p className="m-0 mt-1 text-xs leading-relaxed text-[#5b5e55]">{item.description}</p>
-							<p className="m-0 mt-1 font-mono text-[11px] text-[#7a7c72]">
+							<p className="m-0 mt-1 font-mono text-[11px] text-[#5f6259]">
 								{item.extensions.map((extension) => `.${extension}`).join("  ")}
 							</p>
 						</li>

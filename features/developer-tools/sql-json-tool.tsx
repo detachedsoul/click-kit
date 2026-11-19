@@ -57,7 +57,7 @@ export const SqlJsonTool = () => {
 						]}
 					/>
 					{result.report.warnings.length > 0 && (
-						<ul className="m-0 flex list-none flex-col gap-1 text-xs text-[#8a6a1f]">
+						<ul className="m-0 flex list-none flex-col gap-1 text-xs text-[#6f5416]">
 							{result.report.warnings.map((warning) => (
 								<li key={warning}>{warning}</li>
 							))}

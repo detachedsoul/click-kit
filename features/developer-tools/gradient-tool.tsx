@@ -93,7 +93,7 @@ export const GradientTool = () => {
 							type="number"
 							value={stop.position}
 						/>
-						<span className="text-xs text-[#7a7c72]">%</span>
+						<span className="text-xs text-[#5f6259]">%</span>
 						<button
 							className="cursor-pointer border border-line bg-surface px-2 py-1 text-[11px] text-[#8a3028] hover:border-accent disabled:cursor-not-allowed disabled:opacity-40"
 							disabled={options.stops.length <= 2}

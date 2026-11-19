@@ -90,7 +90,7 @@ export default function UnitPriceCalculator() {
 							</select>
 						</label>
 						<button
-							className="min-h-11 cursor-pointer border border-line bg-surface px-3 text-xs text-[#54554e] hover:border-[#aaa69a] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="min-h-11 cursor-pointer border border-line bg-surface px-3 text-xs text-[#54554e] hover:border-[#5f6259] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 							onClick={() => setOffers((current) => (current.length > 1 ? current.filter((item) => item.id !== offer.id) : current))}
 							type="button"
 						>

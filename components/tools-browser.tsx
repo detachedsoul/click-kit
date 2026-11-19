@@ -1,11 +1,27 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Search, X } from "lucide-react";
+import { ArrowDownWideNarrow, Sparkles, Search, X } from "lucide-react";
 import ToolCard from "@/components/tool-card";
 import { categories, tools } from "@/lib/tools";
+import { isNewTool, toolAddedOn } from "@/lib/tool-recency";
 
 const STORAGE_KEY = "clickkit:tools-category";
+
+type SortOrder = "curated" | "newest" | "az";
+
+const SORT_OPTIONS: { id: SortOrder; label: string }[] = [
+	{ id: "curated", label: "Curated order" },
+	{ id: "newest", label: "Newest first" },
+	{ id: "az", label: "A to Z" },
+];
+
+const sortTools = (list: typeof tools, order: SortOrder) => {
+	if (order === "az") return [...list].sort((left, right) => left.name.localeCompare(right.name));
+	if (order === "newest")
+		return [...list].sort((left, right) => (toolAddedOn(right.slug) ?? "").localeCompare(toolAddedOn(left.slug) ?? ""));
+	return list;
+};
 
 const readSavedCategory = () => {
 	try {
@@ -39,6 +55,8 @@ const matchesQuery = (tool: (typeof tools)[number], query: string) => {
 
 const ToolsBrowser = () => {
 	const [query, setQuery] = useState("");
+	const [newOnly, setNewOnly] = useState(false);
+	const [sort, setSort] = useState<SortOrder>("curated");
 	const [selected, setSelected] = useState<string | null>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	// The last category lives in localStorage; the server snapshot keeps the static HTML on "all".
@@ -51,8 +69,8 @@ const ToolsBrowser = () => {
 
 	useEffect(() => {
 		const handleShortcut = (event: KeyboardEvent) => {
-			const target = event.target as HTMLElement | null;
-			const typing = target ? target.closest("input, textarea, select, [contenteditable='true']") !== null : false;
+			const target = event.target instanceof HTMLElement ? event.target : null;
+			const typing = target?.closest("input, textarea, select, [contenteditable='true']") !== null;
 			if (event.key === "/" && !typing) {
 				event.preventDefault();
 				inputRef.current?.focus();
@@ -67,13 +85,22 @@ const ToolsBrowser = () => {
 	}, []);
 
 	const filtered = useMemo(
-		() => tools.filter((tool) => (category === "all" || tool.category === category) && matchesQuery(tool, query)),
-		[category, query],
+		() =>
+			sortTools(
+				tools.filter((tool) => (category === "all" || tool.category === category) && matchesQuery(tool, query) && (!newOnly || isNewTool(tool.slug))),
+				sort,
+			),
+		[category, newOnly, query, sort],
 	);
+	const newCount = useMemo(() => tools.filter((tool) => isNewTool(tool.slug)).length, []);
 	const activeCategory = categories.find((item) => item.id === category);
-	const filtering = category !== "all" || query.trim().length > 0;
+	// One heading names the visible set, so the cards below it are never an h1-to-h3 jump.
+	const resultsHeading = `${newOnly ? "Recently added" : (activeCategory?.name ?? "All")} tools${query.trim() ? ` matching “${query.trim()}”` : ""}`;
+	const filtering = category !== "all" || query.trim().length > 0 || newOnly || sort !== "curated";
 	const reset = () => {
 		setQuery("");
+		setNewOnly(false);
+		setSort("curated");
 		chooseCategory("all");
 		inputRef.current?.focus();
 	};
@@ -82,10 +109,10 @@ const ToolsBrowser = () => {
 		<div className="flex flex-col gap-5 pb-[80px]">
 			<div className="flex flex-col gap-3">
 				<div className="relative max-w-[460px]">
-					<Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#85857e]" size={15} />
+					<Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5f6259]" size={15} />
 					<input
 						aria-label="Search all tools"
-						className="h-11 w-full border border-[#d9d7cd] bg-surface pl-9 pr-10 text-sm text-ink outline-2 outline-offset-2 outline-transparent transition-colors placeholder:text-[#96958c] focus:border-accent focus:outline-accent"
+						className="h-11 w-full border border-field bg-surface pl-9 pr-10 text-sm text-ink outline-2 outline-offset-2 outline-transparent transition-colors placeholder:text-[#5f6259] focus:border-accent focus:outline-accent"
 						onChange={(event) => setQuery(event.target.value)}
 						placeholder="Filter by name, keyword, or category…"
 						ref={inputRef}
@@ -95,7 +122,7 @@ const ToolsBrowser = () => {
 					{query ? (
 						<button
 							aria-label="Clear filter"
-							className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#898981] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+							className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 cursor-pointer place-items-center rounded-[3px] text-[#5f6259] hover:bg-paper hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[520px]:size-10"
 							onClick={() => {
 								setQuery("");
 								inputRef.current?.focus();
@@ -105,19 +132,23 @@ const ToolsBrowser = () => {
 							<X aria-hidden="true" size={14} />
 						</button>
 					) : (
-						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#898981]">
+						<kbd aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded-[3px] border border-line px-[5px] py-px font-mono text-[10px] text-[#5f6259] sm:block">
 							/
 						</kbd>
 					)}
 				</div>
-				<div aria-label="Filter by category" className="flex flex-wrap gap-2" role="group">
+				<div
+					aria-label="Filter by category"
+					className="flex flex-wrap gap-2 max-[640px]:-mx-4 max-[640px]:flex-nowrap max-[640px]:gap-1.5 max-[640px]:overflow-x-auto max-[640px]:px-4 max-[640px]:pb-1 [scrollbar-width:thin]"
+					role="group"
+				>
 					{[{ id: "all", name: "All tools", count: tools.length }, ...categories.map((item) => ({ id: item.id, name: item.name, count: tools.filter((tool) => tool.category === item.id).length }))].map((item) => {
 						const active = category === item.id;
 						return (
 							<button
 								aria-pressed={active}
-								className={`inline-flex min-h-9 cursor-pointer items-center gap-2 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-									active ? "border-forest bg-forest text-white" : "border-line bg-surface text-[#50534c] hover:border-[#aaa69a] hover:text-ink"
+								className={`inline-flex min-h-9 cursor-pointer items-center gap-2 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent max-[640px]:shrink-0 ${
+									active ? "border-forest bg-forest text-white" : "border-line bg-surface text-[#50534c] hover:border-[#5f6259] hover:text-ink"
 								}`}
 								key={item.id}
 								onClick={() => chooseCategory(item.id)}
@@ -129,16 +160,49 @@ const ToolsBrowser = () => {
 						);
 					})}
 				</div>
+				<div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
+					<span className="font-mono text-[10px] uppercase tracking-[.08em] text-muted">Quick filters</span>
+					<button
+						aria-pressed={newOnly}
+						className={`inline-flex min-h-9 cursor-pointer items-center gap-1.5 border px-3 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+							newOnly ? "border-accent bg-accent text-white" : "border-[#e8c7a1] bg-[#fbeee0] text-[#7a4f1d] hover:border-accent hover:text-accent-dark"
+						}`}
+						onClick={() => setNewOnly((value) => !value)}
+						type="button"
+					>
+						<Sparkles aria-hidden="true" size={12} strokeWidth={2.4} />
+						Recently added
+						<span className={`font-mono text-[10px] ${newOnly ? "text-white" : "text-[#7a4f1d]"}`}>{newCount}</span>
+					</button>
+					<label className="ml-auto inline-flex items-center gap-2 text-[11px] text-muted max-[520px]:ml-0 max-[520px]:w-full max-[520px]:justify-between" htmlFor="tools-sort">
+						<ArrowDownWideNarrow aria-hidden="true" size={13} />
+						Sort
+						<select
+							className="h-9 cursor-pointer border border-field bg-surface px-2 text-xs text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent max-[520px]:h-11 max-[520px]:flex-1"
+							id="tools-sort"
+							onChange={(event) => setSort(event.target.value as SortOrder)}
+							value={sort}
+						>
+							{SORT_OPTIONS.map((option) => (
+								<option key={option.id} value={option.id}>
+									{option.label}
+								</option>
+							))}
+						</select>
+					</label>
+				</div>
 			</div>
 
 			<div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-xs text-muted">
+				<h2 className="sr-only">{resultsHeading}</h2>
 				<p aria-live="polite" className="m-0" role="status">
 					{filtered.length === tools.length ? `${tools.length} tools` : `${filtered.length} of ${tools.length} tools`}
 					{activeCategory ? ` · ${activeCategory.name}` : ""}
+					{newOnly ? " · recently added" : ""}
 					{query.trim() ? ` · “${query.trim()}”` : ""}
 				</p>
 				{filtering && (
-					<button className="cursor-pointer text-xs text-[#50534c] underline underline-offset-2 hover:text-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={reset} type="button">
+					<button className="inline-flex min-h-9 cursor-pointer items-center px-1 text-xs text-[#50534c] underline underline-offset-2 hover:text-accent-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={reset} type="button">
 						Clear filters
 					</button>
 				)}
@@ -148,9 +212,11 @@ const ToolsBrowser = () => {
 				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{filtered.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
 			) : (
 				<div className="border border-line bg-surface p-8 text-center">
-					<p className="m-0 font-serif text-2xl">Nothing matches that yet.</p>
+					<h2 className="m-0 font-serif text-2xl">Nothing matches that yet.</h2>
 					<p className="mx-auto mb-4 mt-2 max-w-[420px] text-[13px] leading-[1.6] text-muted">
-						No tool mentions “{query.trim() || activeCategory?.name}”. Try a shorter word, or browse everything ClickKit has.
+						{newOnly && !query.trim()
+							? "Nothing new in this category yet. Turn off “Recently added”, or browse another category."
+							: `No tool mentions “${query.trim() || activeCategory?.name}”. Try a shorter word, or browse everything ClickKit has.`}
 					</p>
 					<button
 						className="inline-flex min-h-10 cursor-pointer items-center border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"

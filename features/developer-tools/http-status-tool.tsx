@@ -24,7 +24,7 @@ export const HttpStatusTool = () => {
 				<div className="flex flex-wrap gap-2" role="group" aria-label="Status category">
 					{statusCategories.map((item) => (
 						<button
-							className={`${buttonClassName} ${category === item.id ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`}
+							className={`${buttonClassName} ${category === item.id ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
 							key={item.id}
 							type="button"
 							aria-pressed={category === item.id}
@@ -47,7 +47,7 @@ export const HttpStatusTool = () => {
 							<div className="flex flex-wrap items-baseline gap-2">
 								<span className="font-mono text-sm font-semibold text-ink">{item.code}</span>
 								<span className="text-sm text-ink">{item.name}</span>
-								<span className="ml-auto font-mono text-[10px] uppercase tracking-[.08em] text-[#7a7c72]">{item.category}</span>
+								<span className="ml-auto font-mono text-[10px] uppercase tracking-[.08em] text-[#5f6259]">{item.category}</span>
 							</div>
 							<p className="m-0 mt-1 text-xs leading-relaxed text-[#5b5e55]">{item.description}</p>
 						</li>

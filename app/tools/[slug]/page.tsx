@@ -57,6 +57,37 @@ import { FrequencyTool } from "@/features/text-tools/frequency-tool";
 import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
+import { CropTool } from "@/features/image-tools/crop-tool";
+import { FaviconTool } from "@/features/image-tools/favicon-tool";
+import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
+import { PaletteTool } from "@/features/image-tools/palette-tool";
+import { MetadataTool } from "@/features/image-tools/metadata-tool";
+import { FileTypeTool } from "@/features/image-tools/file-type-tool";
+import { RotateTool } from "@/features/image-tools/rotate-tool";
+import { WatermarkTool } from "@/features/image-tools/watermark-tool";
+import { FiltersTool } from "@/features/image-tools/filters-tool";
+import { StripTool } from "@/features/image-tools/strip-tool";
+import { PlaceholderTool } from "@/features/image-tools/placeholder-tool";
+import { ShadesTool } from "@/features/developer-tools/shades-tool";
+import { UserAgentTool } from "@/features/developer-tools/user-agent-tool";
+import { ChunkTool } from "@/features/text-tools/chunk-tool";
+import { PostLengthTool } from "@/features/text-tools/post-length-tool";
+import { ShadowTool } from "@/features/developer-tools/shadow-tool";
+import SalaryCalculator from "@/features/calculators/salary-calculator";
+import RecipeTool from "@/features/calculators/recipe-tool";
+import { TeamTool } from "@/features/productivity-tools/team-tool";
+import DecisionMatrixTool from "@/features/productivity-tools/decision-matrix";
+import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
+import { PaceCalculator } from "@/features/calculators/pace-calculator";
+import { ZipTool } from "@/features/image-tools/zip-tool";
+import { FramerTool } from "@/features/image-tools/framer-tool";
+import { RedactTool } from "@/features/image-tools/redact-tool";
+import { SplitTool } from "@/features/image-tools/split-tool";
+import { EyedropperTool } from "@/features/image-tools/eyedropper-tool";
+import { BatchTool } from "@/features/image-tools/batch-tool";
+import { SheetTool } from "@/features/image-tools/sheet-tool";
+import { CompareTool } from "@/features/image-tools/compare-tool";
+import { FileSplitTool } from "@/features/image-tools/file-split-tool";
 import CompoundInterestCalculator from "@/features/calculators/compound-interest-calculator";
 import DateDiffCalculator from "@/features/calculators/date-diff-calculator";
 import AspectCalculator from "@/features/calculators/aspect-calculator";
@@ -77,6 +108,8 @@ import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { NewBadge } from "@/components/new-badge";
+import { addedOnLabel, toolAddedOn } from "@/lib/tool-recency";
 import { categories, getTool, tools } from "@/lib/tools";
 import { categoryUrl, siteUrl, toolUrl } from "@/lib/site";
 
@@ -170,9 +203,40 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
+	"image-cropper": CropTool,
+	"favicon-generator": FaviconTool,
+	"svg-to-png": SvgPngTool,
+	"image-palette": PaletteTool,
+	"image-metadata": MetadataTool,
+	"file-type-identifier": FileTypeTool,
+	"image-rotate": RotateTool,
+	"image-watermark": WatermarkTool,
+	"image-filters": FiltersTool,
+	"image-metadata-remover": StripTool,
+	"placeholder-image": PlaceholderTool,
+	"zip-creator": ZipTool,
+	"image-framer": FramerTool,
+	"image-redactor": RedactTool,
+	"image-splitter": SplitTool,
+	"image-colour-picker": EyedropperTool,
+	"image-batch-converter": BatchTool,
+	"image-contact-sheet": SheetTool,
+	"image-compare": CompareTool,
+	"file-splitter": FileSplitTool,
+	"colour-shades": ShadesTool,
+	"user-agent-parser": UserAgentTool,
+	"text-chunker": ChunkTool,
+	"post-length": PostLengthTool,
+	"css-shadow": ShadowTool,
+	"salary-converter": SalaryCalculator,
+	"recipe-scaler": RecipeTool,
+	"team-splitter": TeamTool,
+	"meeting-planner": MeetingPlanner,
+	"pace-calculator": PaceCalculator,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,
+	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
 	"geometry-calculator": GeometryCalculator,
@@ -243,10 +307,14 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
 	return <Shell>
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
-		<header className="py-[45px] pb-[30px] max-[620px]:py-[33px] max-[620px]:pb-6">
-			<nav className="flex items-center gap-[9px] text-[11px] text-[#777a70]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
-			<div className="mt-[26px] font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-[21px]">{tool.status === "available" ? "Available now" : category.name}</div>
-			<h1 className="mb-2 mt-1.5 font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-[5px] max-[620px]:text-[clamp(48px,12vw,62px)]">{tool.name}</h1>
+		<header className="py-[45px] pb-[30px] max-[620px]:py-6 max-[620px]:pb-5">
+			<nav className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
+			<div className="mt-[26px] flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark max-[620px]:mt-4">
+				<span>{tool.status === "available" ? "Available now" : category.name}</span>
+				<NewBadge slug={tool.slug} variant="banner" />
+				{toolAddedOn(tool.slug) ? <span className="normal-case tracking-normal text-[#5f6259]">Added {addedOnLabel(toolAddedOn(tool.slug) as string)}</span> : null}
+			</div>
+			<h1 className="mb-2 mt-1.5 font-serif text-[clamp(50px,6vw,72px)] font-normal leading-[.98] tracking-[-.035em] max-[620px]:mt-1 max-[620px]:text-[clamp(34px,9.5vw,46px)]">{tool.name}</h1>
 			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{tool.description}</p>
 		</header>
 		{tool.status === "available" && AvailableTool

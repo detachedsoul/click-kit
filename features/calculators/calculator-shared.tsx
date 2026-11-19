@@ -59,7 +59,7 @@ export const CalculatorNumberField = ({ id, label, value, onChange, placeholder 
 		<label className="block min-w-0 text-xs font-semibold text-[#3c3d37]" htmlFor={id}>
 			{label}
 			<input
-				className="mt-2 block h-11 w-full min-w-0 border border-[#d9d7cd] bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+				className="mt-2 block h-11 w-full min-w-0 border border-field bg-surface px-3 text-sm font-normal text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 				id={id}
 				inputMode="decimal"
 				onChange={(event) => {

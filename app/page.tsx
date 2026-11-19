@@ -3,19 +3,23 @@ import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
 import { ArrowRight, Bug, GitPullRequest, Lightbulb, LockKeyhole } from "lucide-react";
 import { categories, tools } from "@/lib/tools";
+import { addedOnLabel, recentToolReleases } from "@/lib/tool-recency";
 
 const HomePage = () => {
 	const featuredTools = ["word-counter", "read-aloud", "percentage-calculator", "password-generator", "case-converter", "qr-generator", "unit-converter", "pomodoro-timer"]
 		.map((id) => tools.find((tool) => tool.id === id)!)
 		.filter(Boolean);
 	const readyToolsCount = tools.filter((tool) => tool.status === "available").length;
+	const recentReleases = recentToolReleases();
+	const recentTools = recentReleases.flatMap((release) => release.tools).slice(0, 4);
+	const latestAdded = recentReleases[0]?.date;
 
 	return <>
 		<section aria-labelledby="home-title">
 			<Shell className="grid grid-cols-[minmax(0,1fr)_330px] items-center gap-[clamp(40px,8vw,112px)] py-[76px] max-[900px]:grid-cols-[minmax(0,1fr)_255px] max-[900px]:gap-7 max-[900px]:py-[66px] max-[620px]:block max-[620px]:py-12">
 				<div className="py-[7px]">
 					<div className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[.1em] text-accent-dark before:h-px before:w-[25px] before:bg-accent">A little more useful, every day</div>
-					<h1 id="home-title" className="mb-[21px] mt-[22px] max-w-[760px] font-serif text-[clamp(76px,9vw,112px)] font-normal leading-[.78] tracking-[-.045em] max-[900px]:text-[clamp(76px,10vw,92px)] max-[620px]:mb-[17px] max-[620px]:mt-5 max-[620px]:text-[clamp(61px,14.5vw,86px)] max-[620px]:leading-[.8]">
+					<h1 id="home-title" className="mb-[21px] mt-[22px] max-w-[760px] font-serif text-[clamp(76px,9vw,112px)] font-normal leading-[.78] tracking-[-.045em] max-[900px]:text-[clamp(76px,10vw,92px)] max-[620px]:mb-[17px] max-[620px]:mt-5 max-[620px]:text-[clamp(46px,14.5vw,86px)] max-[620px]:leading-[.8]">
 						Good tools.<br /><span className="italic text-accent">Less fuss.</span>
 					</h1>
 					<p className="m-0 max-w-[480px] text-base leading-[1.7] text-[#5d6058] max-[620px]:max-w-[430px] max-[620px]:text-sm">Small, thoughtful browser tools for the digital chores in your day. No account, no detour — just the right tool, right when you need it.</p>
@@ -39,11 +43,29 @@ const HomePage = () => {
 			<Shell>
 				<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
 					<div><h2 id="tools-title" className="m-0 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]">A good place to start</h2><p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">The little helpers people reach for most.</p></div>
-					<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark max-[620px]:text-[11px]" href="#categories">Browse by category <ArrowRight size={14} /></Link>
+					<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark" href="#categories">Browse by category <ArrowRight size={14} /></Link>
 				</div>
 				<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{featuredTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
 			</Shell>
 		</section>
+
+		{recentTools.length > 0 ? (
+			<section aria-labelledby="new-title" className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="new">
+				<Shell>
+					<div className="mb-[22px] flex items-end justify-between gap-5 max-[620px]:mb-[17px] max-[620px]:items-start">
+						<div>
+							<p className="m-0 font-mono text-[10px] uppercase tracking-[.09em] text-accent-dark">Fresh out of the workshop</p>
+							<h2 className="mb-0 mt-2 font-serif text-[34px] font-normal leading-[1.05] tracking-[-.02em] max-[620px]:text-[30px]" id="new-title">Recently added</h2>
+							<p className="mb-0 mt-2 text-[13px] text-muted max-[620px]:text-xs">{recentTools.length} new tools in the last two weeks{latestAdded ? ` · latest ${addedOnLabel(latestAdded)}` : ""}.</p>
+						</div>
+						<Link className="inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap text-xs text-[#50534c] transition-colors hover:text-accent-dark" href="/changelog">
+							What&apos;s new <ArrowRight size={14} aria-hidden="true" />
+						</Link>
+					</div>
+					<div className="grid grid-cols-4 border-l border-t border-line max-[900px]:grid-cols-2">{recentTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)}</div>
+				</Shell>
+			</section>
+		) : null}
 
 		<section className="scroll-mt-[86px] border-t border-line py-[34px] pb-[66px] max-[620px]:py-[27px] max-[620px]:pb-[43px]" id="categories" aria-labelledby="categories-title">
 			<Shell>
@@ -55,7 +77,7 @@ const HomePage = () => {
 					const count = tools.filter((tool) => tool.category === category.id).length;
 					return <Link className="flex min-h-[168px] flex-col items-start border-b border-r border-line bg-[#f7f5ee] p-[19px_16px_17px] transition-colors hover:bg-surface max-[620px]:min-h-[151px] max-[620px]:p-[15px_12px]" key={category.id} href={`/category/${category.id}`}>
 						<Icon className="text-accent" size={19} strokeWidth={1.7} aria-hidden="true" />
-						<h3 className="mb-1.5 mt-4 text-[13px] font-semibold tracking-[-.015em] max-[620px]:mt-3">{category.name}</h3><p className="m-0 text-[11px] leading-[1.5] text-muted">{category.description}</p><span className="mt-auto block pt-3 font-mono text-[10px] text-[#777b70]">{String(count).padStart(2, "0")} tools</span>
+						<h3 className="mb-1.5 mt-4 text-[13px] font-semibold tracking-[-.015em] max-[620px]:mt-3">{category.name}</h3><p className="m-0 text-[11px] leading-[1.5] text-muted">{category.description}</p><span className="mt-auto block pt-3 font-mono text-[10px] text-[#5f6259]">{String(count).padStart(2, "0")} tools</span>
 					</Link>;
 				})}</div>
 				<div className="mt-[23px] flex items-center gap-3 border border-[#d8dfd1] bg-[#e9ede3] px-[17px] py-[15px] text-xs leading-[1.55] text-[#50584e] max-[620px]:items-start max-[620px]:p-[14px]">

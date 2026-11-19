@@ -72,7 +72,7 @@ export const CsvJsonTool = () => {
 			<div className="flex flex-wrap gap-2" role="group" aria-label="Conversion direction">
 				{(["csv-to-json", "json-to-csv"] as const).map((item) => (
 					<button
-						className={`${actionClassName} ${direction === item ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#aaa69a]"}`}
+						className={`${actionClassName} ${direction === item ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
 						key={item}
 						type="button"
 						aria-pressed={direction === item}
@@ -140,7 +140,7 @@ export const JsonPathTool = () => {
 			<label className="block text-xs font-semibold text-[#3c3d37]" htmlFor="jsonpath-query">
 				JSONPath query
 				<input
-					className="mt-2 block h-11 w-full border border-[#d9d7cd] bg-surface px-3 font-mono text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
+					className="mt-2 block h-11 w-full border border-field bg-surface px-3 font-mono text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent"
 					id="jsonpath-query"
 					value={query}
 					onChange={(event) => setQuery(event.target.value)}

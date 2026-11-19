@@ -51,11 +51,11 @@ const TextDiffChecker = () => {
 			</div>
 			<div className="grid grid-cols-2 gap-[14px] max-[760px]:grid-cols-1">
 				<section className="min-w-0 border border-line bg-[#f8f7f3] p-[13px]" aria-label="Original passage editor">
-					<div className="mb-3 flex items-center gap-2"><span className="grid size-6 place-items-center bg-[#e9e4d8] font-mono text-[10px] text-[#5c5a4f]">01</span><span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#77786f]">Before</span></div>
+					<div className="mb-3 flex items-center gap-2"><span className="grid size-6 place-items-center bg-[#e9e4d8] font-mono text-[10px] text-[#5c5a4f]">01</span><span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#5f6259]">Before</span></div>
 					<TextAreaField id="text-diff-original" label="Original text" value={originalText} onChange={updateOriginal} placeholder="Paste the original passage…" rows={9} />
 				</section>
 				<section className="min-w-0 border border-line bg-[#f8f7f3] p-[13px]" aria-label="Revised passage editor">
-					<div className="mb-3 flex items-center gap-2"><span className="grid size-6 place-items-center bg-[#dce7d7] font-mono text-[10px] text-[#405a3b]">02</span><span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#577053]">After</span></div>
+					<div className="mb-3 flex items-center gap-2"><span className="grid size-6 place-items-center bg-[#dce7d7] font-mono text-[10px] text-[#405a3b]">02</span><span className="font-mono text-[10px] uppercase tracking-[.06em] text-[#4d6247]">After</span></div>
 					<TextAreaField id="text-diff-revised" label="Revised text" value={revisedText} onChange={updateRevised} placeholder="Paste the updated passage…" rows={9} />
 				</section>
 			</div>
@@ -98,7 +98,7 @@ const DiffPane = ({ title, side, result }: DiffPaneProps) => {
 		<h3 className="m-0 border-b border-line px-3 py-2.5 text-[11px] font-semibold text-[#54554e]">{title}</h3>
 		<p className="m-0 max-h-[390px] min-h-28 overflow-auto whitespace-pre-wrap break-words p-[13px] font-mono text-xs leading-[1.8] text-[#383933]">
 			{visibleSegments.length === 0
-				? <span className="font-sans italic text-[#92928a]">No text</span>
+				? <span className="font-sans italic text-[#5f6259]">No text</span>
 				: visibleSegments.map((segment, index) => {
 					if (segment.kind === "removed") return <del className="bg-[#f5ded7] text-[#762d1d] decoration-1" key={`${segment.kind}-${index}`}>{segment.text}</del>;
 					if (segment.kind === "added") return <ins className="bg-[#dcebd8] text-[#284c25] decoration-1" key={`${segment.kind}-${index}`}>{segment.text}</ins>;

@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 const points = [
 	{
 		title: "Your input stays on your device",
-		body: "Every tool on ClickKit runs as JavaScript in your browser. Text, files, images, and numbers you paste are processed locally and are never sent to a server.",
+		body: "Every tool on ClickKit runs in your browser. Text, files, images, and numbers you paste are processed on your device and are never sent to a server.",
 	},
 	{
 		title: "No accounts, no uploads",
-		body: "There is no sign-up, no login, and no storage bucket behind the tools. Nothing you enter is saved between visits unless your browser restores a form field for you.",
+		body: "There is no sign-up, no login, and nothing is stored behind the tools. Nothing you enter is saved between visits unless your browser restores a form field for you.",
 	},
 	{
 		title: "No analytics on what you paste",
@@ -38,7 +38,7 @@ export default function PrivacyPage() {
 	return (
 		<Shell>
 			<header className="max-w-[680px] py-[50px] pb-7 max-[620px]:py-[36px]">
-				<nav aria-label="Breadcrumb" className="flex items-center gap-[9px] text-[11px] text-[#777a70]">
+				<nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]">
 					<Link className="hover:text-accent-dark" href="/">
 						Home
 					</Link>
@@ -60,15 +60,15 @@ export default function PrivacyPage() {
 							<span className="font-mono text-[10px] text-accent-dark">{String(index + 1).padStart(2, "0")}</span>
 							{point.title}
 						</h2>
-						<p className="mb-0 ml-[26px] mt-2 text-[13px] leading-[1.7] text-[#60635b]">{point.body}</p>
+						<p className="mb-0 ml-[26px] mt-2 text-sm leading-[1.7] text-[#60635b]">{point.body}</p>
 					</section>
 				))}
 			</div>
-			<p className="my-6 max-w-[680px] text-xs leading-[1.7] text-muted">
+			<p className="my-6 max-w-[680px] text-sm leading-[1.7] text-muted">
 				Spotted something here that does not match how the site behaves? <a className="text-accent-dark underline hover:text-accent" href="https://github.com/detachedsoul/click-kit/issues/new" rel="noreferrer" target="_blank">Open an issue</a> and it
 				will be fixed.
 			</p>
-			<Link className="mb-[70px] inline-flex items-center gap-2 border border-line bg-surface px-4 py-2.5 text-xs hover:border-[#aaa69a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href="/">
+			<Link className="mb-[70px] inline-flex items-center gap-2 border border-line bg-surface px-4 py-2.5 text-xs hover:border-[#5f6259] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href="/">
 				<ArrowLeft aria-hidden="true" size={14} /> Back to the tools
 			</Link>
 		</Shell>
