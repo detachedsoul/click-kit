@@ -70,6 +70,7 @@ import {
 	Scissors,
 	ScrollText,
 	SearchCode,
+	StretchHorizontal,
 	RotateCw,
 	Ruler,
 	Scale,
@@ -282,6 +283,7 @@ export const tools: Tool[] = [
 	{ id: "pdf-nup", name: "PDF n-up", description: "Put two, four, six, or nine pages on one sheet — handouts, booklets, and revision copies that use a fraction of the paper.", category: "pdf", slug: "pdf-nup", keywords: ["n-up", "pages per sheet", "multiple pages per sheet", "handout", "booklet", "imposition", "save paper"], icon: LayoutGrid, status: "available" },
 	{ id: "pdf-rotate", name: "PDF page rotator", description: "Turn a sideways scan upright — every page or just the ones you pick — by changing the page rotation, not by redrawing anything.", category: "pdf", slug: "pdf-rotate", keywords: ["rotate pdf", "turn pages", "sideways scan", "landscape to portrait", "pdf orientation"], icon: RotateCw, status: "available" },
 	{ id: "pdf-editor", name: "PDF editor", description: "Add notes, highlights, and cover boxes straight onto a PDF and save it — every page keeps its own fonts and artwork, because nothing is redrawn.", category: "pdf", slug: "pdf-editor", keywords: ["edit pdf", "annotate pdf", "add text to pdf", "highlight pdf", "notes on pdf", "sign"], icon: PenLine, status: "available" },
+	{ id: "pdf-margins", name: "PDF margin adder", description: "Give every page a white margin for a binding edge, hole punching, or notes — the content moves inwards and nothing is scaled or redrawn.", category: "pdf", slug: "pdf-margins", keywords: ["pdf margins", "binding edge", "add white space", "print margin", "gutter", "hole punch"], icon: StretchHorizontal, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 

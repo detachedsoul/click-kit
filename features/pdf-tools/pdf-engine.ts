@@ -624,3 +624,23 @@ export const applyEdits = (bytes: Uint8Array, edits: PdfEdit[]): Promise<Uint8Ar
 		}
 		return document.save({ useObjectStreams: true });
 	});
+
+/**
+ * Grows the page and moves its content inwards, so a document gains a white margin for
+ * binding, hole punching, or notes. Nothing is scaled and nothing is redrawn: the same
+ * content stream is simply shifted, so text stays sharp and fonts stay embedded.
+ */
+export const addMargins = (bytes: Uint8Array, insets: CropInsets): Promise<Uint8Array> =>
+	guard(async () => {
+		const sides = [insets.top, insets.right, insets.bottom, insets.left];
+		if (sides.some((side) => !Number.isFinite(side) || side < 0)) throw new PdfInputError("Margins cannot be negative.");
+		if (sides.every((side) => side === 0)) throw new PdfInputError("Add a margin on at least one side.");
+		if (Math.max(...sides) > 1440) throw new PdfInputError("That is more than 50 cm of margin — use a smaller number.");
+		const document = await openDocument(bytes);
+		for (const page of document.getPages()) {
+			const { width, height } = page.getSize();
+			page.setSize(width + insets.left + insets.right, height + insets.top + insets.bottom);
+			page.translateContent(insets.left, insets.bottom);
+		}
+		return document.save({ useObjectStreams: true });
+	});
