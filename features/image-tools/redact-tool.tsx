@@ -62,14 +62,24 @@ export const RedactTool = () => {
 		const paint = async () => {
 			const canvas = canvasRef.current;
 			if (!canvas) return;
-			const image = await loadImage(previewUrl);
+			let image: HTMLImageElement;
+			try {
+				image = await loadImage(previewUrl);
+			} catch {
+				// A picture the browser will not decode leaves the preview blank rather than broken.
+				return;
+			}
 			if (cancelled) return;
 			canvas.width = size.width;
 			canvas.height = size.height;
 			const context = canvas.getContext("2d");
 			if (!context) return;
-			context.drawImage(image, 0, 0, size.width, size.height);
-			drawRedactions({ context, image, regions });
+			try {
+				context.drawImage(image, 0, 0, size.width, size.height);
+				drawRedactions({ context, image, regions });
+			} catch {
+				// Some canvases refuse to paint an image that has not fully decoded; try again on the next change.
+			}
 		};
 		void paint();
 		return () => {
