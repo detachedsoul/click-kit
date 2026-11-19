@@ -75,6 +75,8 @@ import { PdfNupTool } from "@/features/pdf-tools/nup-tool";
 import { PdfRotateTool } from "@/features/pdf-tools/rotate-tool";
 import { PdfEditorTool } from "@/features/pdf-tools/edit-tool";
 import { PdfMarginTool } from "@/features/pdf-tools/margin-tool";
+import { PdfBookletTool } from "@/features/pdf-tools/booklet-tool";
+import { PdfCompareTool } from "@/features/pdf-tools/compare-tool";
 import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-tool";
 import { RtfTool } from "@/features/converter-tools/rtf-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
@@ -282,6 +284,8 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-rotate": PdfRotateTool,
 	"pdf-editor": PdfEditorTool,
 	"pdf-margins": PdfMarginTool,
+	"pdf-booklet": PdfBookletTool,
+	"pdf-compare": PdfCompareTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"markdown-to-html": MarkdownToHtmlTool,
 	"rtf-to-text": RtfTool,

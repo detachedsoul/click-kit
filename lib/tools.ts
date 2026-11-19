@@ -5,6 +5,7 @@ import {
 	BarChart3,
 	Binary,
 	BookOpen,
+	BookMarked,
 	Braces,
 	Boxes,
 	Calculator,
@@ -28,6 +29,7 @@ import {
 	FileCode2,
 	FileCog,
 	FileImage,
+	FileDiff,
 	FileKey2,
 	FileSpreadsheet,
 	FileText,
@@ -289,7 +291,8 @@ export const tools: Tool[] = [
 	{ id: "pdf-editor", name: "PDF editor", description: "Add notes, highlights, and cover boxes straight onto a PDF and save it — every page keeps its own fonts and artwork, because nothing is redrawn.", category: "pdf", slug: "pdf-editor", keywords: ["edit pdf", "annotate pdf", "add text to pdf", "highlight pdf", "notes on pdf", "sign"], icon: PenLine, status: "available" },
 	{ id: "pdf-margins", name: "PDF margin adder", description: "Give every page a white margin for a binding edge, hole punching, or notes — the content moves inwards and nothing is scaled or redrawn.", category: "pdf", slug: "pdf-margins", keywords: ["pdf margins", "binding edge", "add white space", "print margin", "gutter", "hole punch"], icon: StretchHorizontal, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
-];
+	{ id: "pdf-booklet", name: "PDF booklet maker", description: "Impose a PDF as a folded booklet — two pages per landscape sheet in saddle-stitch order, with blanks filling the last sheet and an optional fold line.", category: "pdf", slug: "pdf-booklet", keywords: ["pdf booklet", "imposition", "saddle stitch", "zine", "folded pages", "print booklet"], icon: BookMarked, status: "available" },	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
+	{ id: "pdf-compare", name: "PDF compare", description: "Read two versions of a PDF page by page and see exactly which words were added, removed, or rewritten — text only, nothing leaves the tab.", category: "pdf", slug: "pdf-compare", keywords: ["pdf compare", "diff pdf", "contract changes", "compare documents", "what changed", "proofreading"], icon: FileDiff, status: "available" },];
 
 export const getCategory = (id: CategoryId) => categories.find((category) => category.id === id)!;
 export const getTool = (slug: string) => tools.find((tool) => tool.slug === slug);

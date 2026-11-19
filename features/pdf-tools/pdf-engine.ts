@@ -478,6 +478,80 @@ export const nupPages = (bytes: Uint8Array, options: NupOptions = {}): Promise<U
 		return target.save({ useObjectStreams: true });
 	});
 
+export type BookletSheet = { front: [number | null, number | null]; back: [number | null, number | null] };
+
+/**
+ * The page order for a saddle-stitched booklet: print double-sided, fold the stack in half,
+ * and the pages land in reading order. Pages are 1-based, and `null` is the blank that fills
+ * the last sheet out to a multiple of four.
+ */
+export const bookletOrder = (pageCount: number): BookletSheet[] => {
+	if (!Number.isFinite(pageCount) || pageCount < 1) return [];
+	const padded = Math.ceil(pageCount / 4) * 4;
+	const page = (number: number) => (number >= 1 && number <= pageCount ? number : null);
+	const sheets: BookletSheet[] = [];
+	for (let sheet = 0; sheet < padded / 4; sheet += 1) {
+		sheets.push({
+			front: [page(padded - sheet * 2), page(1 + sheet * 2)],
+			back: [page(2 + sheet * 2), page(padded - 1 - sheet * 2)],
+		});
+	}
+	return sheets;
+};
+
+export type BookletOptions = { paper?: PaperSize; margin?: number; fold?: boolean };
+
+/**
+ * Imposes a PDF as a folded booklet. Two pages per landscape sheet, in booklet order, each
+ * one embedded as the original content stream — so the type is still type, not a picture.
+ */
+export const bookletPages = (bytes: Uint8Array, options: BookletOptions = {}): Promise<Uint8Array> =>
+	guard(async () => {
+		const { PDFDocument, PDFName, degrees, rgb } = await loadPdfLib();
+		const source = await openDocument(bytes);
+		const pages = source.getPages();
+		if (pages.length === 0) throw new PdfInputError("This PDF has no pages.");
+		const order = bookletOrder(pages.length);
+		const layout = nupLayout(2, options.paper ?? "a4", options.margin ?? 18, 12);
+		const target = await PDFDocument.create();
+		copyMetadata(source, target);
+		const draw = async (sheet: Awaited<ReturnType<typeof target.addPage>>, slot: number, number: number | null) => {
+			if (number === null) return;
+			const page = pages[number - 1];
+			if (!page) return;
+			const cell = layout.cells[slot];
+			const { width, height } = page.getSize();
+			const zoom = Math.min(cell.width / width, cell.height / height);
+			const drawn = { width: width * zoom, height: height * zoom };
+			const x = cell.x + (cell.width - drawn.width) / 2;
+			const y = cell.y + (cell.height - drawn.height) / 2;
+			if (!page.node.Contents()) page.node.set(PDFName.of("Contents"), source.context.obj([]));
+			const turn = ((page.getRotation().angle % 360) + 360) % 360;
+			const embedded = await target.embedPage(page);
+			if (turn === 0) sheet.drawPage(embedded, { x, y, width: drawn.width, height: drawn.height });
+			else if (turn === 90) sheet.drawPage(embedded, { x: x + drawn.width, y, width: drawn.height, height: drawn.width, rotate: degrees(90) });
+			else if (turn === 180) sheet.drawPage(embedded, { x: x + drawn.width, y: y + drawn.height, width: drawn.width, height: drawn.height, rotate: degrees(180) });
+			else sheet.drawPage(embedded, { x, y: y + drawn.width, width: drawn.height, height: drawn.width, rotate: degrees(270) });
+		};
+		for (const part of order) {
+			for (const side of [part.front, part.back] as [number | null, number | null][]) {
+				const sheet = target.addPage([layout.width, layout.height]);
+				await draw(sheet, 0, side[0]);
+				await draw(sheet, 1, side[1]);
+				if (options.fold) {
+					sheet.drawLine({
+						start: { x: layout.width / 2, y: 24 },
+						end: { x: layout.width / 2, y: layout.height - 24 },
+						thickness: 0.5,
+						dashArray: [4, 4],
+						color: rgb(0.72, 0.72, 0.72),
+					});
+				}
+			}
+		}
+		return target.save({ useObjectStreams: true });
+	});
+
 export type RotateOptions = { angle?: 90 | 180 | 270; pages?: number[] | null };
 
 /**
