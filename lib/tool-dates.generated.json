@@ -24,6 +24,7 @@
     "decision-matrix": "2026-11-19",
     "delimiter-converter": null,
     "docker-compose": null,
+    "docx-to-markdown": "2026-11-19",
     "dotenv-converter": null,
     "env-validator": null,
     "favicon-generator": "2026-11-18",
