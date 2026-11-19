@@ -25,8 +25,9 @@ import {
 	FileKey2,
 	FileSpreadsheet,
 	FileText,
-	Footprints,
 	FileType2,
+	Files,
+	Footprints,
 	Frame,
 	FlaskConical,
 	Fingerprint,
@@ -87,7 +88,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity";
+export type CategoryId = "text" | "calculators" | "developer" | "image" | "productivity" | "pdf";
 export type ToolStatus = "available" | "planned";
 
 export type Tool = {
@@ -107,6 +108,7 @@ export const categories: { id: CategoryId; name: string; description: string; ic
 	{ id: "developer", name: "Developer tools", description: "Small, sharp helpers for working with code.", icon: Code2 },
 	{ id: "image", name: "Image & files", description: "Inspect, crop, convert, and shrink images and files — all processed in your browser.", icon: Image },
 	{ id: "productivity", name: "Productivity", description: "Simple tools to help you get into a good rhythm.", icon: ListChecks },
+	{ id: "pdf", name: "PDF & documents", description: "Join, split, tidy, and convert PDFs without uploading them anywhere.", icon: FileType2 },
 ];
 
 export const tools: Tool[] = [
@@ -245,6 +247,7 @@ export const tools: Tool[] = [
 	{ id: "password-generator", name: "Password generator", description: "Create a strong, random password on your device.", category: "productivity", slug: "password-generator", keywords: ["secure", "random", "privacy"], icon: LockKeyhole, status: "available" },
 	{ id: "pomodoro-timer", name: "Pomodoro timer", description: "Focus for a while, then take a proper break.", category: "productivity", slug: "pomodoro-timer", keywords: ["focus", "countdown", "work"], icon: Timer, status: "available" },
 	{ id: "decision-matrix", name: "Decision matrix", description: "Compare options against weighted criteria and see which one wins, with a ranking you can copy.", category: "productivity", slug: "decision-matrix", keywords: ["decision", "matrix", "weighted", "compare", "choose", "score", "pros and cons"], icon: Scale, status: "available" },
+	{ id: "pdf-merge", name: "PDF merger", description: "Join several PDFs into one, in the order you choose, with fonts, images, and links left exactly as they were.", category: "pdf", slug: "pdf-merge", keywords: ["merge pdf", "combine pdf", "join pdf", "pdf binder", "append pdf"], icon: Files, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 

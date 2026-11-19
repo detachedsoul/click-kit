@@ -58,6 +58,7 @@ import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import { CropTool } from "@/features/image-tools/crop-tool";
+import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -236,6 +237,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,
+	"pdf-merge": PdfMergeTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
