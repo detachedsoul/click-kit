@@ -395,3 +395,85 @@ export const cropPages = (bytes: Uint8Array, insets: CropInsets): Promise<Uint8A
 		}
 		return document.save({ useObjectStreams: true });
 	});
+
+export type NupGrid = { columns: number; rows: number };
+
+export type NupLayout = { width: number; height: number; cells: { x: number; y: number; width: number; height: number }[] };
+
+export const NUP_GRIDS: Record<number, NupGrid> = {
+	1: { columns: 1, rows: 1 },
+	2: { columns: 2, rows: 1 },
+	4: { columns: 2, rows: 2 },
+	6: { columns: 3, rows: 2 },
+	9: { columns: 3, rows: 3 },
+};
+
+/**
+ * Where each mini page goes on a sheet: paper turned sideways for two-up, then an even
+ * grid with a margin round the outside and a gap between cells. Pure numbers, so the
+ * placement can be checked without drawing anything.
+ */
+export const nupLayout = (perSheet: number, paper: PaperSize, margin = 18, gap = 12): NupLayout => {
+	const grid = NUP_GRIDS[perSheet] ?? NUP_GRIDS[4];
+	const preset = PAPER_SIZES[paper] ?? PAPER_SIZES.a4;
+	const width = grid.columns > grid.rows ? preset.height : preset.width;
+	const height = grid.columns > grid.rows ? preset.width : preset.height;
+	const cellWidth = (width - margin * 2 - gap * (grid.columns - 1)) / grid.columns;
+	const cellHeight = (height - margin * 2 - gap * (grid.rows - 1)) / grid.rows;
+	const cells: NupLayout["cells"] = [];
+	for (let row = 0; row < grid.rows; row += 1) {
+		for (let column = 0; column < grid.columns; column += 1) {
+			cells.push({
+				x: margin + column * (cellWidth + gap),
+				y: height - margin - (row + 1) * cellHeight - row * gap,
+				width: cellWidth,
+				height: cellHeight,
+			});
+		}
+	}
+	return { width, height, cells };
+};
+
+export type NupOptions = { perSheet?: number; paper?: PaperSize; margin?: number; gap?: number; border?: boolean };
+
+/**
+ * Puts several pages on one sheet. Each page is embedded as it stands — a form XObject of
+ * the original content — so fonts, vectors, and links are scaled, never redrawn.
+ */
+export const nupPages = (bytes: Uint8Array, options: NupOptions = {}): Promise<Uint8Array> =>
+	guard(async () => {
+		const perSheet = options.perSheet ?? 2;
+		if (!NUP_GRIDS[perSheet]) throw new PdfInputError("Choose 1, 2, 4, 6, or 9 pages per sheet.");
+		const { PDFDocument, PDFName, degrees, rgb } = await loadPdfLib();
+		const source = await openDocument(bytes);
+		const pages = source.getPages();
+		if (pages.length === 0) throw new PdfInputError("This PDF has no pages.");
+		const layout = nupLayout(perSheet, options.paper ?? "a4", options.margin, options.gap);
+		const target = await PDFDocument.create();
+		copyMetadata(source, target);
+		for (let start = 0; start < pages.length; start += perSheet) {
+			const sheet = target.addPage([layout.width, layout.height]);
+			const slice = pages.slice(start, start + perSheet);
+			for (const [index, page] of slice.entries()) {
+				const cell = layout.cells[index];
+				const { width, height } = page.getSize();
+				const zoom = Math.min(cell.width / width, cell.height / height);
+				const drawn = { width: width * zoom, height: height * zoom };
+				const x = cell.x + (cell.width - drawn.width) / 2;
+				const y = cell.y + (cell.height - drawn.height) / 2;
+				// A blank source page has no content stream, and pdf-lib refuses to embed one.
+				// Give it an empty stream so a blank page becomes a blank cell, not an error.
+				if (!page.node.Contents()) page.node.set(PDFName.of("Contents"), source.context.obj([]));
+				const embedded = await target.embedPage(page);
+				const turn = ((page.getRotation().angle % 360) + 360) % 360;
+				if (turn === 0) sheet.drawPage(embedded, { x, y, width: drawn.width, height: drawn.height });
+				else if (turn === 90) sheet.drawPage(embedded, { x: x + drawn.width, y, width: drawn.height, height: drawn.width, rotate: degrees(90) });
+				else if (turn === 180) sheet.drawPage(embedded, { x: x + drawn.width, y: y + drawn.height, width: drawn.width, height: drawn.height, rotate: degrees(180) });
+				else sheet.drawPage(embedded, { x, y: y + drawn.width, width: drawn.height, height: drawn.width, rotate: degrees(270) });
+				if (options.border) {
+					sheet.drawRectangle({ x, y, width: drawn.width, height: drawn.height, borderColor: rgb(0.7, 0.7, 0.7), borderWidth: 0.5 });
+				}
+			}
+		}
+		return target.save({ useObjectStreams: true });
+	});
