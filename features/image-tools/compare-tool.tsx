@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
+import { ChevronsLeftRight, ChevronsUpDown } from "lucide-react";
 import { CheckboxField, ErrorNote, labelClassName, primaryButtonClassName, SegmentedControl, selectClassName, StatGrid, ToolPanel, hintClassName } from "@/features/developer-tools/tool-ui";
 import { ACCEPTED_IMAGE_TYPES, canvasToBlob, describeBytes, FileDownloadLink, FileField, isSupportedImage, loadImage, MAX_IMAGE_BYTES, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { outputExtension, type Size } from "@/features/image-tools/crop-utils";
@@ -22,6 +23,7 @@ export const CompareTool = () => {
 	const [result, setResult] = useState<Result | null>(null);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
+	const stageRef = useRef<HTMLDivElement | null>(null);
 	const beforeUrl = useObjectUrl(before?.file ?? null);
 	const afterUrl = useObjectUrl(after?.file ?? null);
 	const resultUrl = useObjectUrl(result?.blob ?? null);
@@ -54,9 +56,35 @@ export const CompareTool = () => {
 		}
 	};
 
-	const drag = (clientX: number, clientY: number, element: HTMLElement) => {
-		const rect = element.getBoundingClientRect();
+	const drag = (clientX: number, clientY: number) => {
+		const stage = stageRef.current;
+		if (!stage) return;
+		const rect = stage.getBoundingClientRect();
 		setPosition(pointerPercent({ x: clientX, y: clientY }, rect, orientation));
+	};
+
+	/** Arrow keys nudge by 5% (10% with Shift), Page keys by 10%, Home/End jump to the ends. */
+	const nudge = (event: KeyboardEvent<HTMLDivElement>) => {
+		const step = event.shiftKey ? 10 : 5;
+		const axisKeys = orientation === "horizontal" ? ["ArrowLeft", "ArrowRight"] : ["ArrowUp", "ArrowDown"];
+		const deltas: Record<string, number> = {
+			ArrowLeft: -step,
+			ArrowRight: step,
+			ArrowUp: -step,
+			ArrowDown: step,
+			PageUp: -10,
+			PageDown: 10,
+		};
+		if (event.key === "Home" || event.key === "End") {
+			event.preventDefault();
+			setPosition(event.key === "Home" ? 0 : 100);
+			return;
+		}
+		if (event.key.startsWith("Arrow") && !axisKeys.includes(event.key)) return;
+		const delta = deltas[event.key];
+		if (delta === undefined) return;
+		event.preventDefault();
+		setPosition(clampPosition(position + delta));
 	};
 
 	const exportComparison = async () => {
@@ -133,15 +161,16 @@ export const CompareTool = () => {
 			</div>
 			{beforeUrl || afterUrl ? (
 				<div
-					aria-label="Comparison preview — drag to move the divider"
+					aria-label="Comparison preview — drag the divider to reveal more of either picture"
 					className="relative w-full touch-none select-none overflow-hidden border border-line bg-[#f3f1e9]"
 					onPointerDown={(event) => {
 						event.currentTarget.setPointerCapture(event.pointerId);
-						drag(event.clientX, event.clientY, event.currentTarget);
+						drag(event.clientX, event.clientY);
 					}}
 					onPointerMove={(event) => {
-						if (event.buttons === 1) drag(event.clientX, event.clientY, event.currentTarget);
+						if (event.buttons === 1) drag(event.clientX, event.clientY);
 					}}
+					ref={stageRef}
 					role="group"
 					style={{ aspectRatio: stage.width > 0 && stage.height > 0 ? `${stage.width} / ${stage.height}` : "16 / 9", maxHeight: 520 }}
 				>
@@ -159,11 +188,44 @@ export const CompareTool = () => {
 						/>
 					) : null}
 					{beforeUrl && afterUrl ? (
-						<span
-							aria-hidden="true"
-							className={`pointer-events-none absolute bg-white shadow-[0_0_0_1px_#25282060] ${orientation === "vertical" ? "inset-x-0 h-0.5" : "inset-y-0 w-0.5"}`}
-							style={orientation === "vertical" ? { top: `${position}%` } : { left: `${position}%` }}
-						/>
+						<>
+							<span
+								aria-hidden="true"
+								className={`pointer-events-none absolute bg-white shadow-[0_0_0_1px_#25282060] ${orientation === "vertical" ? "inset-x-0 h-0.5 -translate-y-1/2" : "inset-y-0 w-0.5 -translate-x-1/2"}`}
+								style={orientation === "vertical" ? { top: `${position}%` } : { left: `${position}%` }}
+							/>
+							<div
+								className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+								style={orientation === "vertical" ? { left: "50%", top: `${position}%` } : { left: `${position}%`, top: "50%" }}
+							>
+								<div
+									aria-label="Comparison divider"
+									aria-orientation={orientation === "vertical" ? "vertical" : "horizontal"}
+									aria-valuemax={100}
+									aria-valuemin={0}
+									aria-valuenow={position}
+									aria-valuetext={`${position}% — ${position}% after, ${100 - position}% before`}
+									className="grid size-11 cursor-grab touch-none place-items-center rounded-full border border-[#25282059] bg-white text-ink shadow-[0_2px_10px_#322c2033] transition-transform [@media(hover:hover)]:hover:scale-105 active:cursor-grabbing active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+									onKeyDown={nudge}
+									onPointerDown={(event) => {
+										event.stopPropagation();
+										event.currentTarget.setPointerCapture(event.pointerId);
+									}}
+									onPointerMove={(event) => {
+										if (event.buttons === 1) drag(event.clientX, event.clientY);
+									}}
+									role="slider"
+									tabIndex={0}
+									title="Drag to move the divider"
+								>
+									{orientation === "vertical" ? (
+										<ChevronsUpDown aria-hidden="true" className="pointer-events-none" size={20} />
+									) : (
+										<ChevronsLeftRight aria-hidden="true" className="pointer-events-none" size={20} />
+									)}
+								</div>
+							</div>
+						</>
 					) : null}
 					{beforeUrl && afterUrl ? (
 						<>
@@ -175,18 +237,6 @@ export const CompareTool = () => {
 					) : null}
 				</div>
 			) : null}
-			<label className={labelClassName} htmlFor="compare-position">
-				Divider position ({position}%)
-				<input
-					className="mt-2 block h-11 w-full cursor-pointer accent-[#263b34]"
-					id="compare-position"
-					max={100}
-					min={0}
-					onChange={(event) => setPosition(clampPosition(Number(event.target.value)))}
-					type="range"
-					value={position}
-				/>
-			</label>
 			<SegmentedControl label="Comparison layout" onChange={setOrientation} options={ORIENTATIONS} value={orientation} />
 			<div className="grid gap-4 sm:grid-cols-2">
 				<label className={labelClassName} htmlFor="compare-format">
@@ -225,7 +275,8 @@ export const CompareTool = () => {
 				</section>
 			) : null}
 			<p className={hintClassName}>
-				Drag the divider to see exactly what a compression setting, filter, or retouch changed. Both pictures are drawn at their own proportions, so
+				Drag the round handle on the divider, or click anywhere on the picture, to see exactly what a compression setting, filter, or retouch
+				changed. The handle also answers to the arrow keys, Home and End. Both pictures are drawn at their own proportions, so
 				different sizes line up in the middle rather than being stretched.
 			</p>
 		</ToolPanel>
