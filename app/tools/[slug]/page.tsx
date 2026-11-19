@@ -60,6 +60,7 @@ import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroT
 import { CropTool } from "@/features/image-tools/crop-tool";
 import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
+import { PdfOrganiseTool } from "@/features/pdf-tools/organise-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -240,6 +241,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"random-picker": RandomPickerTool,
 	"pdf-merge": PdfMergeTool,
 	"pdf-split": PdfSplitTool,
+	"pdf-organise": PdfOrganiseTool,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,

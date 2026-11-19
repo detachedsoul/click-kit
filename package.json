@@ -11,7 +11,10 @@
     "test:watch": "vitest",
     "tool-dates": "node scripts/collect-tool-dates.mjs",
     "changelog": "node scripts/build-changelog.mjs",
-    "sync-meta": "npm run tool-dates && npm run changelog"
+    "sync-meta": "npm run tool-dates && npm run changelog",
+    "pdf-worker": "node scripts/copy-pdf-worker.mjs",
+    "postinstall": "node scripts/copy-pdf-worker.mjs",
+    "prebuild": "node scripts/copy-pdf-worker.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "5.3.0",

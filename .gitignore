@@ -2,6 +2,8 @@
 /.next
 /out
 /build
+/public/pdfjs/
+/public/pdf.worker.min.mjs
 .DS_Store
 *.tsbuildinfo
 .env*
