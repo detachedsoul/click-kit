@@ -23,10 +23,13 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **ui** — keep every range slider on the brand accent ([91e11b6](https://github.com/detachedsoul/click-kit/commit/91e11b6))
 - **pdf** — type notes straight onto the page and line up the mark buttons ([5527387](https://github.com/detachedsoul/click-kit/commit/5527387))
 
 ### Maintenance
 
+- rewrite the readme as a description of the project ([e148002](https://github.com/detachedsoul/click-kit/commit/e148002))
+- **changelog** — fold the in-place restyling into the notes ([6224f01](https://github.com/detachedsoul/click-kit/commit/6224f01))
 - **changelog** — regenerate the release notes from history ([1b2dcbf](https://github.com/detachedsoul/click-kit/commit/1b2dcbf))
 - point the release notes at the rewritten commits ([e0223a6](https://github.com/detachedsoul/click-kit/commit/e0223a6))
 - fold the editor's typing change into the changelog ([f7b2566](https://github.com/detachedsoul/click-kit/commit/f7b2566))

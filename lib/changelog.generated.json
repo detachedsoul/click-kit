@@ -105,6 +105,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "91e11b6",
+              "date": "2026-11-20",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "keep every range slider on the brand accent",
+              "group": "Fixed"
+            },
+            {
               "hash": "5527387",
               "date": "2026-11-20",
               "type": "fix",
@@ -117,6 +125,22 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "e148002",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "",
+              "summary": "rewrite the readme as a description of the project",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "6224f01",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the in-place restyling into the notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "1b2dcbf",
               "date": "2026-11-20",
