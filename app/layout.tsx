@@ -6,6 +6,7 @@ import { buildInfo } from "@/lib/build-info";
 import type { Metadata, Viewport } from "next";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@fontsource-variable/dm-sans/wght.css";
 import "@fontsource/instrument-serif/latin-400.css";
 import "@fontsource/instrument-serif/latin-400-italic.css";
@@ -96,6 +97,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 			<PwaWidget />
 			<LiveUpdates tools={build.tools} version={build.version} />
 			<Analytics />
+			<SpeedInsights />
 			<script dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} type="application/ld+json" />
 		</body>
 	</html>
