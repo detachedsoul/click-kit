@@ -18,6 +18,15 @@ export const buttonClassName =
 export const primaryButtonClassName =
 	"inline-flex min-h-10 cursor-pointer items-center justify-center border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
 
+/**
+ * One button in a row of mutually exclusive choices. Built from scratch rather than by
+ * patching the primary button: adding `text-ink` to a class list that already says
+ * `text-white` leaves the winner to stylesheet order, which once turned a row of
+ * white-background buttons white-on-white.
+ */
+export const choiceButtonClassName = (active: boolean) =>
+	`${buttonClassName} ${active ? "border-forest bg-forest text-white hover:bg-[#354d44]" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`;
+
 export const checkboxInputClassName = "checkbox-input";
 
 type CheckboxInputProps = {
@@ -115,7 +124,7 @@ export const SegmentedControl = <T extends string>({ label, options, value, onCh
 		<div className="flex flex-wrap gap-2">
 			{options.map((option) => (
 				<button
-					className={`${buttonClassName} ${value === option.id ? "border-forest bg-forest text-white" : "border-line bg-surface text-ink hover:border-[#5f6259]"}`}
+					className={choiceButtonClassName(value === option.id)}
 					key={option.id}
 					type="button"
 					aria-pressed={value === option.id}

@@ -7,7 +7,9 @@ import { describe, expect, it } from "vitest";
  * 1. a checkbox never sits directly in a field grid (it has no caption, so it
  *    drifts out of line with the labelled inputs beside it);
  * 2. every <select> uses the shared `select-input` class, which is the only
- *    thing keeping the caret inset equal to the text inset.
+ *    thing keeping the caret inset equal to the text inset;
+ * 3. every range slider carries the brand accent, because a bare one falls back
+ *    to the browser's own blue and looks like it belongs to another site.
  */
 
 const ROOT = join(process.cwd(), "features");
@@ -67,6 +69,20 @@ const checkboxGridViolations = (file: string, lines: string[]): Violation[] => {
 		if (!/labelClassName|fieldClass|SelectField/.test(block)) return;
 		violations.push(`${file.split("features/")[1]}:${index + 1}`);
 	});
+	return violations;
+};
+
+/** Range sliders with no accent class: they would show the browser's default thumb and track. */
+const sliderAccentViolations = (file: string, source: string): Violation[] => {
+	const violations: Violation[] = [];
+	const tagPattern = /<input\b[^>]*type="range"[^>]*>/g;
+	let match = tagPattern.exec(source);
+	while (match) {
+		const tag = match[0];
+		const line = source.slice(0, match.index).split("\n").length;
+		if (!tag.includes("accent-[#263b34]")) violations.push(`${file.split("features/")[1]}:${line}`);
+		match = tagPattern.exec(source);
+	}
 	return violations;
 };
 
@@ -132,6 +148,11 @@ describe("tool layout contract", () => {
 		const { selectGap, inputGap } = captionGap();
 		expect(selectGap).toBeGreaterThan(0);
 		expect(selectGap).toBeCloseTo(inputGap, 5);
+	});
+
+	it("gives every slider the brand accent", () => {
+		const violations = sourceFiles().flatMap((file) => sliderAccentViolations(file, readFileSync(file, "utf8")));
+		expect(violations, `Add accent-[#263b34] so these sliders keep the brand colour:\n${violations.join("\n")}`).toEqual([]);
 	});
 
 	it("gives every select the shared select-input class", () => {

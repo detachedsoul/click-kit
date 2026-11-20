@@ -307,7 +307,7 @@ const ReadAloud = () => {
 						<output className="font-mono text-[11px] text-[#64665e]" htmlFor="read-aloud-rate">{rate.toFixed(1)}×</output>
 					</div>
 					<input
-						className="h-10 w-full cursor-pointer accent-accent-dark outline-2 outline-offset-2 outline-transparent focus:outline-accent"
+						className="h-10 w-full cursor-pointer accent-[#263b34] outline-2 outline-offset-2 outline-transparent focus:outline-accent"
 						id="read-aloud-rate"
 						type="range"
 						min="0.5"

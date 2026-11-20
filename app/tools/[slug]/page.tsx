@@ -58,6 +58,43 @@ import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
 import { CropTool } from "@/features/image-tools/crop-tool";
+import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
+import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
+import { PdfOrganiseTool } from "@/features/pdf-tools/organise-tool";
+import { PdfToImagesTool } from "@/features/pdf-tools/pdf-to-images-tool";
+import { ImagesToPdfTool } from "@/features/pdf-tools/images-to-pdf-tool";
+import { PdfCompressTool } from "@/features/pdf-tools/compress-tool";
+import { PdfWatermarkTool } from "@/features/pdf-tools/watermark-tool";
+import { PdfPageNumbersTool } from "@/features/pdf-tools/page-numbers-tool";
+import { PdfMetadataTool } from "@/features/pdf-tools/metadata-tool";
+import { PdfUnlockTool } from "@/features/pdf-tools/unlock-tool";
+import { PdfTextTool } from "@/features/pdf-tools/text-tool";
+import { PdfResizeTool } from "@/features/pdf-tools/resize-tool";
+import { PdfCropTool } from "@/features/pdf-tools/crop-tool";
+import { PdfNupTool } from "@/features/pdf-tools/nup-tool";
+import { PdfRotateTool } from "@/features/pdf-tools/rotate-tool";
+import { PdfEditorTool } from "@/features/pdf-tools/edit-tool";
+import { PdfFlattenTool } from "@/features/pdf-tools/flatten-tool";
+import { PdfSplitHalvesTool } from "@/features/pdf-tools/split-halves-tool";
+import { PdfMarginTool } from "@/features/pdf-tools/margin-tool";
+import { PdfBookletTool } from "@/features/pdf-tools/booklet-tool";
+import { PdfCompareTool } from "@/features/pdf-tools/compare-tool";
+import { PdfLongPageTool } from "@/features/pdf-tools/long-page-tool";
+import { PdfOverlayTool } from "@/features/pdf-tools/overlay-tool";
+import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-tool";
+import { RtfTool } from "@/features/converter-tools/rtf-tool";
+import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
+import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
+import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
+import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
+import { DocxTool } from "@/features/converter-tools/docx-tool";
+import { DocxPdfTool } from "@/features/converter-tools/docx-pdf-tool";
+import { PdfDocxTool } from "@/features/converter-tools/pdf-docx-tool";
+import { EpubTool } from "@/features/converter-tools/epub-tool";
+import { PptxTool } from "@/features/converter-tools/pptx-tool";
+import { SpreadsheetTool } from "@/features/converter-tools/xlsx-tool";
+import { HtmlTableTool } from "@/features/converter-tools/html-tables-tool";
+import { MarkdownTableTool } from "@/features/converter-tools/markdown-table-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -77,6 +114,12 @@ import SalaryCalculator from "@/features/calculators/salary-calculator";
 import RecipeTool from "@/features/calculators/recipe-tool";
 import { TeamTool } from "@/features/productivity-tools/team-tool";
 import DecisionMatrixTool from "@/features/productivity-tools/decision-matrix";
+import { TaskList } from "@/features/productivity-tools/task-list";
+import { MeetingCostMeter } from "@/features/productivity-tools/meeting-cost";
+import { SubscriptionTracker } from "@/features/productivity-tools/subscription-tracker";
+import { ReadingList } from "@/features/productivity-tools/reading-list";
+import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
+import { MealPlanner } from "@/features/productivity-tools/meal-planner";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
 import { ZipTool } from "@/features/image-tools/zip-tool";
@@ -236,6 +279,49 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
 	"random-picker": RandomPickerTool,
+	"pdf-merge": PdfMergeTool,
+	"pdf-split": PdfSplitTool,
+	"pdf-organise": PdfOrganiseTool,
+	"pdf-to-images": PdfToImagesTool,
+	"images-to-pdf": ImagesToPdfTool,
+	"pdf-compress": PdfCompressTool,
+	"pdf-watermark": PdfWatermarkTool,
+	"pdf-page-numbers": PdfPageNumbersTool,
+	"pdf-metadata": PdfMetadataTool,
+	"pdf-unlock": PdfUnlockTool,
+	"pdf-text": PdfTextTool,
+	"pdf-resize": PdfResizeTool,
+	"pdf-crop": PdfCropTool,
+	"pdf-nup": PdfNupTool,
+	"pdf-rotate": PdfRotateTool,
+	"pdf-editor": PdfEditorTool,
+	"pdf-flatten": PdfFlattenTool,
+	"pdf-split-halves": PdfSplitHalvesTool,
+	"pdf-margins": PdfMarginTool,
+	"pdf-booklet": PdfBookletTool,
+	"pdf-compare": PdfCompareTool,
+	"pdf-long-page": PdfLongPageTool,
+	"pdf-overlay": PdfOverlayTool,
+	"html-to-markdown": HtmlToMarkdownTool,
+	"markdown-to-html": MarkdownToHtmlTool,
+	"rtf-to-text": RtfTool,
+	"subtitle-converter": SubtitleConverterTool,
+	"contacts-converter": ContactsConverterTool,
+	"calendar-converter": CalendarConverterTool,
+	"docx-to-pdf": DocxPdfTool,
+	"pdf-to-word": PdfDocxTool,
+	"docx-to-markdown": DocxTool,
+	"epub-to-markdown": EpubTool,
+	"pptx-to-markdown": PptxTool,
+	"csv-excel": SpreadsheetTool,
+	"html-tables": HtmlTableTool,
+	"markdown-html-table": MarkdownTableTool,
+	"meal-planner": MealPlanner,
+	"habit-tracker": HabitTracker,
+	"task-list": TaskList,
+	"meeting-cost": MeetingCostMeter,
+	"subscription-tracker": SubscriptionTracker,
+	"reading-list": ReadingList,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,

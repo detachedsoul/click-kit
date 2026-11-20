@@ -129,7 +129,7 @@ export const PasswordGeneratorTool = () => {
 			<label className="block max-w-[440px] text-xs font-semibold text-[#3c3d37]" htmlFor="password-length">
 				Length <span className="ml-2 font-mono font-normal text-muted">{length}</span>
 				<input
-					className="mt-3 block w-full cursor-pointer accent-[#405a4e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+					className="mt-3 block w-full cursor-pointer accent-[#263b34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 					id="password-length"
 					type="range"
 					min={4}
@@ -387,7 +387,7 @@ const ImageTool = ({ mode }: { mode: ImageMode }) => {
 							<label className="block text-xs font-semibold" htmlFor={`${mode}-quality`}>
 								Quality <span className="font-mono font-normal text-muted">{quality}%</span>
 								<input
-									className="mt-4 block w-full cursor-pointer accent-[#405a4e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+									className="mt-4 block w-full cursor-pointer accent-[#263b34] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 									id={`${mode}-quality`}
 									disabled={busy}
 									type="range"
