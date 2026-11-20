@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "0036973",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a barcode and qr scanner",
+              "group": "Added"
+            },
+            {
               "hash": "f47f954",
               "date": "2026-11-20",
               "type": "feat",
