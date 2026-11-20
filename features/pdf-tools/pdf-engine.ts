@@ -718,3 +718,81 @@ export const addMargins = (bytes: Uint8Array, insets: CropInsets): Promise<Uint8
 		}
 		return document.save({ useObjectStreams: true });
 	});
+
+export type LongPageOptions = { gap?: number; margin?: number; maxHeight?: number };
+
+/**
+ * Stacks every page of a document into one very tall page — the way a receipt, a webtoon,
+ * or a long table is meant to be read on a phone. Each page is embedded as its own content
+ * stream, so nothing is rasterised; the PDF simply gets one page instead of many.
+ */
+export const longPage = (bytes: Uint8Array, options: LongPageOptions = {}): Promise<Uint8Array> =>
+	guard(async () => {
+		const { PDFDocument, PDFName } = await loadPdfLib();
+		const source = await openDocument(bytes);
+		const pages = source.getPages();
+		if (pages.length === 0) throw new PdfInputError("This PDF has no pages.");
+		if (pages.length === 1) throw new PdfInputError("This PDF is already a single page — there is nothing to stack.");
+		const gap = Math.max(0, options.gap ?? 12);
+		const margin = Math.max(0, options.margin ?? 0);
+		// 200 inches is the largest a PDF page may be, and the viewer refuses anything longer.
+		const limit = Math.min(options.maxHeight ?? 14_400, 14_400);
+		const width = Math.max(...pages.map((page) => page.getWidth()));
+		const height = pages.reduce((sum, page) => sum + page.getHeight(), 0) + gap * (pages.length - 1) + margin * 2;
+		if (height > limit) throw new PdfInputError(`That would make one page ${Math.round(height)} pt tall, past the ${limit} pt limit a PDF viewer accepts. Split the document first.`);
+
+		const target = await PDFDocument.create();
+		copyMetadata(source, target);
+		const sheet = target.addPage([width + margin * 2, height]);
+		let top = height - margin;
+		for (const page of pages) {
+			const { width: pageWidth, height: pageHeight } = page.getSize();
+			if (!page.node.Contents()) page.node.set(PDFName.of("Contents"), source.context.obj([]));
+			const embedded = await target.embedPage(page);
+			top -= pageHeight;
+			sheet.drawPage(embedded, { x: margin + (width - pageWidth) / 2, y: top, width: pageWidth, height: pageHeight });
+			top -= gap;
+		}
+		return target.save({ useObjectStreams: true });
+	});
+
+export type OverlayOptions = { opacity?: number; scale?: "fit" | "stretch"; pages?: number[] | null };
+
+/**
+ * Lays one PDF over another — a letterhead under the words, or a stamp over every sheet.
+ * The layer's first page is placed on each chosen page of the base document; both are
+ * embedded as they are, so neither loses its fonts.
+ */
+export const overlayPdf = (baseBytes: Uint8Array, layerBytes: Uint8Array, options: OverlayOptions = {}): Promise<Uint8Array> =>
+	guard(async () => {
+		const base = await openDocument(baseBytes);
+		const layer = await openDocument(layerBytes);
+		const basePages = base.getPages();
+		const layerPage = layer.getPages()[0];
+		if (basePages.length === 0) throw new PdfInputError("The first PDF has no pages.");
+		if (!layerPage) throw new PdfInputError("The second PDF has no pages.");
+		const wanted = options.pages && options.pages.length ? new Set(options.pages) : null;
+		if (wanted) {
+			for (const number of wanted) {
+				if (number < 1 || number > basePages.length) throw new PdfInputError(`This PDF has ${pageWordOf(basePages.length)}, so page ${number} does not exist.`);
+			}
+		}
+		const opacity = Math.min(Math.max(options.opacity ?? 1, 0.05), 1);
+		const stretch = options.scale === "stretch";
+		const embedded = await base.embedPage(layerPage);
+		const layerSize = layerPage.getSize();
+		basePages.forEach((page, index) => {
+			if (wanted && !wanted.has(index + 1)) return;
+			const { width, height } = page.getSize();
+			const zoom = stretch ? null : Math.min(width / layerSize.width, height / layerSize.height);
+			const drawn = zoom === null ? { width, height } : { width: layerSize.width * zoom, height: layerSize.height * zoom };
+			page.drawPage(embedded, {
+				x: (width - drawn.width) / 2,
+				y: (height - drawn.height) / 2,
+				width: drawn.width,
+				height: drawn.height,
+				opacity,
+			});
+		});
+		return base.save({ useObjectStreams: true });
+	});

@@ -109,6 +109,7 @@
     "pdf-margins": "2026-11-19",
     "pdf-booklet": "2026-11-19",
     "pdf-compare": "2026-11-19",
+    "pdf-long-page": "2026-11-19",
     "pdf-merge": "2026-11-19",
     "pdf-metadata": "2026-11-19",
     "pdf-organise": "2026-11-19",
@@ -169,6 +170,7 @@
     "xml-json": null,
     "xpath-tester": null,
     "yaml-json": null,
-    "zip-creator": "2026-11-18"
+    "zip-creator": "2026-11-18",
+    "pdf-overlay": "2026-11-19"
   }
 }

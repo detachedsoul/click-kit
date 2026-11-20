@@ -77,6 +77,8 @@ import { PdfEditorTool } from "@/features/pdf-tools/edit-tool";
 import { PdfMarginTool } from "@/features/pdf-tools/margin-tool";
 import { PdfBookletTool } from "@/features/pdf-tools/booklet-tool";
 import { PdfCompareTool } from "@/features/pdf-tools/compare-tool";
+import { PdfLongPageTool } from "@/features/pdf-tools/long-page-tool";
+import { PdfOverlayTool } from "@/features/pdf-tools/overlay-tool";
 import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-tool";
 import { RtfTool } from "@/features/converter-tools/rtf-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
@@ -288,6 +290,8 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-margins": PdfMarginTool,
 	"pdf-booklet": PdfBookletTool,
 	"pdf-compare": PdfCompareTool,
+	"pdf-long-page": PdfLongPageTool,
+	"pdf-overlay": PdfOverlayTool,
 	"html-to-markdown": HtmlToMarkdownTool,
 	"markdown-to-html": MarkdownToHtmlTool,
 	"rtf-to-text": RtfTool,

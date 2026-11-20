@@ -100,6 +100,8 @@ import {
 	Workflow,
 	Volume2,
 	Baby,
+	Layers,
+	MoveVertical,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -296,6 +298,8 @@ export const tools: Tool[] = [
 	{ id: "pdf-margins", name: "PDF margin adder", description: "Give every page a white margin for a binding edge, hole punching, or notes — the content moves inwards and nothing is scaled or redrawn.", category: "pdf", slug: "pdf-margins", keywords: ["pdf margins", "binding edge", "add white space", "print margin", "gutter", "hole punch"], icon: StretchHorizontal, status: "available" },
 	{ id: "pdf-booklet", name: "PDF booklet maker", description: "Impose a PDF as a folded booklet — two pages per landscape sheet in saddle-stitch order, with blanks filling the last sheet and an optional fold line.", category: "pdf", slug: "pdf-booklet", keywords: ["pdf booklet", "imposition", "saddle stitch", "zine", "folded pages", "print booklet"], icon: BookMarked, status: "available" },
 	{ id: "pdf-compare", name: "PDF compare", description: "Read two versions of a PDF page by page and see exactly which words were added, removed, or rewritten — text only, nothing leaves the tab.", category: "pdf", slug: "pdf-compare", keywords: ["pdf compare", "diff pdf", "contract changes", "compare documents", "what changed", "proofreading"], icon: FileDiff, status: "available" },
+	{ id: "pdf-long-page", name: "PDF long page", description: "Stack every page into one very tall page, the way a receipt or a webtoon is meant to be scrolled — pages are embedded, not redrawn.", category: "pdf", slug: "pdf-long-page", keywords: ["long page", "scroll pdf", "stitch pages", "webtoon", "receipt", "one page pdf"], icon: MoveVertical, status: "available" },
+	{ id: "pdf-overlay", name: "PDF overlay", description: "Lay one PDF over another — a letterhead under the words, or a stamp over every sheet — with a page range, fit or stretch, and a strength.", category: "pdf", slug: "pdf-overlay", keywords: ["pdf overlay", "letterhead", "stationery", "stamp every page", "combine pages", "overlay"], icon: Layers, status: "available" },
 	{ id: "random-picker", name: "Random picker", description: "Pick one option fairly from a list of choices.", category: "productivity", slug: "random-picker", keywords: ["choose", "decision", "draw"], icon: Shuffle, status: "available" },
 ];
 
