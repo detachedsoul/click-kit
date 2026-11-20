@@ -1,14 +1,22 @@
 {
   "releases": [
     {
-      "date": "2026-11-19",
+      "date": "2026-11-20",
       "groups": [
         {
           "group": "Added",
           "entries": [
             {
+              "hash": "3a5b9ee",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add weight, colour, and background to editor notes",
+              "group": "Added"
+            },
+            {
               "hash": "e359480",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "productivity",
               "summary": "add a weekly meal planner and shopping list",
@@ -16,7 +24,7 @@
             },
             {
               "hash": "61e0c65",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "convert",
               "summary": "add a markdown and html table converter",
@@ -24,7 +32,7 @@
             },
             {
               "hash": "f23fd09",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "pdf",
               "summary": "add a split-in-half tool",
@@ -32,7 +40,7 @@
             },
             {
               "hash": "b96c69f",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "pdf",
               "summary": "add a flatten tool for annotations and form fields",
@@ -40,7 +48,7 @@
             },
             {
               "hash": "d81f603",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "convert",
               "summary": "add html tables to csv",
@@ -48,7 +56,7 @@
             },
             {
               "hash": "3a3fd77",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "productivity",
               "summary": "add a reading list",
@@ -56,12 +64,93 @@
             },
             {
               "hash": "3a3d309",
-              "date": "2026-11-19",
+              "date": "2026-11-20",
               "type": "feat",
               "scope": "pdf",
               "summary": "add a long-page stitcher and an overlay",
               "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "dfbc6e3",
+              "date": "2026-11-20",
+              "type": "refactor",
+              "scope": "pdf",
+              "summary": "rebuild the editor as a three-step flow",
+              "group": "Changed"
             },
+            {
+              "hash": "6f4cb60",
+              "date": "2026-11-20",
+              "type": "style",
+              "scope": "productivity",
+              "summary": "drop an unused import from the reading list test",
+              "group": "Changed"
+            }
+          ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "5527387",
+              "date": "2026-11-20",
+              "type": "fix",
+              "scope": "pdf",
+              "summary": "type notes straight onto the page and line up the mark buttons",
+              "group": "Fixed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "e0223a6",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "",
+              "summary": "point the release notes at the rewritten commits",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "f7b2566",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "",
+              "summary": "fold the editor's typing change into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "143d037",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "",
+              "summary": "fold the new tools and the editor rework into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "5711707",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "",
+              "summary": "fold the three new tools into the changelog",
+              "group": "Maintenance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
             {
               "hash": "0bee559",
               "date": "2026-11-19",
@@ -325,185 +414,12 @@
               "scope": "pdf",
               "summary": "shared pdf plumbing that copies pages, not pictures",
               "group": "Added"
-            },
-            {
-              "hash": "ca84cf0",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "productivity",
-              "summary": "add a decision matrix",
-              "group": "Added"
-            },
-            {
-              "hash": "9fcfdf4",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "calculators",
-              "summary": "add a recipe scaler",
-              "group": "Added"
-            },
-            {
-              "hash": "5a0b69b",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "calculators",
-              "summary": "add a salary converter",
-              "group": "Added"
-            },
-            {
-              "hash": "b995ff5",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "developer",
-              "summary": "add a box shadow generator",
-              "group": "Added"
-            },
-            {
-              "hash": "407f1c2",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "text",
-              "summary": "add a post length counter",
-              "group": "Added"
-            },
-            {
-              "hash": "e38506c",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "ui",
-              "summary": "update open pages in place when a new build ships",
-              "group": "Added"
-            },
-            {
-              "hash": "0babd8d",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "pwa",
-              "summary": "install prompt and new-tool notifications",
-              "group": "Added"
-            },
-            {
-              "hash": "55774dc",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "calculators",
-              "summary": "default the GPA calculator to 5.0 and plain A-F letters",
-              "group": "Added"
-            },
-            {
-              "hash": "1c54069",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "files",
-              "summary": "add a file splitter and joiner",
-              "group": "Added"
-            },
-            {
-              "hash": "75d9a67",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add a before and after comparison",
-              "group": "Added"
-            },
-            {
-              "hash": "a44899a",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add a contact sheet builder",
-              "group": "Added"
-            },
-            {
-              "hash": "278fac2",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "ui",
-              "summary": "louder New badge and filters for the tool list",
-              "group": "Added"
-            },
-            {
-              "hash": "9ea9780",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "watermark with your own logo",
-              "group": "Added"
-            },
-            {
-              "hash": "16ee6a2",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "calculators",
-              "summary": "add a 5.0 GPA scale",
-              "group": "Added"
-            },
-            {
-              "hash": "07adb14",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add a batch image converter",
-              "group": "Added"
-            },
-            {
-              "hash": "4725d31",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add an image colour picker",
-              "group": "Added"
-            },
-            {
-              "hash": "6d297f4",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add an image splitter",
-              "group": "Added"
-            },
-            {
-              "hash": "9d957e7",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add an image redactor",
-              "group": "Added"
-            },
-            {
-              "hash": "0cc0035",
-              "date": "2026-11-19",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add a screenshot framer",
-              "group": "Added"
-            }
-          ]
-        },
-        {
-          "group": "Changed",
-          "entries": [
-            {
-              "hash": "dfbc6e3",
-              "date": "2026-11-19",
-              "type": "refactor",
-              "scope": "pdf",
-              "summary": "rebuild the editor as a three-step flow",
-              "group": "Changed"
             }
           ]
         },
         {
           "group": "Fixed",
           "entries": [
-            {
-              "hash": "5527387",
-              "date": "2026-11-19",
-              "type": "fix",
-              "scope": "pdf",
-              "summary": "type notes straight onto the page and line up the mark buttons",
-              "group": "Fixed"
-            },
             {
               "hash": "21c6dee",
               "date": "2026-11-19",
@@ -521,27 +437,19 @@
               "group": "Fixed"
             },
             {
-              "hash": "eaa5932",
+              "hash": "fe0d1db",
               "date": "2026-11-19",
               "type": "fix",
-              "scope": "a11y",
-              "summary": "keep the heading outline sequential on the tools page",
+              "scope": "pdf",
+              "summary": "list the page resizer in the catalogue",
               "group": "Fixed"
             },
             {
-              "hash": "3e67464",
+              "hash": "20c5e0a",
               "date": "2026-11-19",
               "type": "fix",
-              "scope": "image",
-              "summary": "make the redactor strength slider work",
-              "group": "Fixed"
-            },
-            {
-              "hash": "1aa4a50",
-              "date": "2026-11-19",
-              "type": "fix",
-              "scope": "a11y",
-              "summary": "raise text and field contrast to WCAG AA",
+              "scope": "convert",
+              "summary": "give the epub chapter picker the shared select class",
               "group": "Fixed"
             }
           ]
@@ -550,151 +458,51 @@
           "group": "Maintenance",
           "entries": [
             {
-              "hash": "f7b2566",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": null,
-              "summary": "fold the editor's typing change into the changelog",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "143d037",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": null,
-              "summary": "fold the new tools and the editor rework into the changelog",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "5711707",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": null,
-              "summary": "fold the three new tools into the changelog",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "6f4cb60",
-              "date": "2026-11-19",
-              "type": "style",
-              "scope": "style",
-              "summary": "drop an unused import from the reading list test",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "812c1f9",
+              "hash": "4d16f74",
               "date": "2026-11-19",
               "type": "docs",
               "scope": "",
-              "summary": "refresh the generated changelog",
+              "summary": "fold the four new tools into the changelog",
               "group": "Maintenance"
             },
             {
-              "hash": "59f2f19",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": "ui",
-              "summary": "drop build-and-repository notes from the site copy",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "2cfcbd5",
+              "hash": "7ddf579",
               "date": "2026-11-19",
               "type": "docs",
               "scope": "",
-              "summary": "refresh the generated changelog",
+              "summary": "fold the new tools into the changelog",
               "group": "Maintenance"
             },
             {
-              "hash": "a868eaa",
+              "hash": "e71af82",
               "date": "2026-11-19",
-              "type": "docs",
-              "scope": "",
-              "summary": "refresh the generated changelog",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "d29b52c",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": "",
-              "summary": "refresh the generated changelog",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "a904401",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": "",
-              "summary": "refresh changelog and README for GPA scales, watermarks, and new tools",
-              "group": "Maintenance"
-            },
-            {
-              "hash": "181a6dd",
-              "date": "2026-11-19",
-              "type": "docs",
-              "scope": "",
-              "summary": "refresh changelog and README for the five new image tools",
-              "group": "Maintenance"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "date": "2026-11-18",
-      "groups": [
-        {
-          "group": "Added",
-          "entries": [
-            {
-              "hash": "3117e99",
-              "date": "2026-11-18",
-              "type": "feat",
-              "scope": "site",
-              "summary": "five more tools, new-tool tracking, and a changelog",
-              "group": "Added"
-            },
-            {
-              "hash": "ed04ff7",
-              "date": "2026-11-18",
-              "type": "feat",
-              "scope": "image",
-              "summary": "add six more tools and a Tailwind v4 palette theme",
-              "group": "Added"
-            },
-            {
-              "hash": "2affb63",
-              "date": "2026-11-18",
-              "type": "feat",
-              "scope": "image",
-              "summary": "six new image and file tools",
-              "group": "Added"
-            }
-          ]
-        },
-        {
-          "group": "Changed",
-          "entries": [
-            {
-              "hash": "a79c5f3",
-              "date": "2026-11-18",
-              "type": "refine",
-              "scope": "image",
-              "summary": "keep the palette page to two copy blocks",
-              "group": "Changed"
-            }
-          ]
-        },
-        {
-          "group": "Maintenance",
-          "entries": [
-            {
-              "hash": "781925a",
-              "date": "2026-11-18",
               "type": "chore",
-              "scope": "",
-              "summary": "sync tool dates and changelog",
+              "scope": "meta",
+              "summary": "fold the new tools into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "02df4e7",
+              "date": "2026-11-19",
+              "type": "chore",
+              "scope": "meta",
+              "summary": "fold the two new pdf tools into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "73d39bc",
+              "date": "2026-11-19",
+              "type": "chore",
+              "scope": "lint",
+              "summary": "leave the generated pdf.js files out of linting",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "edbadf7",
+              "date": "2026-11-19",
+              "type": "chore",
+              "scope": "meta",
+              "summary": "fold this release into the changelog",
               "group": "Maintenance"
             }
           ]

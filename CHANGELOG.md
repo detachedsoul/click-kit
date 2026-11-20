@@ -2,10 +2,11 @@
 
 Every change to ClickKit, newest first. Generated from git history with `npm run changelog` — do not edit by hand.
 
-## 19 November 2026
+## 20 November 2026
 
 ### Added
 
+- **pdf** — add weight, colour, and background to editor notes ([3a5b9ee](https://github.com/detachedsoul/click-kit/commit/3a5b9ee))
 - **productivity** — add a weekly meal planner and shopping list ([e359480](https://github.com/detachedsoul/click-kit/commit/e359480))
 - **convert** — add a markdown and html table converter ([61e0c65](https://github.com/detachedsoul/click-kit/commit/61e0c65))
 - **pdf** — add a split-in-half tool ([f23fd09](https://github.com/detachedsoul/click-kit/commit/f23fd09))
@@ -13,6 +14,27 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 - **convert** — add html tables to csv ([d81f603](https://github.com/detachedsoul/click-kit/commit/d81f603))
 - **productivity** — add a reading list ([3a3fd77](https://github.com/detachedsoul/click-kit/commit/3a3fd77))
 - **pdf** — add a long-page stitcher and an overlay ([3a3d309](https://github.com/detachedsoul/click-kit/commit/3a3d309))
+
+### Changed
+
+- **pdf** — rebuild the editor as a three-step flow ([dfbc6e3](https://github.com/detachedsoul/click-kit/commit/dfbc6e3))
+- **productivity** — drop an unused import from the reading list test ([6f4cb60](https://github.com/detachedsoul/click-kit/commit/6f4cb60))
+
+### Fixed
+
+- **pdf** — type notes straight onto the page and line up the mark buttons ([5527387](https://github.com/detachedsoul/click-kit/commit/5527387))
+
+### Maintenance
+
+- point the release notes at the rewritten commits ([e0223a6](https://github.com/detachedsoul/click-kit/commit/e0223a6))
+- fold the editor's typing change into the changelog ([f7b2566](https://github.com/detachedsoul/click-kit/commit/f7b2566))
+- fold the new tools and the editor rework into the changelog ([143d037](https://github.com/detachedsoul/click-kit/commit/143d037))
+- fold the three new tools into the changelog ([5711707](https://github.com/detachedsoul/click-kit/commit/5711707))
+
+## 19 November 2026
+
+### Added
+
 - **convert** — add csv and excel conversion ([0bee559](https://github.com/detachedsoul/click-kit/commit/0bee559))
 - **productivity** — add a subscription tracker ([7f7bd9d](https://github.com/detachedsoul/click-kit/commit/7f7bd9d))
 - **pdf** — add a booklet maker and a word-level comparison ([9dff9a1](https://github.com/detachedsoul/click-kit/commit/9dff9a1))
@@ -46,65 +68,19 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 - **pdf** — add a pdf splitter with ranges, chunks and burst ([c0436f6](https://github.com/detachedsoul/click-kit/commit/c0436f6))
 - **pdf** — add a pdf merger with a reorderable list ([1e5f214](https://github.com/detachedsoul/click-kit/commit/1e5f214))
 - **pdf** — shared pdf plumbing that copies pages, not pictures ([c9863ff](https://github.com/detachedsoul/click-kit/commit/c9863ff))
-- **productivity** — add a decision matrix ([ca84cf0](https://github.com/detachedsoul/click-kit/commit/ca84cf0))
-- **calculators** — add a recipe scaler ([9fcfdf4](https://github.com/detachedsoul/click-kit/commit/9fcfdf4))
-- **calculators** — add a salary converter ([5a0b69b](https://github.com/detachedsoul/click-kit/commit/5a0b69b))
-- **developer** — add a box shadow generator ([b995ff5](https://github.com/detachedsoul/click-kit/commit/b995ff5))
-- **text** — add a post length counter ([407f1c2](https://github.com/detachedsoul/click-kit/commit/407f1c2))
-- **ui** — update open pages in place when a new build ships ([e38506c](https://github.com/detachedsoul/click-kit/commit/e38506c))
-- **pwa** — install prompt and new-tool notifications ([0babd8d](https://github.com/detachedsoul/click-kit/commit/0babd8d))
-- **calculators** — default the GPA calculator to 5.0 and plain A-F letters ([55774dc](https://github.com/detachedsoul/click-kit/commit/55774dc))
-- **files** — add a file splitter and joiner ([1c54069](https://github.com/detachedsoul/click-kit/commit/1c54069))
-- **image** — add a before and after comparison ([75d9a67](https://github.com/detachedsoul/click-kit/commit/75d9a67))
-- **image** — add a contact sheet builder ([a44899a](https://github.com/detachedsoul/click-kit/commit/a44899a))
-- **ui** — louder New badge and filters for the tool list ([278fac2](https://github.com/detachedsoul/click-kit/commit/278fac2))
-- **image** — watermark with your own logo ([9ea9780](https://github.com/detachedsoul/click-kit/commit/9ea9780))
-- **calculators** — add a 5.0 GPA scale ([16ee6a2](https://github.com/detachedsoul/click-kit/commit/16ee6a2))
-- **image** — add a batch image converter ([07adb14](https://github.com/detachedsoul/click-kit/commit/07adb14))
-- **image** — add an image colour picker ([4725d31](https://github.com/detachedsoul/click-kit/commit/4725d31))
-- **image** — add an image splitter ([6d297f4](https://github.com/detachedsoul/click-kit/commit/6d297f4))
-- **image** — add an image redactor ([9d957e7](https://github.com/detachedsoul/click-kit/commit/9d957e7))
-- **image** — add a screenshot framer ([0cc0035](https://github.com/detachedsoul/click-kit/commit/0cc0035))
-
-### Changed
-
-- **pdf** — rebuild the editor as a three-step flow ([dfbc6e3](https://github.com/detachedsoul/click-kit/commit/dfbc6e3))
 
 ### Fixed
 
-- **pdf** — type notes straight onto the page and line up the mark buttons ([5527387](https://github.com/detachedsoul/click-kit/commit/5527387))
 - **ui** — stop the pages-per-sheet buttons going white on white ([21c6dee](https://github.com/detachedsoul/click-kit/commit/21c6dee))
 - **image** — keep a preview from breaking when the canvas will not paint ([b07f77f](https://github.com/detachedsoul/click-kit/commit/b07f77f))
-- **a11y** — keep the heading outline sequential on the tools page ([eaa5932](https://github.com/detachedsoul/click-kit/commit/eaa5932))
-- **image** — make the redactor strength slider work ([3e67464](https://github.com/detachedsoul/click-kit/commit/3e67464))
-- **a11y** — raise text and field contrast to WCAG AA ([1aa4a50](https://github.com/detachedsoul/click-kit/commit/1aa4a50))
+- **pdf** — list the page resizer in the catalogue ([fe0d1db](https://github.com/detachedsoul/click-kit/commit/fe0d1db))
+- **convert** — give the epub chapter picker the shared select class ([20c5e0a](https://github.com/detachedsoul/click-kit/commit/20c5e0a))
 
 ### Maintenance
 
-- **docs** — fold the editor's typing change into the changelog ([f7b2566](https://github.com/detachedsoul/click-kit/commit/f7b2566))
-- **docs** — fold the new tools and the editor rework into the changelog ([143d037](https://github.com/detachedsoul/click-kit/commit/143d037))
-- **docs** — fold the three new tools into the changelog ([5711707](https://github.com/detachedsoul/click-kit/commit/5711707))
-- **style** — drop an unused import from the reading list test ([6f4cb60](https://github.com/detachedsoul/click-kit/commit/6f4cb60))
-- refresh the generated changelog ([812c1f9](https://github.com/detachedsoul/click-kit/commit/812c1f9))
-- **ui** — drop build-and-repository notes from the site copy ([59f2f19](https://github.com/detachedsoul/click-kit/commit/59f2f19))
-- refresh the generated changelog ([2cfcbd5](https://github.com/detachedsoul/click-kit/commit/2cfcbd5))
-- refresh the generated changelog ([a868eaa](https://github.com/detachedsoul/click-kit/commit/a868eaa))
-- refresh the generated changelog ([d29b52c](https://github.com/detachedsoul/click-kit/commit/d29b52c))
-- refresh changelog and README for GPA scales, watermarks, and new tools ([a904401](https://github.com/detachedsoul/click-kit/commit/a904401))
-- refresh changelog and README for the five new image tools ([181a6dd](https://github.com/detachedsoul/click-kit/commit/181a6dd))
-
-## 18 November 2026
-
-### Added
-
-- **site** — five more tools, new-tool tracking, and a changelog ([3117e99](https://github.com/detachedsoul/click-kit/commit/3117e99))
-- **image** — add six more tools and a Tailwind v4 palette theme ([ed04ff7](https://github.com/detachedsoul/click-kit/commit/ed04ff7))
-- **image** — six new image and file tools ([2affb63](https://github.com/detachedsoul/click-kit/commit/2affb63))
-
-### Changed
-
-- **image** — keep the palette page to two copy blocks ([a79c5f3](https://github.com/detachedsoul/click-kit/commit/a79c5f3))
-
-### Maintenance
-
-- sync tool dates and changelog ([781925a](https://github.com/detachedsoul/click-kit/commit/781925a))
+- fold the four new tools into the changelog ([4d16f74](https://github.com/detachedsoul/click-kit/commit/4d16f74))
+- fold the new tools into the changelog ([7ddf579](https://github.com/detachedsoul/click-kit/commit/7ddf579))
+- **meta** — fold the new tools into the changelog ([e71af82](https://github.com/detachedsoul/click-kit/commit/e71af82))
+- **meta** — fold the two new pdf tools into the changelog ([02df4e7](https://github.com/detachedsoul/click-kit/commit/02df4e7))
+- **lint** — leave the generated pdf.js files out of linting ([73d39bc](https://github.com/detachedsoul/click-kit/commit/73d39bc))
+- **meta** — fold this release into the changelog ([edbadf7](https://github.com/detachedsoul/click-kit/commit/edbadf7))
