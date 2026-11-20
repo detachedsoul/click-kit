@@ -88,6 +88,8 @@ import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool"
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
 import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
 import { DocxTool } from "@/features/converter-tools/docx-tool";
+import { DocxPdfTool } from "@/features/converter-tools/docx-pdf-tool";
+import { PdfDocxTool } from "@/features/converter-tools/pdf-docx-tool";
 import { EpubTool } from "@/features/converter-tools/epub-tool";
 import { PptxTool } from "@/features/converter-tools/pptx-tool";
 import { SpreadsheetTool } from "@/features/converter-tools/xlsx-tool";
@@ -306,6 +308,8 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"subtitle-converter": SubtitleConverterTool,
 	"contacts-converter": ContactsConverterTool,
 	"calendar-converter": CalendarConverterTool,
+	"docx-to-pdf": DocxPdfTool,
+	"pdf-to-word": PdfDocxTool,
 	"docx-to-markdown": DocxTool,
 	"epub-to-markdown": EpubTool,
 	"pptx-to-markdown": PptxTool,
