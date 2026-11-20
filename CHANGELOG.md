@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **pdf** — let any mark be dragged anywhere and explain the editor ([2258bb7](https://github.com/detachedsoul/click-kit/commit/2258bb7))
 - **pdf** — restyle a note that is already on the page ([1288542](https://github.com/detachedsoul/click-kit/commit/1288542))
 - **pdf** — add weight, colour, and background to editor notes ([3a5b9ee](https://github.com/detachedsoul/click-kit/commit/3a5b9ee))
 - **productivity** — add a weekly meal planner and shopping list ([e359480](https://github.com/detachedsoul/click-kit/commit/e359480))
@@ -28,6 +29,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — fold the slider fix into the notes ([eeed74b](https://github.com/detachedsoul/click-kit/commit/eeed74b))
 - rewrite the readme as a description of the project ([e148002](https://github.com/detachedsoul/click-kit/commit/e148002))
 - **changelog** — fold the in-place restyling into the notes ([6224f01](https://github.com/detachedsoul/click-kit/commit/6224f01))
 - **changelog** — regenerate the release notes from history ([1b2dcbf](https://github.com/detachedsoul/click-kit/commit/1b2dcbf))

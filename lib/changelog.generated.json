@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "2258bb7",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "let any mark be dragged anywhere and explain the editor",
+              "group": "Added"
+            },
+            {
               "hash": "1288542",
               "date": "2026-11-20",
               "type": "feat",
@@ -125,6 +133,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "eeed74b",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the slider fix into the notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "e148002",
               "date": "2026-11-20",
