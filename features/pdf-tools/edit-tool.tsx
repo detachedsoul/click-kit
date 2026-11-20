@@ -636,13 +636,13 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-picture-width">
 										Width on the page ({pictureWidth}%)
 									</label>
-									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-width" max={100} min={5} onChange={(event) => choosePictureWidth(event.target.value)} type="range" value={pictureWidth} />
+									<input className="mt-2 block h-11 w-full cursor-pointer accent-[#263b34]" id="pdf-edit-picture-width" max={100} min={5} onChange={(event) => choosePictureWidth(event.target.value)} type="range" value={pictureWidth} />
 								</div>
 								<div>
 									<label className={labelClassName} htmlFor="pdf-edit-picture-opacity">
 										Strength ({pictureOpacity}%)
 									</label>
-									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-opacity" max={100} min={5} onChange={(event) => choosePictureOpacity(event.target.value)} type="range" value={pictureOpacity} />
+									<input className="mt-2 block h-11 w-full cursor-pointer accent-[#263b34]" id="pdf-edit-picture-opacity" max={100} min={5} onChange={(event) => choosePictureOpacity(event.target.value)} type="range" value={pictureOpacity} />
 								</div>
 							</div>
 						) : (
@@ -820,7 +820,7 @@ export const PdfEditorTool = () => {
 										{edit.kind === "image" ? (
 											<input
 												aria-label={`Width of the picture on page ${edit.page}`}
-												className="w-24 cursor-pointer"
+												className="h-8 w-24 cursor-pointer accent-[#263b34]"
 												max={100}
 												min={5}
 												onChange={(event) => storeEdits((list) => list.map((item, at) => (at === index ? { ...item, width: Number(event.target.value) / 100 } : item)))}

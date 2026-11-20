@@ -689,4 +689,18 @@ describe("changing words that are already on the page", () => {
 		expect(contentOf(doc, 1)).toContain("240 0 0 240 0 0 cm");
 	});
 });
+	it("gives its sliders the brand colour", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		await user.upload(screen.getByLabelText("Picture to place"), new File([PICTURE_BYTES], "stamp.png", { type: "image/png" }));
+		await screen.findByText(/is ready/u);
+		clickPage(100, 300);
+		const sliders = Array.from(document.querySelectorAll<HTMLInputElement>('input[type="range"]'));
+		// Width, strength, and the row slider: every one of them, not just the first.
+		expect(sliders.length).toBeGreaterThanOrEqual(3);
+		for (const slider of sliders) expect(slider.className).toContain("accent-[#263b34]");
+	});
 });
