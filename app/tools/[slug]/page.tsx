@@ -117,6 +117,7 @@ import { MeetingCostMeter } from "@/features/productivity-tools/meeting-cost";
 import { SubscriptionTracker } from "@/features/productivity-tools/subscription-tracker";
 import { ReadingList } from "@/features/productivity-tools/reading-list";
 import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
+import { MealPlanner } from "@/features/productivity-tools/meal-planner";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
 import { ZipTool } from "@/features/image-tools/zip-tool";
@@ -311,6 +312,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"csv-excel": SpreadsheetTool,
 	"html-tables": HtmlTableTool,
 	"markdown-html-table": MarkdownTableTool,
+	"meal-planner": MealPlanner,
 	"habit-tracker": HabitTracker,
 	"task-list": TaskList,
 	"meeting-cost": MeetingCostMeter,
