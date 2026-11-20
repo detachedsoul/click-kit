@@ -6,6 +6,10 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **productivity** — add a weekly meal planner and shopping list ([1a5c01c](https://github.com/detachedsoul/click-kit/commit/1a5c01c))
+- **convert** — add a markdown and html table converter ([a8c58c9](https://github.com/detachedsoul/click-kit/commit/a8c58c9))
+- **pdf** — add a split-in-half tool ([301d895](https://github.com/detachedsoul/click-kit/commit/301d895))
+- **pdf** — add a flatten tool for annotations and form fields ([4652d14](https://github.com/detachedsoul/click-kit/commit/4652d14))
 - **convert** — add html tables to csv ([d81f603](https://github.com/detachedsoul/click-kit/commit/d81f603))
 - **productivity** — add a reading list ([3a3fd77](https://github.com/detachedsoul/click-kit/commit/3a3fd77))
 - **pdf** — add a long-page stitcher and an overlay ([3a3d309](https://github.com/detachedsoul/click-kit/commit/3a3d309))
@@ -61,6 +65,10 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 - **image** — add an image splitter ([6d297f4](https://github.com/detachedsoul/click-kit/commit/6d297f4))
 - **image** — add an image redactor ([9d957e7](https://github.com/detachedsoul/click-kit/commit/9d957e7))
 - **image** — add a screenshot framer ([0cc0035](https://github.com/detachedsoul/click-kit/commit/0cc0035))
+
+### Changed
+
+- **pdf** — make the editor a three-step flow ([ef79960](https://github.com/detachedsoul/click-kit/commit/ef79960))
 
 ### Fixed
 

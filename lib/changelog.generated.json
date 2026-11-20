@@ -7,6 +7,38 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "1a5c01c",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a weekly meal planner and shopping list",
+              "group": "Added"
+            },
+            {
+              "hash": "a8c58c9",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add a markdown and html table converter",
+              "group": "Added"
+            },
+            {
+              "hash": "301d895",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a split-in-half tool",
+              "group": "Added"
+            },
+            {
+              "hash": "4652d14",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a flatten tool for annotations and form fields",
+              "group": "Added"
+            },
+            {
               "hash": "d81f603",
               "date": "2026-11-19",
               "type": "feat",
@@ -445,6 +477,19 @@
               "scope": "image",
               "summary": "add a screenshot framer",
               "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "ef79960",
+              "date": "2026-11-19",
+              "type": "refactor",
+              "scope": "pdf",
+              "summary": "make the editor a three-step flow",
+              "group": "Changed"
             }
           ]
         },
