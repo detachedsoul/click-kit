@@ -140,7 +140,8 @@ describe("the typing tester", () => {
 
 		await user.click(screen.getByRole("button", { name: "Easy" }));
 		expect(screen.getByText(/Short, plain words/u)).toBeTruthy();
-		expect(passage()).toMatch(/^[a-z ·]+$/u);
+		// Easy text stays letters, spaces, commas, and full stops: no capitals, no digits.
+		expect(passage()).toMatch(/^[a-z ,.]+$/u);
 	});
 
 	it("takes a passage of your own", async () => {
@@ -172,6 +173,8 @@ describe("the typing tester", () => {
 
 	it("counts a mistake past the end of the passage", async () => {
 		const user = await setup();
+		// The shortest test keeps this test cheap: it types the whole passage.
+		await user.click(screen.getByRole("button", { name: "15s" }));
 		await user.click(screen.getByRole("textbox", { name: "Typing area" }));
 		const target = passage();
 		await user.keyboard(target);

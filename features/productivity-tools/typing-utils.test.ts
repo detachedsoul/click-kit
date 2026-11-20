@@ -93,8 +93,25 @@ describe("passages", () => {
 		expect(picks.size).toBeGreaterThan(1);
 	});
 
+	it("fills the longest test without saying the same thing twice", () => {
+		for (const level of ["easy", "medium", "hard"] as const) {
+			const text = passageFor(level, targetLengthFor(120), () => 0.13);
+			const repeated = PASSAGES[level].filter((passage) => text.split(passage).length - 1 > 1);
+			expect(repeated).toEqual([]);
+		}
+	});
+
+	it("keeps a page of sentences for each level, more than the longest test needs", () => {
+		for (const level of ["easy", "medium", "hard"] as const) {
+			expect(PASSAGES[level].length).toBeGreaterThanOrEqual(15);
+			expect(PASSAGES[level].join(" ").length).toBeGreaterThan(targetLengthFor(120));
+		}
+	});
+
 	it("asks for more text on a longer test", () => {
 		expect(targetLengthFor(120)).toBeGreaterThan(targetLengthFor(15));
+		// Half a minute is a paragraph, not a line.
+		expect(targetLengthFor(30)).toBeGreaterThanOrEqual(600);
 		expect(DURATIONS).toEqual([15, 30, 60, 120]);
 	});
 
