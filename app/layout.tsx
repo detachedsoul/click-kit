@@ -5,6 +5,7 @@ import LiveUpdates from "@/components/live-updates";
 import { buildInfo } from "@/lib/build-info";
 import type { Metadata, Viewport } from "next";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 import "@fontsource-variable/dm-sans/wght.css";
 import "@fontsource/instrument-serif/latin-400.css";
 import "@fontsource/instrument-serif/latin-400-italic.css";
@@ -94,6 +95,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 			<SiteFooter />
 			<PwaWidget />
 			<LiveUpdates tools={build.tools} version={build.version} />
+			<Analytics />
 			<script dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }} type="application/ld+json" />
 		</body>
 	</html>
