@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **productivity** — add a typing speed tester ([f47f954](https://github.com/detachedsoul/click-kit/commit/f47f954))
 - **convert** — add word to pdf and pdf to word ([0f46a2d](https://github.com/detachedsoul/click-kit/commit/0f46a2d))
 - **pdf** — let any mark be dragged anywhere and explain the editor ([2258bb7](https://github.com/detachedsoul/click-kit/commit/2258bb7))
 - **pdf** — restyle a note that is already on the page ([1288542](https://github.com/detachedsoul/click-kit/commit/1288542))
