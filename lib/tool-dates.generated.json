@@ -175,6 +175,7 @@
     "zip-creator": "2026-11-18",
     "pdf-overlay": "2026-11-19",
     "pdf-flatten": "2026-11-19",
-    "pdf-split-halves": "2026-11-19"
+    "pdf-split-halves": "2026-11-19",
+    "markdown-html-table": "2026-11-19"
   }
 }
