@@ -572,15 +572,78 @@ describe("moving a mark on the page", () => {
 		await load(user);
 		await screen.findByAltText("Page 1 of contract.pdf");
 		await typeOnPage(user, "Sign here");
-		const image = measurePage();
+		measurePage();
 		const note = screen.getByRole("button", { name: /Edit Note “Sign here”/u });
-		// Press on the note, move the pointer, and it follows the pointer.
-		fireEvent.mouseDown(note, { clientX: 100, clientY: 300 });
-		fireEvent.mouseMove(image.parentElement as HTMLElement, { clientX: 200, clientY: 480 });
-		fireEvent.mouseUp(image.parentElement as HTMLElement);
+		// Press on the note and move the pointer: it follows, without being retyped.
+		fireEvent.pointerDown(note, { clientX: 100, clientY: 300, pointerId: 1 });
+		fireEvent.pointerMove(note, { clientX: 200, clientY: 480, pointerId: 1 });
+		fireEvent.pointerUp(note, { clientX: 200, clientY: 480, pointerId: 1 });
 		expect(screen.getByText("Note “Sign here” on page 1 at 50% / 80%")).toBeTruthy();
 		// A drag is not a click: the box does not open under the pointer.
 		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+		// And it is still the same note, not a second copy.
+		expect(screen.getAllByRole("button", { name: /Edit Note “/u })).toHaveLength(1);
+	});
+
+	it("keeps dragging when the pointer leaves the page", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Far");
+		measurePage();
+		const note = screen.getByRole("button", { name: /Edit Note “Far”/u });
+		fireEvent.pointerDown(note, { clientX: 100, clientY: 300, pointerId: 1 });
+		// Well past the right and bottom edges of the 400 × 600 page.
+		fireEvent.pointerMove(note, { clientX: 900, clientY: 1200, pointerId: 1 });
+		fireEvent.pointerUp(note, { clientX: 900, clientY: 1200, pointerId: 1 });
+		expect(screen.getByText("Note “Far” on page 1 at 100% / 100%")).toBeTruthy();
+	});
+
+	it("moves a highlight and a picture too", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		clickPage(40, 60);
+		measurePage();
+		const band = document.querySelector('[data-handle="resize"]')?.parentElement as HTMLElement;
+		fireEvent.pointerDown(band, { clientX: 40, clientY: 60, pointerId: 1 });
+		fireEvent.pointerMove(band, { clientX: 200, clientY: 300, pointerId: 1 });
+		fireEvent.pointerUp(band, { clientX: 200, clientY: 300, pointerId: 1 });
+		expect(screen.getByText("Highlight on page 1 at 50% / 50%")).toBeTruthy();
+
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		await user.upload(screen.getByLabelText("Picture to place"), new File([PICTURE_BYTES], "stamp.png", { type: "image/png" }));
+		await screen.findByText(/is ready/u);
+		clickPage(100, 300);
+		const picture = document.querySelector('img[src^="blob:edit/"]')?.parentElement as HTMLElement;
+		fireEvent.pointerDown(picture, { clientX: 100, clientY: 300, pointerId: 1 });
+		fireEvent.pointerMove(picture, { clientX: 300, clientY: 420, pointerId: 1 });
+		fireEvent.pointerUp(picture, { clientX: 300, clientY: 420, pointerId: 1 });
+		expect(screen.getByText("Picture on page 1 at 75% / 70%")).toBeTruthy();
+	});
+
+	it("nudges a selected mark with the arrow keys", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Nudge");
+		measurePage();
+		const page = screen.getByAltText("Page 1 of contract.pdf");
+		// 1% a press, 5% with Shift.
+		fireEvent.keyDown(page, { key: "ArrowRight" });
+		fireEvent.keyDown(page, { key: "ArrowDown" });
+		expect(screen.getByText("Note “Nudge” on page 1 at 26% / 51%")).toBeTruthy();
+		fireEvent.keyDown(page, { key: "ArrowLeft", shiftKey: true });
+		expect(screen.getByText("Note “Nudge” on page 1 at 21% / 51%")).toBeTruthy();
+
+		// The note itself takes the arrow keys too, so a keyboard can move it without the page focused.
+		const note = screen.getByRole("button", { name: /Edit Note “Nudge”/u });
+		fireEvent.keyDown(note, { key: "ArrowRight", shiftKey: true });
+		expect(screen.getByText("Note “Nudge” on page 1 at 26% / 51%")).toBeTruthy();
 	});
 
 	it("pulls a band wider by its corner", async () => {
@@ -590,16 +653,18 @@ describe("moving a mark on the page", () => {
 		await screen.findByAltText("Page 1 of contract.pdf");
 		await user.click(screen.getByRole("button", { name: "Highlight" }));
 		clickPage(40, 60);
-		const image = measurePage();
+		measurePage();
 		const handle = document.querySelector('[data-handle="resize"]') as HTMLElement;
 		const shape = handle.parentElement as HTMLElement;
 		const before = Number.parseFloat(shape.style.width);
 		// 34% of 400 pt is 136 pt; pulling 40 pt to the right adds 10% of the page.
-		fireEvent.mouseDown(handle, { clientX: 40 + 136, clientY: 60 + 36 });
-		fireEvent.mouseMove(image.parentElement as HTMLElement, { clientX: 40 + 136 + 40, clientY: 60 + 36 });
+		fireEvent.pointerDown(handle, { clientX: 40 + 136, clientY: 60 + 36, pointerId: 1 });
+		fireEvent.pointerMove(handle, { clientX: 40 + 136 + 40, clientY: 60 + 36, pointerId: 1 });
+		fireEvent.pointerUp(handle, { clientX: 40 + 136 + 40, clientY: 60 + 36, pointerId: 1 });
 		expect(Number.parseFloat(shape.style.width)).toBeCloseTo(before + 10, 5);
 	});
 });
+
 describe("changing words that are already on the page", () => {
 	it("keeps a new note selected so its look can be changed without retyping it", async () => {
 		const user = userEvent.setup();
@@ -703,4 +768,18 @@ describe("changing words that are already on the page", () => {
 		expect(sliders.length).toBeGreaterThanOrEqual(3);
 		for (const slider of sliders) expect(slider.className).toContain("accent-[#263b34]");
 	});
+describe("the note that explains the editor", () => {
+	it("names every tool and says how to move a mark", () => {
+		render(<PdfEditorTool />);
+		const heading = screen.getByRole("heading", { name: "How this works" });
+		const note = heading.parentElement as HTMLElement;
+		// It is there before a file is chosen, so the editor explains itself up front.
+		for (const words of ["Text note", "Highlight", "Cover box", "Picture"]) expect(note.textContent).toContain(words);
+		expect(note.textContent).toContain("drag it anywhere on the page");
+		expect(note.textContent).toContain("arrow keys nudge it");
+		expect(note.textContent).toContain("Done editing");
+		// The cover box is still described as a cover, not a redaction.
+		expect(note.textContent).toContain("hides it rather than deleting it");
+	});
+});
 });

@@ -104,8 +104,7 @@ export const PdfEditorTool = () => {
 	/** The mark the toolbar is pointed at, so a font or colour change lands on a settled note. */
 	const [selected, setSelected] = useState<number | null>(null);
 	const [hover, setHover] = useState<Spot | null>(null);
-	const [drag, setDrag] = useState<{ index: number; dx: number; dy: number } | null>(null);
-	const [resize, setResize] = useState<{ index: number; startX: number; startY: number; width: number; height: number } | null>(null);
+	const [moving, setMoving] = useState(false);
 	const [customName, setCustomName] = useState("");
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
@@ -115,6 +114,10 @@ export const PdfEditorTool = () => {
 	const pageRef = useRef<HTMLImageElement | null>(null);
 	const draftRef = useRef<Draft | null>(null);
 	const editsRef = useRef<Mark[]>([]);
+	/** A mark being dragged, held in a ref: pointer moves arrive between renders. */
+	const grabRef = useRef<{ dx: number; dy: number; index: number; moved: boolean } | null>(null);
+	/** A band or box being pulled wider by its corner. */
+	const stretchRef = useRef<{ height: number; index: number; startX: number; startY: number; width: number } | null>(null);
 	const picturesRef = useRef<string[]>([]);
 	const fileName = result ? pdfFileName(customName, result.defaultName) : "";
 
@@ -166,8 +169,9 @@ export const PdfEditorTool = () => {
 		setBytes(null);
 		setPage(1);
 		setHover(null);
-		setDrag(null);
-		setResize(null);
+		setMoving(false);
+		grabRef.current = null;
+		stretchRef.current = null;
 		setCustomName("");
 	};
 
@@ -347,8 +351,9 @@ export const PdfEditorTool = () => {
 		setSelected(null);
 		setPage(pageNumber);
 		setHover(null);
-		setDrag(null);
-		setResize(null);
+		grabRef.current = null;
+		stretchRef.current = null;
+		setMoving(false);
 		if (bytes) void showPage(bytes, pageNumber);
 	};
 
@@ -393,46 +398,99 @@ export const PdfEditorTool = () => {
 		setHover(clickFraction(event.currentTarget.getBoundingClientRect(), event.clientX, event.clientY));
 	};
 
-	const startDrag = (event: React.MouseEvent, index: number, edit: Mark) => {
+	/** Arrow keys walk a mark around the page; Shift takes bigger steps. */
+	const nudgeAt = (event: React.KeyboardEvent, index: number) => {
+		if (!editsRef.current[index]) return false;
+		const step = event.shiftKey ? 0.05 : 0.01;
+		const shifts: Record<string, [number, number]> = { ArrowDown: [0, step], ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step] };
+		const shift = shifts[event.key];
+		if (!shift) return false;
+		event.preventDefault();
+		if (selected !== index) setSelected(index);
+		storeEdits((list) => list.map((item, at) => (at === index ? { ...item, x: clamp(item.x + shift[0]), y: clamp(item.y + shift[1]) } : item)));
+		return true;
+	};
+
+	const nudge = (event: React.KeyboardEvent) => (selected === null ? false : nudgeAt(event, selected));
+
+	/** Pointer capture is what keeps a drag alive past the edge of the page. Old browsers do without. */
+	const capture = (element: Element | null, pointerId: number, on: boolean) => {
+		const node = element as HTMLElement | null;
+		if (!node || typeof node.setPointerCapture !== "function") return;
+		try {
+			if (on) node.setPointerCapture(pointerId);
+			else node.releasePointerCapture(pointerId);
+		} catch {
+			// The pointer has already gone; nothing to release.
+		}
+	};
+
+	/** Press on any mark to pick it up. A press that never moves is a click, not a drag. */
+	const beginGrab = (event: React.PointerEvent, index: number, edit: Mark) => {
+		if (event.button > 0) return;
 		event.preventDefault();
 		event.stopPropagation();
 		const spot = pageSpot(event.clientX, event.clientY);
 		if (!spot) return;
-		setDrag({ dx: spot.x - edit.x, dy: spot.y - edit.y, index });
+		capture(event.currentTarget, event.pointerId, true);
+		grabRef.current = { dx: spot.x - edit.x, dy: spot.y - edit.y, index, moved: false };
+		// Picking a mark up also points the toolbar at it, so arrow keys carry on from there.
+		selectMark(index);
 	};
 
-	const startResize = (event: React.MouseEvent, index: number, edit: Mark) => {
+	const continueGrab = (event: React.PointerEvent) => {
+		const grab = grabRef.current;
+		if (!grab) return;
+		const spot = pageSpot(event.clientX, event.clientY);
+		const current = editsRef.current[grab.index];
+		if (!spot || !current) return;
+		const x = clamp(spot.x - grab.dx);
+		const y = clamp(spot.y - grab.dy);
+		// Below roughly a thumb's width of travel the press is a click on the mark, not a move.
+		if (!grab.moved && Math.abs(x - current.x) < 0.005 && Math.abs(y - current.y) < 0.005) return;
+		grab.moved = true;
+		setMoving(true);
+		storeEdits((list) => list.map((item, at) => (at === grab.index ? { ...item, x, y } : item)));
+	};
+
+	const endGrab = (event: React.PointerEvent) => {
+		const grab = grabRef.current;
+		grabRef.current = null;
+		setMoving(false);
+		capture(event.currentTarget, event.pointerId, false);
+		if (!grab || grab.moved) return;
+		const target = editsRef.current[grab.index];
+		if (!target) return;
+		if (target.kind === "text") editNote(grab.index, target);
+		else selectMark(grab.index);
+	};
+
+	const beginStretch = (event: React.PointerEvent, index: number, edit: Mark) => {
 		event.preventDefault();
 		event.stopPropagation();
 		const spot = pageSpot(event.clientX, event.clientY);
 		if (!spot) return;
-		setResize({ height: edit.height ?? EDIT_BOX_DEFAULT.height, index, startX: spot.x, startY: spot.y, width: edit.width ?? EDIT_BOX_DEFAULT.width });
+		capture(event.currentTarget, event.pointerId, true);
+		stretchRef.current = { height: edit.height ?? EDIT_BOX_DEFAULT.height, index, startX: spot.x, startY: spot.y, width: edit.width ?? EDIT_BOX_DEFAULT.width };
 	};
 
-	const followPointer = (event: React.MouseEvent) => {
-		if (drag) {
-			const spot = pageSpot(event.clientX, event.clientY);
-			if (!spot) return;
-			storeEdits((list) => list.map((item, at) => (at === drag.index ? { ...item, x: clamp(spot.x - drag.dx), y: clamp(spot.y - drag.dy) } : item)));
-			return;
-		}
-		if (resize) {
-			const spot = pageSpot(event.clientX, event.clientY);
-			if (!spot) return;
-			const width = Math.min(Math.max(resize.width + (spot.x - resize.startX), 0.02), 1);
-			const height = Math.min(Math.max(resize.height + (spot.y - resize.startY), 0.01), 1);
-			storeEdits((list) => list.map((item, at) => (at === resize.index ? { ...item, height, width } : item)));
-		}
+	const continueStretch = (event: React.PointerEvent) => {
+		const stretch = stretchRef.current;
+		if (!stretch) return;
+		const spot = pageSpot(event.clientX, event.clientY);
+		if (!spot) return;
+		const width = Math.min(Math.max(stretch.width + (spot.x - stretch.startX), 0.02), 1);
+		const height = Math.min(Math.max(stretch.height + (spot.y - stretch.startY), 0.01), 1);
+		storeEdits((list) => list.map((item, at) => (at === stretch.index ? { ...item, height, width } : item)));
 	};
 
-	const endPointer = () => {
-		setDrag(null);
-		setResize(null);
+	const endStretch = (event: React.PointerEvent) => {
+		stretchRef.current = null;
+		capture(event.currentTarget, event.pointerId, false);
 	};
 
 	/** Clicking a note already on the page opens it again where it stands. */
 	const editNote = (index: number, edit: Mark) => {
-		if (drag) return;
 		setSelected(index);
 		setKind("text");
 		setColour(edit.color ?? "#1b1b1b");
@@ -477,11 +535,34 @@ export const PdfEditorTool = () => {
 		<ToolPanel>
 			<FileField
 				accept={ACCEPTED_PDF_TYPES}
-				hint="Three steps: pick a mark, work on the page, save. Notes are typed straight onto the page, pictures are placed where you click, and every page underneath is copied through as it stands, so the document keeps its own fonts, links, and artwork."
+				hint="Read in this tab and never uploaded. The pages are copied through exactly as they are, with your marks drawn on top."
 				id="pdf-edit-file"
 				label="PDF to edit"
 				onFile={(chosen) => void chooseFile(chosen)}
 			/>
+			<section className="flex flex-col gap-2 border border-line bg-[#fbfaf7] p-3">
+				<h2 className="m-0 text-sm font-semibold text-ink">How this works</h2>
+				<p className="m-0 text-xs leading-relaxed text-ink">
+					Three steps: <strong>choose a mark</strong>, <strong>work on the page</strong>, then <strong>save</strong>. The marks are drawn on top of each page — every page keeps its own fonts, links, and artwork, nothing is redrawn, and nothing leaves this tab.
+				</p>
+				<ul className="m-0 grid list-none gap-x-4 gap-y-1 p-0 text-xs leading-relaxed text-ink sm:grid-cols-2">
+					<li>
+						<strong>Text note</strong> — click the page and type straight onto it. Font, weight, size, colour, and a background only if you ask for one.
+					</li>
+					<li>
+						<strong>Highlight</strong> — a see-through band you drag over the words you want to come back to.
+					</li>
+					<li>
+						<strong>Cover box</strong> — paints white over something. It hides it rather than deleting it from the file.
+					</li>
+					<li>
+						<strong>Picture</strong> — a PNG or JPEG placed where you click, at the width and strength you set.
+					</li>
+				</ul>
+				<p className="m-0 text-xs leading-relaxed text-ink">
+					<strong>Moving a mark:</strong> drag it anywhere on the page, with a mouse, a finger, or a pen — the drag keeps going even if the pointer leaves the page. With a mark selected, the arrow keys nudge it and Shift takes bigger steps. Drag a band or box by its bottom-right corner to resize it. Click a note to change its words, and press <strong>Done editing</strong> to let go of it.
+				</p>
+			</section>
 			{error ? <ErrorNote message={error} /> : null}
 			{pageCount !== null ? (
 				<>
@@ -658,15 +739,7 @@ export const PdfEditorTool = () => {
 							<h2 className="m-0 text-sm font-semibold text-ink">Work on the page</h2>
 						</div>
 						<p className={hintClassName}>{instruction(kind)}</p>
-						<div
-							className="relative self-start border border-line bg-white shadow-sm"
-							onMouseLeave={() => {
-								endPointer();
-								setHover(null);
-							}}
-							onMouseMove={followPointer}
-							onMouseUp={endPointer}
-						>
+						<div className="relative self-start border border-line bg-white shadow-sm" onMouseLeave={() => setHover(null)}>
 							{preview ? (
 								// eslint-disable-next-line @next/next/no-img-element -- the rendered page you are marking up
 								<img
@@ -676,6 +749,7 @@ export const PdfEditorTool = () => {
 									draggable={false}
 									onClick={place}
 									onKeyDown={(event) => {
+										if (nudge(event)) return;
 										if (event.key !== "Enter" && event.key !== " ") return;
 										event.preventDefault();
 										addMark({ x: 0.5, y: 0.5 });
@@ -693,7 +767,7 @@ export const PdfEditorTool = () => {
 							) : (
 								<p className="m-0 p-6 text-xs text-muted">Rendering page {page}…</p>
 							)}
-							{hover && !editingHere && !drag ? (
+							{hover && !editingHere && !moving ? (
 								kind === "text" ? (
 									<span aria-hidden="true" className="pointer-events-none absolute z-10 block max-w-[70%] truncate rounded-sm border border-dashed border-accent px-1 text-muted" style={{ background: background ?? "transparent", fontSize: `${Math.min(typeSize, 18)}px`, left: `${hover.x * 100}%`, top: `${hover.y * 100}%`, transform: "translateY(-0.8em)" }}>
 										Type here
@@ -714,11 +788,19 @@ export const PdfEditorTool = () => {
 									return (
 										<button
 											aria-label={`Edit ${describeEdit(edit)}`}
-											className={`absolute z-10 max-w-[70%] cursor-text truncate rounded-sm border border-transparent text-left leading-tight hover:border-accent ${edit.background ? "px-1" : ""} ${selected === index ? "ring-2 ring-accent" : ""}`}
+											className={`absolute z-10 max-w-[70%] cursor-grab truncate rounded-sm border border-transparent text-left leading-tight hover:border-accent active:cursor-grabbing ${edit.background ? "px-1" : ""} ${selected === index ? "ring-2 ring-accent" : ""}`}
 											key={`note-${index}`}
-											onClick={() => editNote(index, edit)}
-											onMouseDown={(event) => startDrag(event, index, edit)}
-											style={{ ...placeAt, background: edit.background ?? "transparent", color: edit.color ?? "#1b1b1b", fontSize: `${onScreenSize(edit.size ?? 13)}px`, fontWeight: edit.weight === "bold" ? 700 : 400, transform: "translateY(-0.8em)" }}
+											onKeyDown={(event) => {
+												if (nudgeAt(event, index)) return;
+												if (event.key !== "Enter" && event.key !== " ") return;
+												event.preventDefault();
+												editNote(index, edit);
+											}}
+											onPointerCancel={endGrab}
+											onPointerDown={(event) => beginGrab(event, index, edit)}
+											onPointerMove={continueGrab}
+											onPointerUp={endGrab}
+											style={{ ...placeAt, background: edit.background ?? "transparent", color: edit.color ?? "#1b1b1b", fontSize: `${onScreenSize(edit.size ?? 13)}px`, fontWeight: edit.weight === "bold" ? 700 : 400, touchAction: "none", transform: "translateY(-0.8em)" }}
 											type="button"
 										>
 											{edit.text}
@@ -727,7 +809,15 @@ export const PdfEditorTool = () => {
 								}
 								if (edit.kind === "image") {
 									return (
-										<span className={`absolute z-10 cursor-move ${selected === index ? "ring-2 ring-accent" : ""}`} key={`picture-${index}`} onClick={() => selectMark(index)} onMouseDown={(event) => startDrag(event, index, edit)} style={{ ...placeAt, width: `${(edit.width ?? 0.3) * 100}%` }}>
+										<span
+										className={`absolute z-10 cursor-grab active:cursor-grabbing ${selected === index ? "ring-2 ring-accent" : ""}`}
+										key={`picture-${index}`}
+										onPointerCancel={endGrab}
+										onPointerDown={(event) => beginGrab(event, index, edit)}
+										onPointerMove={continueGrab}
+										onPointerUp={endGrab}
+										style={{ ...placeAt, touchAction: "none", width: `${(edit.width ?? 0.3) * 100}%` }}
+									>
 											{edit.preview ? (
 												// eslint-disable-next-line @next/next/no-img-element -- the picture as it will be placed
 												<img alt="" aria-hidden="true" className="pointer-events-none block w-full select-none" draggable={false} src={edit.preview} style={{ opacity: edit.opacity ?? 1 }} />
@@ -740,13 +830,23 @@ export const PdfEditorTool = () => {
 								return (
 									<span
 										aria-hidden="true"
-										className={`absolute z-10 cursor-move ${edit.kind === "highlight" ? "bg-[#f5d76e]/60 ring-1 ring-[#d9b53e]/70" : "border border-dashed border-[#b64b31] bg-white"} ${selected === index ? "outline-2 outline-accent" : ""}`}
+										className={`absolute z-10 cursor-grab active:cursor-grabbing ${edit.kind === "highlight" ? "bg-[#f5d76e]/60 ring-1 ring-[#d9b53e]/70" : "border border-dashed border-[#b64b31] bg-white"} ${selected === index ? "outline-2 outline-accent" : ""}`}
 										key={`shape-${index}`}
-										onClick={() => selectMark(index)}
-										onMouseDown={(event) => startDrag(event, index, edit)}
-										style={{ ...placeAt, height: `${(edit.height ?? EDIT_BOX_DEFAULT.height) * 100}%`, width: `${(edit.width ?? EDIT_BOX_DEFAULT.width) * 100}%` }}
+										onPointerCancel={endGrab}
+										onPointerDown={(event) => beginGrab(event, index, edit)}
+										onPointerMove={continueGrab}
+										onPointerUp={endGrab}
+										style={{ ...placeAt, height: `${(edit.height ?? EDIT_BOX_DEFAULT.height) * 100}%`, touchAction: "none", width: `${(edit.width ?? EDIT_BOX_DEFAULT.width) * 100}%` }}
 									>
-										<span className="absolute -bottom-1 -right-1 h-2.5 w-2.5 cursor-nwse-resize border border-white bg-accent" data-handle="resize" onMouseDown={(event) => startResize(event, index, edit)} />
+										<span
+											className="absolute -bottom-1 -right-1 h-3 w-3 cursor-nwse-resize border border-white bg-accent"
+											data-handle="resize"
+											onPointerCancel={endStretch}
+											onPointerDown={(event) => beginStretch(event, index, edit)}
+											onPointerMove={continueStretch}
+											onPointerUp={endStretch}
+											style={{ touchAction: "none" }}
+										/>
 									</span>
 								);
 							})}
