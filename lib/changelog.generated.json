@@ -7,6 +7,30 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "d81f603",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add html tables to csv",
+              "group": "Added"
+            },
+            {
+              "hash": "3a3fd77",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a reading list",
+              "group": "Added"
+            },
+            {
+              "hash": "3a3d309",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "add a long-page stitcher and an overlay",
+              "group": "Added"
+            },
+            {
               "hash": "0bee559",
               "date": "2026-11-19",
               "type": "feat",
@@ -472,6 +496,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "6f4cb60",
+              "date": "2026-11-19",
+              "type": "style",
+              "scope": "style",
+              "summary": "drop an unused import from the reading list test",
+              "group": "Maintenance"
+            },
             {
               "hash": "812c1f9",
               "date": "2026-11-19",

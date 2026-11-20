@@ -6,6 +6,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **convert** — add html tables to csv ([d81f603](https://github.com/detachedsoul/click-kit/commit/d81f603))
+- **productivity** — add a reading list ([3a3fd77](https://github.com/detachedsoul/click-kit/commit/3a3fd77))
+- **pdf** — add a long-page stitcher and an overlay ([3a3d309](https://github.com/detachedsoul/click-kit/commit/3a3d309))
 - **convert** — add csv and excel conversion ([0bee559](https://github.com/detachedsoul/click-kit/commit/0bee559))
 - **productivity** — add a subscription tracker ([7f7bd9d](https://github.com/detachedsoul/click-kit/commit/7f7bd9d))
 - **pdf** — add a booklet maker and a word-level comparison ([9dff9a1](https://github.com/detachedsoul/click-kit/commit/9dff9a1))
@@ -69,6 +72,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **style** — drop an unused import from the reading list test ([6f4cb60](https://github.com/detachedsoul/click-kit/commit/6f4cb60))
 - refresh the generated changelog ([812c1f9](https://github.com/detachedsoul/click-kit/commit/812c1f9))
 - **ui** — drop build-and-repository notes from the site copy ([59f2f19](https://github.com/detachedsoul/click-kit/commit/59f2f19))
 - refresh the generated changelog ([2cfcbd5](https://github.com/detachedsoul/click-kit/commit/2cfcbd5))
