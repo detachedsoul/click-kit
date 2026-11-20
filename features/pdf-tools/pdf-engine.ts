@@ -51,6 +51,16 @@ export const readPdfInfo = (bytes: Uint8Array) => guard(async () => infoOf(await
 
 export const pageCountOf = (bytes: Uint8Array) => guard(async () => (await openDocument(bytes)).getPageCount());
 
+/** The visible size of every page, in points, so the editor can size type the way the page does. */
+export const pageSizes = (bytes: Uint8Array) =>
+	guard(async () => {
+		const doc = await openDocument(bytes);
+		return doc.getPages().map((page) => {
+			const box = page.getCropBox();
+			return { height: box.height, width: box.width };
+		});
+	});
+
 /** Merge in the order given; each source keeps its own fonts and artwork. */
 export const mergePdfs = async (sources: Uint8Array[]): Promise<Uint8Array> =>
 	guard(async () => {

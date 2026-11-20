@@ -59,6 +59,13 @@ const clickPage = (x: number, y: number, page = 1) => {
 	fireEvent.click(image, { clientX: x, clientY: y });
 };
 
+/** Click a spot on the page, type straight onto it, and press Enter to place the words. */
+const typeOnPage = async (user: ReturnType<typeof userEvent.setup>, words: string, x = 100, y = 300, page = 1) => {
+	clickPage(x, y, page);
+	await user.keyboard(words);
+	await user.keyboard("{Enter}");
+};
+
 /** The decoded page content, so the marks and the original text can both be looked for. */
 const contentOf = (doc: PDFDocument, page: number) => {
 	const node = doc.getPage(page - 1).node;
@@ -113,8 +120,7 @@ describe("editing a page", () => {
 		render(<PdfEditorTool />);
 		await load(user);
 		await screen.findByAltText("Page 1 of contract.pdf");
-		await user.type(screen.getByLabelText("Words for the note"), "Signed");
-		clickPage(100, 300);
+		await typeOnPage(user, "Signed");
 		expect(screen.getByText("Note “Signed” on page 1 at 25% / 50%")).toBeTruthy();
 
 		const { doc } = await saveAndRead(user);
@@ -129,14 +135,106 @@ describe("editing a page", () => {
 		expect(fonts).toContain("Times");
 	});
 
-	it("will not place an empty note", async () => {
+	it("opens a box where you click and types right there", async () => {
 		const user = userEvent.setup();
 		render(<PdfEditorTool />);
 		await load(user);
 		await screen.findByAltText("Page 1 of contract.pdf");
 		clickPage(100, 300);
-		expect((await screen.findByRole("alert")).textContent).toContain("Type the words for the note first");
+		const box = screen.getByLabelText("Type on the page");
+		expect(document.activeElement).toBe(box);
+		await user.keyboard("Received");
+		// What is typed is the mark on the page, not a value in a form elsewhere.
+		expect((screen.getByLabelText("Type on the page") as HTMLInputElement).value).toBe("Received");
+		await user.keyboard("{Enter}");
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+		expect(screen.getByText("Note “Received” on page 1 at 25% / 50%")).toBeTruthy();
+		expect(screen.getByRole("button", { name: /Edit Note “Received”/u })).toBeTruthy();
+	});
+
+	it("leaves nothing behind when the box is empty", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		clickPage(100, 300);
+		await user.keyboard("{Escape}");
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
 		expect(screen.queryByText(/^Note “/u)).toBeNull();
+		expect(screen.getByText(/No marks yet/u)).toBeTruthy();
+	});
+
+	it("drops the box without keeping the words when you escape", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		clickPage(100, 300);
+		await user.keyboard("Half typed");
+		await user.keyboard("{Escape}");
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+		expect(screen.queryByText(/^Note “/u)).toBeNull();
+	});
+
+	it("keeps the words when you click away from the box", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		clickPage(100, 300);
+		await user.keyboard("Dated");
+		await user.click(screen.getByRole("heading", { name: "Choose a mark" }));
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+		expect(screen.getByText("Note “Dated” on page 1 at 25% / 50%")).toBeTruthy();
+	});
+
+	it("re-opens a note by clicking it on the page", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Draft");
+		await user.click(screen.getByRole("button", { name: /Edit Note “Draft”/u }));
+		const box = screen.getByLabelText("Type on the page") as HTMLInputElement;
+		expect(box.value).toBe("Draft");
+		await user.clear(box);
+		await user.keyboard("Final");
+		await user.keyboard("{Enter}");
+		expect(screen.getByText("Note “Final” on page 1 at 25% / 50%")).toBeTruthy();
+		expect(screen.queryByText(/Draft/u)).toBeNull();
+	});
+
+	it("saves words that are still in the box", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		clickPage(100, 300);
+		await user.keyboard("Typed and saved");
+		// No Enter first: clicking Save has to take the words with it.
+		const { doc } = await saveAndRead(user);
+		expect(contentOf(doc, 1)).toContain(Buffer.from("Typed and saved", "latin1").toString("hex").toUpperCase());
+	});
+
+	it("lines the three mark buttons up", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		const buttons = ["Text note", "Highlight", "Cover box"].map((name) => screen.getByRole("button", { name }));
+		const shape = (className: string) =>
+			className
+				.split(/\s+/u)
+				.filter((token) => !/^(border-forest|bg-forest|text-white|text-ink|border-line|bg-surface|hover:)/u.test(token))
+				.sort();
+		for (const button of buttons) {
+			// One row per button, centred: a column with no padding left the label pinned to the top edge.
+			expect(button.className).toContain("items-center");
+			expect(button.className).toContain("justify-start");
+			expect(button.className).toContain("w-full");
+			expect(button.className).not.toContain("flex-col");
+		}
+		expect(shape(buttons[0].className)).toEqual(shape(buttons[1].className));
+		expect(shape(buttons[1].className)).toEqual(shape(buttons[2].className));
 	});
 
 	it("highlights a band and covers one", async () => {
@@ -227,8 +325,8 @@ describe("editing a page", () => {
 		const user = userEvent.setup();
 		render(<PdfEditorTool />);
 		await load(user);
-		for (const heading of ["Choose a mark", "Click the page", "Save"]) expect(screen.getByRole("heading", { name: heading })).toBeTruthy();
-		expect(screen.getByText(/Click the spot where the note should sit/u)).toBeTruthy();
+		for (const heading of ["Choose a mark", "Work on the page", "Save"]) expect(screen.getByRole("heading", { name: heading })).toBeTruthy();
+		expect(screen.getByText(/Click the page where the words should begin, then type/u)).toBeTruthy();
 		await user.click(screen.getByRole("button", { name: "Highlight" }));
 		expect(screen.getByText(/Click where the band should begin/u)).toBeTruthy();
 		await user.click(screen.getByRole("button", { name: "Cover box" }));
@@ -271,13 +369,18 @@ describe("editing a page", () => {
 		const user = userEvent.setup();
 		render(<PdfEditorTool />);
 		await load(user);
-		await user.type(screen.getByLabelText("Words for the note"), "Paid");
 		const image = await screen.findByAltText("Page 1 of contract.pdf");
 		vi.spyOn(image, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 600, right: 400, bottom: 600, x: 0, y: 0, toJSON: () => ({}) } as DOMRect);
+		// The text tool says what a click will do in the place it will do it.
 		fireEvent.mouseMove(image, { clientX: 100, clientY: 300 });
-		expect(screen.getByText("Paid")).toBeTruthy();
+		expect(screen.getByText("Type here")).toBeTruthy();
 		fireEvent.mouseLeave(image);
-		expect(screen.queryByText("Paid")).toBeNull();
+		expect(screen.queryByText("Type here")).toBeNull();
+
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		fireEvent.mouseMove(image, { clientX: 40, clientY: 60 });
+		expect(image.className).toContain("cursor-crosshair");
+		expect(screen.queryByText("Type here")).toBeNull();
 	});
 
 	it("places a mark from the keyboard", async () => {
