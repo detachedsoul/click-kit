@@ -220,7 +220,7 @@ describe("editing a page", () => {
 		const user = userEvent.setup();
 		render(<PdfEditorTool />);
 		await load(user);
-		const buttons = ["Text note", "Highlight", "Cover box"].map((name) => screen.getByRole("button", { name }));
+		const buttons = ["Text note", "Highlight", "Cover box", "Picture"].map((name) => screen.getByRole("button", { name }));
 		const shape = (className: string) =>
 			className
 				.split(/\s+/u)
@@ -235,6 +235,7 @@ describe("editing a page", () => {
 		}
 		expect(shape(buttons[0].className)).toEqual(shape(buttons[1].className));
 		expect(shape(buttons[1].className)).toEqual(shape(buttons[2].className));
+		expect(shape(buttons[2].className)).toEqual(shape(buttons[3].className));
 	});
 
 	it("highlights a band and covers one", async () => {
@@ -433,4 +434,169 @@ describe("editing a page", () => {
 		clickPage(40, 60);
 		expect(screen.getByRole("button", { name: "Save the edited PDF" })).toHaveProperty("disabled", false);
 	});
+/** A 1 × 1 red PNG — real bytes, so the picture path can embed something. */
+const PICTURE_BYTES = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="), (letter) => letter.charCodeAt(0));
+
+/** The page image, measured so a click can be turned into fractions. */
+const measurePage = (page = 1) => {
+	const image = screen.getByAltText(`Page ${page} of contract.pdf`);
+	vi.spyOn(image, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 600, right: 400, bottom: 600, x: 0, y: 0, toJSON: () => ({}) } as DOMRect);
+	return image;
+};
+
+const follows = (first: Node, second: Node) => (first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+describe("the page strip", () => {
+	it("sits at the top, above the marks and the page itself", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		const first = screen.getByRole("button", { name: "Go to page 1" });
+		const heading = screen.getByRole("heading", { name: "Choose a mark" });
+		const image = screen.getByAltText("Page 1 of contract.pdf");
+		// The pages come first now: a strip at the bottom made you scroll to find the page you wanted.
+		expect(follows(first, heading)).toBe(true);
+		expect(follows(heading, image)).toBe(true);
+		expect(follows(screen.getByText("Page 1 of 2"), image)).toBe(true);
+	});
+});
+
+describe("how the words look", () => {
+	it("writes in the weight and colour you pick", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		fireEvent.change(screen.getByLabelText("Weight"), { target: { value: "bold" } });
+		fireEvent.change(screen.getByLabelText("Text colour"), { target: { value: "#ff0000" } });
+		await typeOnPage(user, "PAID");
+		const { doc } = await saveAndRead(user);
+		const content = contentOf(doc, 1);
+		expect(content).toContain("1 0 0 rg");
+		// A bold cut is embedded alongside the regular one rather than reusing it.
+		expect(doc.getPage(0).node.Resources()?.toString() ?? "").toContain("Bold");
+	});
+
+	it("leaves the words with no background until one is chosen", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		// Plain words first, at the default: nothing but ink on the page.
+		await typeOnPage(user, "plain", 40, 60);
+		expect(screen.getByText("No background: the words sit straight on the page.")).toBeTruthy();
+
+		await user.click(screen.getByRole("button", { name: "Lemon background" }));
+		expect(screen.getByRole("button", { name: "Lemon background" }).getAttribute("aria-pressed")).toBe("true");
+		await typeOnPage(user, "marked", 200, 300);
+
+		const { doc } = await saveAndRead(user);
+		const content = contentOf(doc, 1);
+		const lemon = "0.9921568627450981 0.9529411764705882 0.7686274509803922 rg";
+		// One filled box, for the second note only.
+		expect(content.split(lemon).length - 1).toBe(1);
+	});
+
+	it("goes back to no background when you say so", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "White background" }));
+		await user.click(screen.getByRole("button", { name: "No background" }));
+		expect(screen.getByText("No background: the words sit straight on the page.")).toBeTruthy();
+		const { doc } = await (async () => {
+			await typeOnPage(user, "clean");
+			return saveAndRead(user);
+		})();
+		// White would have been painted as a filled path; there is none.
+		expect(contentOf(doc, 1)).not.toContain("\nh\nf\n");
+	});
+});
+
+describe("pictures", () => {
+	it("places a picture where you click and carries it into the PDF", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		await user.upload(screen.getByLabelText("Picture to place"), new File([PICTURE_BYTES], "stamp.png", { type: "image/png" }));
+		expect(await screen.findByText(/stamp\.png is ready/u)).toBeTruthy();
+		clickPage(100, 300);
+		expect(screen.getByText("Picture on page 1 at 25% / 50%")).toBeTruthy();
+		// The picture is shown on the page from a local object URL, never uploaded.
+		expect(document.querySelector('img[src^="blob:edit/"]')).toBeTruthy();
+
+		const { doc } = await saveAndRead(user);
+		const content = contentOf(doc, 1);
+		// 30% of a 400 pt page is 120 pt, and a square picture stays square.
+		expect(content).toContain("120 0 0 120 0 0 cm");
+		// The click is the picture's top-left corner, and a 120 pt picture drops 120 pt from there.
+		expect(content).toContain("1 0 0 1 100 180 cm");
+		expect(content).toContain("Do");
+	});
+
+	it("asks for a picture before letting you click one onto the page", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		clickPage(100, 300);
+		expect(screen.getByText(/Choose a picture first/u)).toBeTruthy();
+		expect(screen.queryByText(/^Picture on page/u)).toBeNull();
+	});
+
+	it("resizes a picture from its row", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		await user.upload(screen.getByLabelText("Picture to place"), new File([PICTURE_BYTES], "stamp.png", { type: "image/png" }));
+		await screen.findByText(/is ready/u);
+		clickPage(100, 300);
+		fireEvent.change(screen.getByLabelText("Width of the picture on page 1"), { target: { value: "50" } });
+		const { doc } = await saveAndRead(user);
+		expect(contentOf(doc, 1)).toContain("200 0 0 200 0 0 cm");
+	});
+});
+
+describe("moving a mark on the page", () => {
+	it("drags a note to a new spot", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Sign here");
+		const image = measurePage();
+		const note = screen.getByRole("button", { name: /Edit Note “Sign here”/u });
+		// Press on the note, move the pointer, and it follows the pointer.
+		fireEvent.mouseDown(note, { clientX: 100, clientY: 300 });
+		fireEvent.mouseMove(image.parentElement as HTMLElement, { clientX: 200, clientY: 480 });
+		fireEvent.mouseUp(image.parentElement as HTMLElement);
+		expect(screen.getByText("Note “Sign here” on page 1 at 50% / 80%")).toBeTruthy();
+		// A drag is not a click: the box does not open under the pointer.
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+	});
+
+	it("pulls a band wider by its corner", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		clickPage(40, 60);
+		const image = measurePage();
+		const handle = document.querySelector('[data-handle="resize"]') as HTMLElement;
+		const shape = handle.parentElement as HTMLElement;
+		const before = Number.parseFloat(shape.style.width);
+		// 34% of 400 pt is 136 pt; pulling 40 pt to the right adds 10% of the page.
+		fireEvent.mouseDown(handle, { clientX: 40 + 136, clientY: 60 + 36 });
+		fireEvent.mouseMove(image.parentElement as HTMLElement, { clientX: 40 + 136 + 40, clientY: 60 + 36 });
+		expect(Number.parseFloat(shape.style.width)).toBeCloseTo(before + 10, 5);
+	});
+});
 });

@@ -622,8 +622,12 @@ export const addImageWatermark = (bytes: Uint8Array, options: ImageWatermarkOpti
 		return document.save({ useObjectStreams: true });
 	});
 
-export type EditKind = "text" | "highlight" | "cover";
+export type EditKind = "text" | "highlight" | "cover" | "image";
 export type EditFont = "helvetica" | "times" | "courier";
+export type EditWeight = "regular" | "bold";
+
+/** A picture waiting to be placed: its own bytes, so nothing is ever fetched from a server. */
+export type EditPicture = { bytes: Uint8Array; format: "jpeg" | "png" };
 
 /**
  * One mark on a page. Positions are fractions of the page — 0 is the left or top edge and
@@ -639,19 +643,49 @@ export type PdfEdit = {
 	/** Text size in points, 6 – 96. */
 	size?: number;
 	font?: EditFont;
-	color?: "black" | "red" | "blue";
+	/** Regular or bold. Bold uses the bold cut of the same standard font, not a faked stroke. */
+	weight?: EditWeight;
+	/** Ink for the words: "#rrggbb", or one of the old names (black, red, blue). */
+	color?: string;
+	/** Behind the words: "#rrggbb", or null/absent for no background at all. */
+	background?: string | null;
 	/** Width and height of a highlight or cover box, again as fractions of the page. */
 	width?: number;
 	height?: number;
+	/** A placed picture, and how strong it is drawn. */
+	picture?: EditPicture;
+	opacity?: number;
 };
 
 /** "2 pages" — kept local so this module does not pull in the utils for one string. */
 const pageWordOf = (count: number) => `${count} page${count === 1 ? "" : "s"}`;
 
-const EDIT_COLOURS: Record<"black" | "red" | "blue", [number, number, number]> = {
+type Ink = [number, number, number];
+
+const EDIT_COLOURS: Record<string, Ink> = {
 	black: [0.1, 0.1, 0.1],
-	red: [0.72, 0.16, 0.14],
 	blue: [0.14, 0.28, 0.65],
+	white: [1, 1, 1],
+	yellow: [1, 0.93, 0.3],
+	red: [0.72, 0.16, 0.14],
+};
+
+/** "#1b1b1b" or a colour name, turned into pdf-lib's 0–1 channels. */
+export const toInk = (value: string | null | undefined, fallback: Ink): Ink => {
+	if (!value) return fallback;
+	const named = EDIT_COLOURS[value.toLowerCase()];
+	if (named) return named;
+	const hex = value.trim().replace(/^#/u, "");
+	const full = hex.length === 3 ? hex.replace(/./gu, (digit) => `${digit}${digit}`) : hex;
+	if (!/^[0-9a-f]{6}$/iu.test(full)) return fallback;
+	return [Number.parseInt(full.slice(0, 2), 16) / 255, Number.parseInt(full.slice(2, 4), 16) / 255, Number.parseInt(full.slice(4, 6), 16) / 255];
+};
+
+/** The standard font for a family and weight, so bold text is really bold rather than smeared. */
+const STANDARD_FONT: Record<EditFont, Record<EditWeight, "Courier" | "CourierBold" | "Helvetica" | "HelveticaBold" | "TimesRoman" | "TimesRomanBold">> = {
+	courier: { bold: "CourierBold", regular: "Courier" },
+	helvetica: { bold: "HelveticaBold", regular: "Helvetica" },
+	times: { bold: "TimesRomanBold", regular: "TimesRoman" },
 };
 
 export const EDIT_BOX_DEFAULT = { width: 0.34, height: 0.06 };
@@ -666,18 +700,26 @@ export const EDIT_BOX_DEFAULT = { width: 0.34, height: 0.06 };
  */
 export const applyEdits = (bytes: Uint8Array, edits: PdfEdit[]): Promise<Uint8Array> =>
 	guard(async () => {
-		if (!edits.length) throw new PdfInputError("Add a note, a highlight, or a cover box first.");
+		if (!edits.length) throw new PdfInputError("Add a note, a highlight, a cover box, or a picture first.");
 		const { StandardFonts, rgb } = await loadPdfLib();
 		const document = await openDocument(bytes);
 		const total = document.getPageCount();
 		if (!total) throw new PdfInputError("This PDF has no pages.");
-		const fonts = new Map<EditFont, Awaited<ReturnType<typeof document.embedFont>>>();
-		const fontFor = async (font: EditFont) => {
-			const existing = fonts.get(font);
+		const fonts = new Map<string, Awaited<ReturnType<typeof document.embedFont>>>();
+		const fontFor = async (font: EditFont, weight: EditWeight) => {
+			const key = `${font}:${weight}`;
+			const existing = fonts.get(key);
 			if (existing) return existing;
-			const standard = font === "times" ? StandardFonts.TimesRoman : font === "courier" ? StandardFonts.Courier : StandardFonts.Helvetica;
-			const embedded = await document.embedFont(standard);
-			fonts.set(font, embedded);
+			const embedded = await document.embedFont(StandardFonts[STANDARD_FONT[font][weight]]);
+			fonts.set(key, embedded);
+			return embedded;
+		};
+		const pictures = new Map<EditPicture, Awaited<ReturnType<typeof document.embedPng>>>();
+		const pictureFor = async (picture: EditPicture) => {
+			const existing = pictures.get(picture);
+			if (existing) return existing;
+			const embedded = picture.format === "jpeg" ? await document.embedJpg(picture.bytes) : await document.embedPng(picture.bytes);
+			pictures.set(picture, embedded);
 			return embedded;
 		};
 		const clamp = (value: number | undefined, fallback: number) => Math.min(Math.max(Number.isFinite(value) ? (value as number) : fallback, 0), 1);
@@ -699,12 +741,36 @@ export const applyEdits = (bytes: Uint8Array, edits: PdfEdit[]): Promise<Uint8Ar
 				page.drawRectangle({ x: left, y: height - top - boxHeight, width: boxWidth, height: boxHeight, color: rgb(1, 1, 1) });
 				continue;
 			}
+			if (edit.kind === "image") {
+				if (!edit.picture?.bytes.length) throw new PdfInputError("Choose a picture to place, then click the page.");
+				const picture = await pictureFor(edit.picture);
+				if (!picture.width || !picture.height) throw new PdfInputError("That picture has no size to it.");
+				const drawnWidth = clamp(edit.width, 0.3) * width;
+				const drawnHeight = (picture.height / picture.width) * drawnWidth;
+				page.drawImage(picture, {
+					height: drawnHeight,
+					opacity: Math.min(Math.max(Number.isFinite(edit.opacity) ? (edit.opacity as number) : 1, 0.05), 1),
+					width: drawnWidth,
+					x: left,
+					y: height - top - drawnHeight,
+				});
+				continue;
+			}
 			const text = (edit.text ?? "").trim();
 			if (!text) throw new PdfInputError("Type something for the note before saving.");
-			const font = await fontFor(edit.font ?? "helvetica");
+			const weight: EditWeight = edit.weight === "bold" ? "bold" : "regular";
+			const font = await fontFor(edit.font ?? "helvetica", weight);
 			const size = Math.min(Math.max(edit.size ?? 13, 6), 96);
 			if (!isLatin(text, font)) throw new PdfInputError("The built-in note fonts cover Latin letters, digits, and common punctuation. Try shorter wording.");
-			page.drawText(text, { x: left, y: height - top, size, font, color: rgb(...EDIT_COLOURS[edit.color ?? "black"]) });
+			const wordWidth = font.widthOfTextAtSize(text, size);
+			// The click is the baseline of the words. A background, when asked for, is drawn
+			// first and hugs them: a quarter of the type size of padding on each side.
+			const background = edit.background ? toInk(edit.background, [1, 1, 1]) : null;
+			if (background) {
+				const padding = size * 0.25;
+				page.drawRectangle({ color: rgb(...background), height: size * 1.2, width: wordWidth + padding * 2, x: left - padding, y: height - top - size * 0.28 });
+			}
+			page.drawText(text, { color: rgb(...toInk(edit.color, EDIT_COLOURS.black)), font, size, x: left, y: height - top });
 		}
 		return document.save({ useObjectStreams: true });
 	});
