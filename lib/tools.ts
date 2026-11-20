@@ -100,6 +100,7 @@ import {
 	Workflow,
 	Volume2,
 	Baby,
+	Library,
 	Layers,
 	MoveVertical,
 } from "lucide-react";
@@ -269,6 +270,7 @@ export const tools: Tool[] = [
 	{ id: "task-list", name: "Task list", description: "A to-do list that lives in this browser: add, tick off, rename, filter, and copy it out as a markdown checklist.", category: "productivity", slug: "task-list", keywords: ["todo", "to-do", "checklist", "tasks", "list", "markdown", "reminder"], icon: ListTodo, status: "available" },
 	{ id: "meeting-cost", name: "Meeting cost meter", description: "Watch what a meeting costs while it runs, and see what fifteen, thirty, or sixty minutes of that room adds up to.", category: "productivity", slug: "meeting-cost", keywords: ["meeting cost", "hourly rate", "time is money", "cost of a meeting", "timer", "budget"], icon: Coins, status: "available" },
 	{ id: "subscription-tracker", name: "Subscription tracker", description: "Keep a list of what renews and when, with every cycle normalised to a monthly and a yearly total, saved in this browser only.", category: "productivity", slug: "subscription-tracker", keywords: ["subscription tracker", "recurring costs", "monthly bills", "cancel subscriptions", "budget", "renewals"], icon: Receipt, status: "available" },
+	{ id: "reading-list", name: "Reading list", description: "Keep a shelf of what you are reading, waiting on, and finished, with pages read and progress — saved in this browser only.", category: "productivity", slug: "reading-list", keywords: ["reading list", "book tracker", "tbr", "what i read", "pages read", "library"], icon: Library, status: "available" },
 	{ id: "pdf-merge", name: "PDF merger", description: "Join several PDFs into one, in the order you choose, with fonts, images, and links left exactly as they were.", category: "pdf", slug: "pdf-merge", keywords: ["merge pdf", "combine pdf", "join pdf", "pdf binder", "append pdf"], icon: Files, status: "available" },
 	{ id: "pdf-split", name: "PDF splitter", description: "Break a PDF into separate files by page range, every few pages, or one file per page — pages are copied, never re-rendered.", category: "pdf", slug: "pdf-split", keywords: ["split pdf", "burst pdf", "separate pages", "extract pages", "page ranges", "pdf parts"], icon: Scissors, status: "available" },
 	{ id: "pdf-organise", name: "PDF page organiser", description: "See every page, then move, turn, or remove them before saving — the pages are copied, never redrawn.", category: "pdf", slug: "pdf-organise", keywords: ["reorder pdf", "rotate pdf", "delete pages", "organise pdf", "arrange pages", "thumbnails"], icon: Grid2x2, status: "available" },

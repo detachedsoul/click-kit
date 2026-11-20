@@ -111,6 +111,7 @@ import DecisionMatrixTool from "@/features/productivity-tools/decision-matrix";
 import { TaskList } from "@/features/productivity-tools/task-list";
 import { MeetingCostMeter } from "@/features/productivity-tools/meeting-cost";
 import { SubscriptionTracker } from "@/features/productivity-tools/subscription-tracker";
+import { ReadingList } from "@/features/productivity-tools/reading-list";
 import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -306,6 +307,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"task-list": TaskList,
 	"meeting-cost": MeetingCostMeter,
 	"subscription-tracker": SubscriptionTracker,
+	"reading-list": ReadingList,
 	"decision-matrix": DecisionMatrixTool,
 	"compound-interest-calculator": CompoundInterestCalculator,
 	"sales-tax-calculator": SalesTaxCalculator,
