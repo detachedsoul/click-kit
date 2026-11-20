@@ -180,6 +180,66 @@ describe("the typing tester", () => {
 		const mistakes = screen.getByText("Accuracy").parentElement?.textContent ?? "";
 		expect(mistakes).not.toContain("100%");
 	});
+	it("takes the first keystroke without a click", async () => {
+		const user = await setup();
+		// Not focused at all, as if the visitor had clicked somewhere else on the page.
+		act(() => {
+			(document.activeElement as HTMLElement | null)?.blur();
+		});
+		expect(screen.getByText(/Click here and start typing/u)).toBeTruthy();
+		await user.keyboard("a");
+		expect(screen.getByText("Characters").parentElement?.textContent).toContain("1");
+		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Typing area" }));
+	});
+
+	it("pauses the clock while the typing area is out of focus", async () => {
+		const user = await setup();
+		const box = screen.getByRole("textbox", { name: "Typing area" });
+		await user.click(box);
+		await typePassage(user, 5);
+		await advance(1000);
+		expect(screen.getByText("Time left").parentElement?.textContent).toContain("0:29");
+
+		act(() => {
+			box.blur();
+		});
+		expect(screen.getByText(/Paused — click here to keep typing/u)).toBeTruthy();
+		await advance(4000);
+		// Time stood still: the hands were not on the keyboard.
+		expect(screen.getByText("Time left").parentElement?.textContent).toContain("0:29");
+
+		await user.click(box);
+		await advance(1000);
+		expect(screen.getByText("Time left").parentElement?.textContent).toContain("0:28");
+	});
+
+	it("starts a fresh attempt from the result", async () => {
+		const user = await setup();
+		await user.click(screen.getByRole("textbox", { name: "Typing area" }));
+		await typePassage(user, 20);
+		await advance(30_200);
+		expect(screen.getByRole("heading", { name: "Your result" })).toBeTruthy();
+
+		await user.click(screen.getByRole("button", { name: "Type again" }));
+		expect(screen.queryByRole("heading", { name: "Your result" })).toBeNull();
+		expect(screen.getByText("Characters").parentElement?.textContent).toContain("0");
+		expect(screen.getByText("Time left").parentElement?.textContent).toContain("0:30");
+		expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Typing area" }));
+	});
+
+	it("explains the three steps until the first attempt is kept", async () => {
+		store.set(HISTORY_KEY, JSON.stringify([{ accuracy: 95, at: Date.now(), correct: 120, cpm: 200, duration: 30, incorrect: 6, level: "medium", wpm: 40 }]));
+		await setup();
+		expect(screen.queryByText(/Pick how long you want to type/u)).toBeNull();
+
+		cleanup();
+		store.clear();
+		await setup();
+		expect(screen.getByText(/Pick how long you want to type/u)).toBeTruthy();
+		expect(screen.getByText(/Type the passage as it appears/u)).toBeTruthy();
+		expect(screen.getByText(/Read your score/u)).toBeTruthy();
+	});
+
 	it("flags a space that should have been a letter or the other way round", async () => {
 		const user = await setup();
 		const target = passage();
