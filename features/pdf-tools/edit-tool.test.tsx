@@ -223,11 +223,111 @@ describe("editing a page", () => {
 		expect(screen.getByText(/hides what is there rather than removing it/u)).toBeTruthy();
 	});
 
-	it("waits for a mark before saving", async () => {
+	it("walks you through the three steps", async () => {
 		const user = userEvent.setup();
 		render(<PdfEditorTool />);
 		await load(user);
-		expect(screen.queryByRole("button", { name: "Save the edited PDF" })).toBeNull();
+		for (const heading of ["Choose a mark", "Click the page", "Save"]) expect(screen.getByRole("heading", { name: heading })).toBeTruthy();
+		expect(screen.getByText(/Click the spot where the note should sit/u)).toBeTruthy();
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		expect(screen.getByText(/Click where the band should begin/u)).toBeTruthy();
+		await user.click(screen.getByRole("button", { name: "Cover box" }));
+		expect(screen.getByText(/Click where the white box should begin/u)).toBeTruthy();
+	});
+
+	it("shows which mark is loaded", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		const note = screen.getByRole("button", { name: "Text note" });
+		const band = screen.getByRole("button", { name: "Highlight" });
+		// The loaded mark is filled dark and the empty ones stay light: a filled button that
+		// loses its background would read as white-on-white, so the class is pinned here.
+		expect(note.getAttribute("aria-pressed")).toBe("true");
+		expect(note.className).toContain("bg-forest");
+		expect(note.className).toContain("text-white");
+		expect(band.getAttribute("aria-pressed")).toBe("false");
+		expect(band.className).not.toContain("bg-forest");
+		await user.click(band);
+		expect(band.getAttribute("aria-pressed")).toBe("true");
+		expect(note.getAttribute("aria-pressed")).toBe("false");
+		expect(screen.getByRole("button", { name: "Place a highlight on page 1" })).toBeTruthy();
+	});
+
+	it("steps between pages with buttons", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		expect(screen.getByRole("button", { name: "Previous page" }).getAttribute("disabled")).not.toBeNull();
+		await user.click(screen.getByRole("button", { name: "Next page" }));
+		await screen.findByAltText("Page 2 of contract.pdf");
+		expect(screen.getByRole("button", { name: "Next page" }).getAttribute("disabled")).not.toBeNull();
+		await user.click(screen.getByRole("button", { name: "Previous page" }));
+		await screen.findByAltText("Page 1 of contract.pdf");
+	});
+
+	it("shows where the mark will land before the click", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await user.type(screen.getByLabelText("Words for the note"), "Paid");
+		const image = await screen.findByAltText("Page 1 of contract.pdf");
+		vi.spyOn(image, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 600, right: 400, bottom: 600, x: 0, y: 0, toJSON: () => ({}) } as DOMRect);
+		fireEvent.mouseMove(image, { clientX: 100, clientY: 300 });
+		expect(screen.getByText("Paid")).toBeTruthy();
+		fireEvent.mouseLeave(image);
+		expect(screen.queryByText("Paid")).toBeNull();
+	});
+
+	it("places a mark from the keyboard", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		const image = await screen.findByAltText("Page 1 of contract.pdf");
+		fireEvent.keyDown(image, { key: "Enter" });
+		expect(screen.getByText("Highlight on page 1 at 50% / 50%")).toBeTruthy();
+	});
+
+	it("drops a mark from the row under the page", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		clickPage(40, 60);
+		clickPage(200, 300);
+		expect(screen.getByText("Highlight at 10% / 10%")).toBeTruthy();
+		expect(screen.getByText("Highlight at 50% / 50%")).toBeTruthy();
+		await user.click(screen.getByRole("button", { name: "Remove Highlight on page 1 at 10% / 10% from the page" }));
+		expect(screen.queryByText("Highlight at 10% / 10%")).toBeNull();
+		expect(screen.queryByText("Highlight on page 1 at 10% / 10%")).toBeNull();
+		expect(screen.getByText("Highlight at 50% / 50%")).toBeTruthy();
+	});
+
+	it("jumps to the page a mark sits on", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		clickPage(40, 60);
+		await user.click(screen.getByRole("button", { name: "Next page" }));
+		await screen.findByAltText("Page 2 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Show" }));
+		expect(await screen.findByAltText("Page 1 of contract.pdf")).toBeTruthy();
+	});
+
+	it("keeps saving switched off until there is a mark", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		expect(screen.getByRole("button", { name: "Save the edited PDF" })).toHaveProperty("disabled", true);
+		expect(screen.getByText(/Nothing to save yet/u)).toBeTruthy();
 		await waitFor(() => expect(screen.getByText(/No marks yet/u)).toBeTruthy());
+		await user.click(screen.getByRole("button", { name: "Highlight" }));
+		clickPage(40, 60);
+		expect(screen.getByRole("button", { name: "Save the edited PDF" })).toHaveProperty("disabled", false);
 	});
 });
