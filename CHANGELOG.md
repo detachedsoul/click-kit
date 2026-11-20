@@ -68,6 +68,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Changed
 
+- **pdf** — type notes straight onto the page, and line the mark buttons up ([aa294ee](https://github.com/detachedsoul/click-kit/commit/aa294ee))
 - **pdf** — make the editor a three-step flow ([ef79960](https://github.com/detachedsoul/click-kit/commit/ef79960))
 
 ### Fixed

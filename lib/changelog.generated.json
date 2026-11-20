@@ -484,6 +484,14 @@
           "group": "Changed",
           "entries": [
             {
+              "hash": "aa294ee",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "pdf",
+              "summary": "type notes straight onto the page, and line the mark buttons up",
+              "group": "Changed"
+            },
+            {
               "hash": "ef79960",
               "date": "2026-11-19",
               "type": "refactor",
