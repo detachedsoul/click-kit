@@ -74,6 +74,7 @@ import { PdfCropTool } from "@/features/pdf-tools/crop-tool";
 import { PdfNupTool } from "@/features/pdf-tools/nup-tool";
 import { PdfRotateTool } from "@/features/pdf-tools/rotate-tool";
 import { PdfEditorTool } from "@/features/pdf-tools/edit-tool";
+import { PdfFlattenTool } from "@/features/pdf-tools/flatten-tool";
 import { PdfMarginTool } from "@/features/pdf-tools/margin-tool";
 import { PdfBookletTool } from "@/features/pdf-tools/booklet-tool";
 import { PdfCompareTool } from "@/features/pdf-tools/compare-tool";
@@ -289,6 +290,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"pdf-nup": PdfNupTool,
 	"pdf-rotate": PdfRotateTool,
 	"pdf-editor": PdfEditorTool,
+	"pdf-flatten": PdfFlattenTool,
 	"pdf-margins": PdfMarginTool,
 	"pdf-booklet": PdfBookletTool,
 	"pdf-compare": PdfCompareTool,

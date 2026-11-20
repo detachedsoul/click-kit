@@ -173,6 +173,7 @@
     "xpath-tester": null,
     "yaml-json": null,
     "zip-creator": "2026-11-18",
-    "pdf-overlay": "2026-11-19"
+    "pdf-overlay": "2026-11-19",
+    "pdf-flatten": "2026-11-19"
   }
 }
