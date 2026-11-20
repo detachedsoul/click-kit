@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "0f46a2d",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "convert",
+              "summary": "add word to pdf and pdf to word",
+              "group": "Added"
+            },
+            {
               "hash": "2258bb7",
               "date": "2026-11-20",
               "type": "feat",
@@ -133,6 +141,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "5d6cd3f",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the draggable marks into the notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "eeed74b",
               "date": "2026-11-20",
