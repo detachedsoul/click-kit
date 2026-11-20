@@ -56,6 +56,13 @@ export const describeEdit = (edit: PdfEdit): string => {
 	return `Note “${(edit.text ?? "").trim()}” on page ${edit.page} at ${place}`;
 };
 
+/** What the controls below will do to the mark that is selected. */
+const stripWords = (edit: Mark): string => {
+	if (edit.kind === "text") return "The font, weight, size, colour, and background below change it where it stands — no need to retype it.";
+	if (edit.kind === "image") return "The width and strength below change it where it stands — no need to place it again.";
+	return "The controls below change it where it stands.";
+};
+
 /** The instruction under the page, in the words of the tool that is loaded. */
 const instruction = (kind: EditKind) => {
 	if (kind === "text") return "Click the page where the words should begin, then type. Enter places them, Escape drops them.";
@@ -94,6 +101,8 @@ export const PdfEditorTool = () => {
 	const [pictureOpacity, setPictureOpacity] = useState("100");
 	const [edits, setEdits] = useState<Mark[]>([]);
 	const [draft, setDraft] = useState<Draft | null>(null);
+	/** The mark the toolbar is pointed at, so a font or colour change lands on a settled note. */
+	const [selected, setSelected] = useState<number | null>(null);
 	const [hover, setHover] = useState<Spot | null>(null);
 	const [drag, setDrag] = useState<{ index: number; dx: number; dy: number } | null>(null);
 	const [resize, setResize] = useState<{ index: number; startX: number; startY: number; width: number; height: number } | null>(null);
@@ -146,6 +155,7 @@ export const PdfEditorTool = () => {
 
 	const reset = () => {
 		closeDraft();
+		setSelected(null);
 		storeEdits(() => []);
 		setResult(null);
 		setError("");
@@ -182,11 +192,17 @@ export const PdfEditorTool = () => {
 		closeDraft();
 		if (!current.text.trim()) {
 			// Re-opening a note and emptying it takes that note away.
-			if (current.index !== null) storeEdits((list) => list.filter((_item, at) => at !== current.index));
+			if (current.index !== null) {
+				storeEdits((list) => list.filter((_item, at) => at !== current.index));
+				setSelected(null);
+			}
 			return editsRef.current;
 		}
 		const edit = wordsOnPage(current);
-		storeEdits((list) => (current.index === null ? [...list, edit] : list.map((item, at) => (at === current.index ? edit : item))));
+		const at = current.index ?? editsRef.current.length;
+		storeEdits((list) => (current.index === null ? [...list, edit] : list.map((item, index) => (index === current.index ? edit : item))));
+		// Newly placed words stay selected, so their weight or colour can be changed without retyping.
+		setSelected(at);
 		setResult(null);
 		return editsRef.current;
 	};
@@ -197,6 +213,67 @@ export const PdfEditorTool = () => {
 		const next = { ...current, text: words };
 		draftRef.current = next;
 		setDraft(next);
+	};
+
+	const selectedEdit = selected === null ? null : (edits[selected] ?? null);
+
+	/** A style change paints the selected mark straight away — never the one after it instead. */
+	const restyle = (patch: Partial<Mark>) => {
+		if (selected === null || !editsRef.current[selected]) return;
+		storeEdits((list) => list.map((item, at) => (at === selected ? { ...item, ...patch } : item)));
+	};
+
+	const restyleSelected = (kindOf: EditKind, patch: Partial<Mark>) => {
+		if (selected === null || editsRef.current[selected]?.kind !== kindOf) return;
+		restyle(patch);
+	};
+
+	const chooseFont = (value: EditFont) => {
+		setFont(value);
+		restyleSelected("text", { font: value });
+	};
+
+	const chooseWeight = (value: EditWeight) => {
+		setWeight(value);
+		restyleSelected("text", { weight: value });
+	};
+
+	const chooseSize = (value: string) => {
+		setSize(value);
+		restyleSelected("text", { size: Number(value) });
+	};
+
+	const chooseColour = (value: string) => {
+		setColour(value);
+		restyleSelected("text", { color: value });
+	};
+
+	const chooseBackground = (value: string | null) => {
+		setBackground(value);
+		restyleSelected("text", { background: value });
+	};
+
+	const choosePictureWidth = (value: string) => {
+		setPictureWidth(value);
+		restyleSelected("image", { width: Number(value) / 100 });
+	};
+
+	const choosePictureOpacity = (value: string) => {
+		setPictureOpacity(value);
+		restyleSelected("image", { opacity: Number(value) / 100 });
+	};
+
+	/** Point the toolbar at a mark that is already on the page. */
+	const selectMark = (index: number) => {
+		const edit = editsRef.current[index];
+		if (!edit) return;
+		setSelected(index);
+		setResult(null);
+		if (edit.kind === "image") {
+			setKind("image");
+			setPictureWidth(String(Math.round((edit.width ?? 0.3) * 100)));
+			setPictureOpacity(String(Math.round((edit.opacity ?? 1) * 100)));
+		}
 	};
 
 	const showPage = async (source: Uint8Array, pageNumber: number) => {
@@ -267,6 +344,7 @@ export const PdfEditorTool = () => {
 
 	const selectPage = (pageNumber: number) => {
 		commitDraft();
+		setSelected(null);
 		setPage(pageNumber);
 		setHover(null);
 		setDrag(null);
@@ -277,6 +355,7 @@ export const PdfEditorTool = () => {
 	/** Clicking the page: words open a box right there, the rest drop their shape at once. */
 	const addMark = (spot: Spot) => {
 		if (kind === "text") {
+			setSelected(null);
 			openDraft({ index: null, page, text: "", x: spot.x, y: spot.y });
 			return;
 		}
@@ -291,10 +370,14 @@ export const PdfEditorTool = () => {
 			const width = Math.min(Math.max(Number(pictureWidth) / 100 || 0.3, 0.05), 1);
 			const opacity = Math.min(Math.max(Number(pictureOpacity) / 100 || 1, 0.05), 1);
 			const edit: Mark = { kind: "image", opacity, page, picture: { bytes: picture.bytes, format: picture.format }, preview: picture.url, width, x: spot.x, y: spot.y };
+			const at = editsRef.current.length;
 			storeEdits((current) => [...current, edit]);
+			setSelected(at);
 			return;
 		}
+		const at = editsRef.current.length;
 		storeEdits((current) => [...current, { kind, page, ...spot, ...EDIT_BOX_DEFAULT }]);
+		setSelected(at);
 	};
 
 	const place = (event: React.MouseEvent<HTMLImageElement>) => {
@@ -350,6 +433,7 @@ export const PdfEditorTool = () => {
 	/** Clicking a note already on the page opens it again where it stands. */
 	const editNote = (index: number, edit: Mark) => {
 		if (drag) return;
+		setSelected(index);
 		setKind("text");
 		setColour(edit.color ?? "#1b1b1b");
 		setBackground(edit.background ?? null);
@@ -450,6 +534,16 @@ export const PdfEditorTool = () => {
 							</span>
 							<h2 className="m-0 text-sm font-semibold text-ink">Choose a mark</h2>
 						</div>
+						{selectedEdit ? (
+							<div className="flex flex-wrap items-center justify-between gap-2 border border-accent bg-[#eef4ea] px-3 py-2">
+								<p className="m-0 text-xs text-ink">
+									Editing {describeEdit(selectedEdit)}. {stripWords(selectedEdit)}
+								</p>
+								<button className={buttonClassName} onClick={() => setSelected(null)} type="button">
+									Done editing
+								</button>
+							</div>
+						) : null}
 						<div className="grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-4" role="group" aria-label="Add">
 							{KINDS.map((entry) => {
 								const Icon = entry.id === "text" ? PenLine : entry.id === "highlight" ? Highlighter : entry.id === "image" ? ImageIcon : Eraser;
@@ -461,6 +555,7 @@ export const PdfEditorTool = () => {
 											className={`${choiceButtonClassName(chosen)} flex w-full items-center justify-start gap-2 px-3 py-2 text-left`}
 											onClick={() => {
 												commitDraft();
+												setSelected(null);
 												setKind(entry.id);
 												setError("");
 											}}
@@ -480,7 +575,7 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-font">
 										Font
 									</label>
-									<select className={`${selectClassName} mt-1`} id="pdf-edit-font" onChange={(event) => setFont(event.target.value as EditFont)} value={font}>
+									<select className={`${selectClassName} mt-1`} id="pdf-edit-font" onChange={(event) => chooseFont(event.target.value as EditFont)} value={font}>
 										{FONTS.map((item) => (
 											<option key={item.id} value={item.id}>
 												{item.label}
@@ -492,7 +587,7 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-weight">
 										Weight
 									</label>
-									<select className={`${selectClassName} mt-1`} id="pdf-edit-weight" onChange={(event) => setWeight(event.target.value as EditWeight)} value={weight}>
+									<select className={`${selectClassName} mt-1`} id="pdf-edit-weight" onChange={(event) => chooseWeight(event.target.value as EditWeight)} value={weight}>
 										{WEIGHTS.map((item) => (
 											<option key={item.id} value={item.id}>
 												{item.label}
@@ -504,7 +599,7 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-size">
 										Size
 									</label>
-									<select className={`${selectClassName} mt-1`} id="pdf-edit-size" onChange={(event) => setSize(event.target.value)} value={size}>
+									<select className={`${selectClassName} mt-1`} id="pdf-edit-size" onChange={(event) => chooseSize(event.target.value)} value={size}>
 										{SIZES.map((item) => (
 											<option key={item} value={item}>
 												{item} pt
@@ -516,17 +611,17 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-colour">
 										Text colour
 									</label>
-									<input className="mt-1 h-9 w-full cursor-pointer border border-field bg-surface p-1" id="pdf-edit-colour" onChange={(event) => setColour(event.target.value)} type="color" value={colour} />
+									<input className="mt-1 h-9 w-full cursor-pointer border border-field bg-surface p-1" id="pdf-edit-colour" onChange={(event) => chooseColour(event.target.value)} type="color" value={colour} />
 								</div>
 								<div className="sm:col-span-2 lg:col-span-4">
 									<span className={labelClassName}>Background</span>
 									<div className="mt-1 flex flex-wrap items-center gap-2">
 										{BACKGROUNDS.map((entry) => (
-											<button aria-pressed={background === entry.value} className={choiceButtonClassName(background === entry.value)} key={entry.id} onClick={() => setBackground(entry.value)} type="button">
+											<button aria-pressed={background === entry.value} className={choiceButtonClassName(background === entry.value)} key={entry.id} onClick={() => chooseBackground(entry.value)} type="button">
 												{entry.label}
 											</button>
 										))}
-										<input aria-label="Any other background colour" className="h-9 w-16 cursor-pointer border border-field bg-surface p-1" onChange={(event) => setBackground(event.target.value)} type="color" value={background ?? "#ffffff"} />
+										<input aria-label="Any other background colour" className="h-9 w-16 cursor-pointer border border-field bg-surface p-1" onChange={(event) => chooseBackground(event.target.value)} type="color" value={background ?? "#ffffff"} />
 									</div>
 									<p className={`${hintClassName} mt-1`}>{background ? "The words sit on a filled box, drawn behind them." : "No background: the words sit straight on the page."}</p>
 								</div>
@@ -541,13 +636,13 @@ export const PdfEditorTool = () => {
 									<label className={labelClassName} htmlFor="pdf-edit-picture-width">
 										Width on the page ({pictureWidth}%)
 									</label>
-									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-width" max={100} min={5} onChange={(event) => setPictureWidth(event.target.value)} type="range" value={pictureWidth} />
+									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-width" max={100} min={5} onChange={(event) => choosePictureWidth(event.target.value)} type="range" value={pictureWidth} />
 								</div>
 								<div>
 									<label className={labelClassName} htmlFor="pdf-edit-picture-opacity">
 										Strength ({pictureOpacity}%)
 									</label>
-									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-opacity" max={100} min={5} onChange={(event) => setPictureOpacity(event.target.value)} type="range" value={pictureOpacity} />
+									<input className="mt-2 w-full cursor-pointer" id="pdf-edit-picture-opacity" max={100} min={5} onChange={(event) => choosePictureOpacity(event.target.value)} type="range" value={pictureOpacity} />
 								</div>
 							</div>
 						) : (
@@ -619,7 +714,7 @@ export const PdfEditorTool = () => {
 									return (
 										<button
 											aria-label={`Edit ${describeEdit(edit)}`}
-											className={`absolute z-10 max-w-[70%] cursor-text truncate rounded-sm border border-transparent text-left leading-tight hover:border-accent ${edit.background ? "px-1" : ""}`}
+											className={`absolute z-10 max-w-[70%] cursor-text truncate rounded-sm border border-transparent text-left leading-tight hover:border-accent ${edit.background ? "px-1" : ""} ${selected === index ? "ring-2 ring-accent" : ""}`}
 											key={`note-${index}`}
 											onClick={() => editNote(index, edit)}
 											onMouseDown={(event) => startDrag(event, index, edit)}
@@ -632,7 +727,7 @@ export const PdfEditorTool = () => {
 								}
 								if (edit.kind === "image") {
 									return (
-										<span className="absolute z-10 cursor-move" key={`picture-${index}`} onMouseDown={(event) => startDrag(event, index, edit)} style={{ ...placeAt, width: `${(edit.width ?? 0.3) * 100}%` }}>
+										<span className={`absolute z-10 cursor-move ${selected === index ? "ring-2 ring-accent" : ""}`} key={`picture-${index}`} onClick={() => selectMark(index)} onMouseDown={(event) => startDrag(event, index, edit)} style={{ ...placeAt, width: `${(edit.width ?? 0.3) * 100}%` }}>
 											{edit.preview ? (
 												// eslint-disable-next-line @next/next/no-img-element -- the picture as it will be placed
 												<img alt="" aria-hidden="true" className="pointer-events-none block w-full select-none" draggable={false} src={edit.preview} style={{ opacity: edit.opacity ?? 1 }} />
@@ -645,8 +740,9 @@ export const PdfEditorTool = () => {
 								return (
 									<span
 										aria-hidden="true"
-										className={`absolute z-10 cursor-move ${edit.kind === "highlight" ? "bg-[#f5d76e]/60 ring-1 ring-[#d9b53e]/70" : "border border-dashed border-[#b64b31] bg-white"}`}
+										className={`absolute z-10 cursor-move ${edit.kind === "highlight" ? "bg-[#f5d76e]/60 ring-1 ring-[#d9b53e]/70" : "border border-dashed border-[#b64b31] bg-white"} ${selected === index ? "outline-2 outline-accent" : ""}`}
 										key={`shape-${index}`}
+										onClick={() => selectMark(index)}
 										onMouseDown={(event) => startDrag(event, index, edit)}
 										style={{ ...placeAt, height: `${(edit.height ?? EDIT_BOX_DEFAULT.height) * 100}%`, width: `${(edit.width ?? EDIT_BOX_DEFAULT.width) * 100}%` }}
 									>
@@ -686,7 +782,10 @@ export const PdfEditorTool = () => {
 									<span className="inline-flex items-center gap-1 border border-line bg-[#fbfaf7] py-1 pl-2 pr-1 text-[11px] text-ink" key={`chip-${index}`}>
 										{markIcon(edit)}
 										{describeEdit(edit).replace(` on page ${edit.page}`, "")}
-										<button aria-label={`Remove ${describeEdit(edit)} from the page`} className="cursor-pointer border-0 bg-transparent p-0 text-[#8a3f30] hover:underline" onClick={() => storeEdits((current) => current.filter((_item, at) => at !== index))} type="button">
+										<button aria-label={`Remove ${describeEdit(edit)} from the page`} className="cursor-pointer border-0 bg-transparent p-0 text-[#8a3f30] hover:underline" onClick={() => {
+												setSelected((current) => (current === index ? null : current !== null && current > index ? current - 1 : current));
+												storeEdits((current) => current.filter((_item, at) => at !== index));
+											}} type="button">
 											<Trash2 aria-hidden="true" size={11} />
 										</button>
 									</span>
@@ -739,7 +838,10 @@ export const PdfEditorTool = () => {
 												Show
 											</button>
 										) : null}
-										<button aria-label={`Remove ${describeEdit(edit)}`} className={`${buttonClassName} px-2`} onClick={() => storeEdits((current) => current.filter((_item, at) => at !== index))} type="button">
+										<button aria-label={`Remove ${describeEdit(edit)}`} className={`${buttonClassName} px-2`} onClick={() => {
+											setSelected(null);
+											storeEdits((current) => current.filter((_item, at) => at !== index));
+										}} type="button">
 											<Trash2 aria-hidden="true" size={13} />
 										</button>
 									</li>
@@ -750,10 +852,16 @@ export const PdfEditorTool = () => {
 							<button className={primaryButtonClassName} disabled={busy || (!edits.length && !draft)} onClick={() => void save()} onMouseDown={commitDraft} type="button">
 								{busy ? "Saving…" : "Save the edited PDF"}
 							</button>
-							<button className={buttonClassName} disabled={!edits.length} onClick={() => storeEdits((current) => current.slice(0, -1))} type="button">
+							<button className={buttonClassName} disabled={!edits.length} onClick={() => {
+									setSelected(null);
+									storeEdits((current) => current.slice(0, -1));
+								}} type="button">
 								<Undo2 aria-hidden="true" size={13} /> Undo last
 							</button>
-							<button className={buttonClassName} disabled={!edits.length} onClick={() => storeEdits(() => [])} type="button">
+							<button className={buttonClassName} disabled={!edits.length} onClick={() => {
+									setSelected(null);
+									storeEdits(() => []);
+								}} type="button">
 								Clear all marks
 							</button>
 						</div>

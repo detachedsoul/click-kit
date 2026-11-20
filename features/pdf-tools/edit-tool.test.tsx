@@ -486,7 +486,8 @@ describe("how the words look", () => {
 		// Plain words first, at the default: nothing but ink on the page.
 		await typeOnPage(user, "plain", 40, 60);
 		expect(screen.getByText("No background: the words sit straight on the page.")).toBeTruthy();
-
+		// The note just typed is still the one the toolbar points at; let go before dressing the next.
+		await user.click(screen.getByRole("button", { name: "Done editing" }));
 		await user.click(screen.getByRole("button", { name: "Lemon background" }));
 		expect(screen.getByRole("button", { name: "Lemon background" }).getAttribute("aria-pressed")).toBe("true");
 		await typeOnPage(user, "marked", 200, 300);
@@ -597,6 +598,95 @@ describe("moving a mark on the page", () => {
 		fireEvent.mouseDown(handle, { clientX: 40 + 136, clientY: 60 + 36 });
 		fireEvent.mouseMove(image.parentElement as HTMLElement, { clientX: 40 + 136 + 40, clientY: 60 + 36 });
 		expect(Number.parseFloat(shape.style.width)).toBeCloseTo(before + 10, 5);
+	});
+});
+describe("changing words that are already on the page", () => {
+	it("keeps a new note selected so its look can be changed without retyping it", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Signed");
+		// The words are already settled on the page, and the toolbar is still pointed at them.
+		expect(screen.getByText(/Editing /u).textContent).toContain("Note “Signed” on page 1 at 25% / 50%");
+
+		fireEvent.change(screen.getByLabelText("Weight"), { target: { value: "bold" } });
+		fireEvent.change(screen.getByLabelText("Font"), { target: { value: "courier" } });
+		fireEvent.change(screen.getByLabelText("Size"), { target: { value: "20" } });
+		fireEvent.change(screen.getByLabelText("Text colour"), { target: { value: "#ff0000" } });
+
+		const note = screen.getByRole("button", { name: /Edit Note “Signed”/u });
+		// Every change lands on the note that is there, with no second note left behind.
+		expect(note.style.fontWeight).toBe("700");
+		expect(note.style.fontSize).toBe("20px");
+		expect(note.style.color).toBe("rgb(255, 0, 0)");
+		expect(screen.getAllByRole("button", { name: /Edit Note “/u })).toHaveLength(1);
+
+		const { doc } = await saveAndRead(user);
+		const content = contentOf(doc, 1);
+		expect(content).toContain("1 0 0 rg");
+		expect(doc.getPage(0).node.Resources()?.toString() ?? "").toContain("Bold");
+	});
+
+	it("changes a note that was let go of earlier", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Dated");
+		// Pressing Done means the next click decides what is being changed.
+		await user.click(screen.getByRole("button", { name: "Done editing" }));
+		expect(screen.queryByText(/Editing /u)).toBeNull();
+		await user.click(screen.getByRole("button", { name: /Edit Note “Dated”/u }));
+		expect(screen.getByText(/Editing /u).textContent).toContain("Note “Dated”");
+		fireEvent.change(screen.getByLabelText("Weight"), { target: { value: "bold" } });
+		// Dropping the box with Escape keeps the new weight: the note itself was changed.
+		await user.keyboard("{Escape}");
+		expect(screen.queryByLabelText("Type on the page")).toBeNull();
+		expect(screen.getByRole("button", { name: /Edit Note “Dated”/u }).style.fontWeight).toBe("700");
+	});
+
+	it("leaves the note alone once the toolbar is let go", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Plain");
+		await user.click(screen.getByRole("button", { name: "Done editing" }));
+		fireEvent.change(screen.getByLabelText("Weight"), { target: { value: "bold" } });
+		fireEvent.change(screen.getByLabelText("Text colour"), { target: { value: "#ff0000" } });
+		// With nothing selected the controls only set up the next note.
+		const note = screen.getByRole("button", { name: /Edit Note “Plain”/u });
+		expect(note.style.fontWeight).toBe("400");
+		expect(note.style.color).not.toBe("rgb(255, 0, 0)");
+	});
+
+	it("changes the background of a settled note", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await typeOnPage(user, "Lemon");
+		await user.click(screen.getByRole("button", { name: "Lemon background" }));
+		expect(screen.getByRole("button", { name: /Edit Note “Lemon”/u }).style.background).toBe("rgb(253, 243, 196)");
+		const { doc } = await saveAndRead(user);
+		expect(contentOf(doc, 1)).toContain("0.9921568627450981 0.9529411764705882 0.7686274509803922 rg");
+	});
+
+	it("resizes a picture that is already on the page", async () => {
+		const user = userEvent.setup();
+		render(<PdfEditorTool />);
+		await load(user);
+		await screen.findByAltText("Page 1 of contract.pdf");
+		await user.click(screen.getByRole("button", { name: "Picture" }));
+		await user.upload(screen.getByLabelText("Picture to place"), new File([PICTURE_BYTES], "stamp.png", { type: "image/png" }));
+		await screen.findByText(/is ready/u);
+		clickPage(100, 300);
+		// The picture is placed and stays selected, so the panel now sizes that picture.
+		expect(screen.getByText(/Editing /u).textContent).toContain("Picture on page 1 at 25% / 50%");
+		fireEvent.change(screen.getByLabelText(/Width on the page/u), { target: { value: "60" } });
+		const { doc } = await saveAndRead(user);
+		expect(contentOf(doc, 1)).toContain("240 0 0 240 0 0 cm");
 	});
 });
 });
