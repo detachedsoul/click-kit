@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "1288542",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "pdf",
+              "summary": "restyle a note that is already on the page",
+              "group": "Added"
+            },
+            {
               "hash": "3a5b9ee",
               "date": "2026-11-20",
               "type": "feat",
@@ -109,6 +117,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "1b2dcbf",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "regenerate the release notes from history",
+              "group": "Maintenance"
+            },
             {
               "hash": "e0223a6",
               "date": "2026-11-20",
