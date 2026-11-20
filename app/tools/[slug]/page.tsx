@@ -89,6 +89,7 @@ import { DocxTool } from "@/features/converter-tools/docx-tool";
 import { EpubTool } from "@/features/converter-tools/epub-tool";
 import { PptxTool } from "@/features/converter-tools/pptx-tool";
 import { SpreadsheetTool } from "@/features/converter-tools/xlsx-tool";
+import { HtmlTableTool } from "@/features/converter-tools/html-tables-tool";
 import { FaviconTool } from "@/features/image-tools/favicon-tool";
 import { SvgPngTool } from "@/features/image-tools/svg-png-tool";
 import { PaletteTool } from "@/features/image-tools/palette-tool";
@@ -303,6 +304,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"epub-to-markdown": EpubTool,
 	"pptx-to-markdown": PptxTool,
 	"csv-excel": SpreadsheetTool,
+	"html-tables": HtmlTableTool,
 	"habit-tracker": HabitTracker,
 	"task-list": TaskList,
 	"meeting-cost": MeetingCostMeter,
