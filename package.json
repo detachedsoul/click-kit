@@ -13,14 +13,15 @@
     "changelog": "node scripts/build-changelog.mjs",
     "sync-meta": "npm run tool-dates && npm run changelog",
     "pdf-worker": "node scripts/copy-pdf-worker.mjs",
-    "postinstall": "node scripts/copy-pdf-worker.mjs",
-    "prebuild": "node scripts/copy-pdf-worker.mjs"
+    "postinstall": "node scripts/copy-pdf-worker.mjs && node scripts/copy-zxing.mjs",
+    "prebuild": "node scripts/copy-pdf-worker.mjs && node scripts/copy-zxing.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "5.3.0",
     "@fontsource/ibm-plex-mono": "5.3.0",
     "@fontsource/instrument-serif": "5.3.0",
     "@tailwindcss/postcss": "4.3.5",
+    "@zxing/library": "^0.21.3",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "cron-parser": "^5.10.6",

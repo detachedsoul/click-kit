@@ -3,6 +3,7 @@
 /out
 /build
 /public/pdfjs/
+/public/zxing/
 /public/pdf.worker.min.mjs
 .DS_Store
 *.tsbuildinfo
