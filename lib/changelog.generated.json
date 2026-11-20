@@ -7,7 +7,7 @@
           "group": "Added",
           "entries": [
             {
-              "hash": "1a5c01c",
+              "hash": "e359480",
               "date": "2026-11-19",
               "type": "feat",
               "scope": "productivity",
@@ -15,7 +15,7 @@
               "group": "Added"
             },
             {
-              "hash": "a8c58c9",
+              "hash": "61e0c65",
               "date": "2026-11-19",
               "type": "feat",
               "scope": "convert",
@@ -23,7 +23,7 @@
               "group": "Added"
             },
             {
-              "hash": "301d895",
+              "hash": "f23fd09",
               "date": "2026-11-19",
               "type": "feat",
               "scope": "pdf",
@@ -31,7 +31,7 @@
               "group": "Added"
             },
             {
-              "hash": "4652d14",
+              "hash": "b96c69f",
               "date": "2026-11-19",
               "type": "feat",
               "scope": "pdf",
@@ -484,19 +484,11 @@
           "group": "Changed",
           "entries": [
             {
-              "hash": "aa294ee",
-              "date": "2026-11-19",
-              "type": "fix",
-              "scope": "pdf",
-              "summary": "type notes straight onto the page, and line the mark buttons up",
-              "group": "Changed"
-            },
-            {
-              "hash": "ef79960",
+              "hash": "dfbc6e3",
               "date": "2026-11-19",
               "type": "refactor",
               "scope": "pdf",
-              "summary": "make the editor a three-step flow",
+              "summary": "rebuild the editor as a three-step flow",
               "group": "Changed"
             }
           ]
@@ -504,6 +496,14 @@
         {
           "group": "Fixed",
           "entries": [
+            {
+              "hash": "5527387",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "pdf",
+              "summary": "type notes straight onto the page and line up the mark buttons",
+              "group": "Fixed"
+            },
             {
               "hash": "21c6dee",
               "date": "2026-11-19",
@@ -549,6 +549,30 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "f7b2566",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": null,
+              "summary": "fold the editor's typing change into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "143d037",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": null,
+              "summary": "fold the new tools and the editor rework into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "5711707",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": null,
+              "summary": "fold the three new tools into the changelog",
+              "group": "Maintenance"
+            },
             {
               "hash": "6f4cb60",
               "date": "2026-11-19",

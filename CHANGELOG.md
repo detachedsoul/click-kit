@@ -6,10 +6,10 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
-- **productivity** — add a weekly meal planner and shopping list ([1a5c01c](https://github.com/detachedsoul/click-kit/commit/1a5c01c))
-- **convert** — add a markdown and html table converter ([a8c58c9](https://github.com/detachedsoul/click-kit/commit/a8c58c9))
-- **pdf** — add a split-in-half tool ([301d895](https://github.com/detachedsoul/click-kit/commit/301d895))
-- **pdf** — add a flatten tool for annotations and form fields ([4652d14](https://github.com/detachedsoul/click-kit/commit/4652d14))
+- **productivity** — add a weekly meal planner and shopping list ([e359480](https://github.com/detachedsoul/click-kit/commit/e359480))
+- **convert** — add a markdown and html table converter ([61e0c65](https://github.com/detachedsoul/click-kit/commit/61e0c65))
+- **pdf** — add a split-in-half tool ([f23fd09](https://github.com/detachedsoul/click-kit/commit/f23fd09))
+- **pdf** — add a flatten tool for annotations and form fields ([b96c69f](https://github.com/detachedsoul/click-kit/commit/b96c69f))
 - **convert** — add html tables to csv ([d81f603](https://github.com/detachedsoul/click-kit/commit/d81f603))
 - **productivity** — add a reading list ([3a3fd77](https://github.com/detachedsoul/click-kit/commit/3a3fd77))
 - **pdf** — add a long-page stitcher and an overlay ([3a3d309](https://github.com/detachedsoul/click-kit/commit/3a3d309))
@@ -68,11 +68,11 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Changed
 
-- **pdf** — type notes straight onto the page, and line the mark buttons up ([aa294ee](https://github.com/detachedsoul/click-kit/commit/aa294ee))
-- **pdf** — make the editor a three-step flow ([ef79960](https://github.com/detachedsoul/click-kit/commit/ef79960))
+- **pdf** — rebuild the editor as a three-step flow ([dfbc6e3](https://github.com/detachedsoul/click-kit/commit/dfbc6e3))
 
 ### Fixed
 
+- **pdf** — type notes straight onto the page and line up the mark buttons ([5527387](https://github.com/detachedsoul/click-kit/commit/5527387))
 - **ui** — stop the pages-per-sheet buttons going white on white ([21c6dee](https://github.com/detachedsoul/click-kit/commit/21c6dee))
 - **image** — keep a preview from breaking when the canvas will not paint ([b07f77f](https://github.com/detachedsoul/click-kit/commit/b07f77f))
 - **a11y** — keep the heading outline sequential on the tools page ([eaa5932](https://github.com/detachedsoul/click-kit/commit/eaa5932))
@@ -81,6 +81,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **docs** — fold the editor's typing change into the changelog ([f7b2566](https://github.com/detachedsoul/click-kit/commit/f7b2566))
+- **docs** — fold the new tools and the editor rework into the changelog ([143d037](https://github.com/detachedsoul/click-kit/commit/143d037))
+- **docs** — fold the three new tools into the changelog ([5711707](https://github.com/detachedsoul/click-kit/commit/5711707))
 - **style** — drop an unused import from the reading list test ([6f4cb60](https://github.com/detachedsoul/click-kit/commit/6f4cb60))
 - refresh the generated changelog ([812c1f9](https://github.com/detachedsoul/click-kit/commit/812c1f9))
 - **ui** — drop build-and-repository notes from the site copy ([59f2f19](https://github.com/detachedsoul/click-kit/commit/59f2f19))
