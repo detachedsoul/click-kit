@@ -4,6 +4,7 @@
 /build
 /public/pdfjs/
 /public/zxing/
+/public/ffmpeg/
 /public/pdf.worker.min.mjs
 .DS_Store
 *.tsbuildinfo
