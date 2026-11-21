@@ -7,6 +7,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "c730e45",
+              "date": "2026-11-21",
+              "type": "feat",
+              "scope": "video",
+              "summary": "add video frame extraction tool",
+              "group": "Added"
+            },
+            {
+              "hash": "b512dda",
+              "date": "2026-11-21",
+              "type": "feat",
+              "scope": "audio",
+              "summary": "add MP3 export alongside WAV",
+              "group": "Added"
+            },
+            {
               "hash": "a9ff6db",
               "date": "2026-11-21",
               "type": "feat",
@@ -31,6 +47,96 @@
               "group": "Added"
             }
           ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "0a35d06",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "world-clock",
+              "summary": "tick the live clocks every second",
+              "group": "Fixed"
+            },
+            {
+              "hash": "53f6d81",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "world-clock",
+              "summary": "show seconds and broaden the city picker",
+              "group": "Fixed"
+            },
+            {
+              "hash": "9eecc1c",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "changelog",
+              "summary": "date the newest tools under November 21",
+              "group": "Fixed"
+            },
+            {
+              "hash": "9e129d2",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "print",
+              "summary": "isolate the packing list from the rest of the page",
+              "group": "Fixed"
+            },
+            {
+              "hash": "2181d49",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "bring every action beside a Copy button down to Copy's height",
+              "group": "Fixed"
+            },
+            {
+              "hash": "9635544",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "line up the icons, the fields, and the buttons beside them",
+              "group": "Fixed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "6865432",
+              "date": "2026-11-21",
+              "type": "test",
+              "scope": "changelog",
+              "summary": "include the audio trimmer in today's release",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "d7acbf0",
+              "date": "2026-11-21",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "add the audio trimmer to today's notes",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "8b5b43d",
+              "date": "2026-11-21",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the world clock into the notes",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "3450d79",
+              "date": "2026-11-21",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the packing list into the notes",
+              "group": "Maintenance"
+            }
+          ]
         }
       ]
     },
@@ -45,7 +151,15 @@
               "date": "2026-11-20",
               "type": "feat",
               "scope": "image",
-              "summary": "add a barcode and qr scanner",
+              "summary": "add a barcode and QR scanner",
+              "group": "Added"
+            },
+            {
+              "hash": "bdcbc88",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "give the typing test a proper page of text",
               "group": "Added"
             },
             {
@@ -171,6 +285,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "7ef1dab",
+              "date": "2026-11-20",
+              "type": "fix",
+              "scope": "productivity",
+              "summary": "make the typing tester say how it works",
+              "group": "Fixed"
+            },
+            {
               "hash": "91e11b6",
               "date": "2026-11-20",
               "type": "fix",
@@ -191,6 +313,46 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "ddaacd4",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the scanner into the notes",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "f7d8881",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the typing tester into the notes",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "197b610",
+              "date": "2026-11-20",
+              "type": "chore",
+              "scope": "",
+              "summary": "Install Vercel Speed Insights with docs",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "3a89e26",
+              "date": "2026-11-20",
+              "type": "chore",
+              "scope": "",
+              "summary": "Install Vercel Web Analytics",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "5317a23",
+              "date": "2026-11-20",
+              "type": "docs",
+              "scope": "changelog",
+              "summary": "fold the two converters into the notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "5d6cd3f",
               "date": "2026-11-20",
@@ -536,6 +698,174 @@
               "scope": "pdf",
               "summary": "shared pdf plumbing that copies pages, not pictures",
               "group": "Added"
+            },
+            {
+              "hash": "d3b969f",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "ui",
+              "summary": "a phone-first type scale and thumb-sized controls",
+              "group": "Added"
+            },
+            {
+              "hash": "7e27095",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "drag the before/after divider by a handle, not a slider",
+              "group": "Added"
+            },
+            {
+              "hash": "ca84cf0",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a decision matrix",
+              "group": "Added"
+            },
+            {
+              "hash": "9fcfdf4",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a recipe scaler",
+              "group": "Added"
+            },
+            {
+              "hash": "5a0b69b",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a salary converter",
+              "group": "Added"
+            },
+            {
+              "hash": "b995ff5",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add a box shadow generator",
+              "group": "Added"
+            },
+            {
+              "hash": "407f1c2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "text",
+              "summary": "add a post length counter",
+              "group": "Added"
+            },
+            {
+              "hash": "e38506c",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "ui",
+              "summary": "update open pages in place when a new build ships",
+              "group": "Added"
+            },
+            {
+              "hash": "0babd8d",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "pwa",
+              "summary": "install prompt and new-tool notifications",
+              "group": "Added"
+            },
+            {
+              "hash": "55774dc",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "default the GPA calculator to 5.0 and plain A-F letters",
+              "group": "Added"
+            },
+            {
+              "hash": "1c54069",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "files",
+              "summary": "add a file splitter and joiner",
+              "group": "Added"
+            },
+            {
+              "hash": "75d9a67",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a before and after comparison",
+              "group": "Added"
+            },
+            {
+              "hash": "a44899a",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a contact sheet builder",
+              "group": "Added"
+            },
+            {
+              "hash": "278fac2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "ui",
+              "summary": "louder New badge and filters for the tool list",
+              "group": "Added"
+            },
+            {
+              "hash": "9ea9780",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "watermark with your own logo",
+              "group": "Added"
+            },
+            {
+              "hash": "16ee6a2",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add a 5.0 GPA scale",
+              "group": "Added"
+            },
+            {
+              "hash": "07adb14",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a batch image converter",
+              "group": "Added"
+            },
+            {
+              "hash": "4725d31",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image colour picker",
+              "group": "Added"
+            },
+            {
+              "hash": "6d297f4",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image splitter",
+              "group": "Added"
+            },
+            {
+              "hash": "9d957e7",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add an image redactor",
+              "group": "Added"
+            },
+            {
+              "hash": "0cc0035",
+              "date": "2026-11-19",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a screenshot framer",
+              "group": "Added"
             }
           ]
         },
@@ -572,6 +902,94 @@
               "type": "fix",
               "scope": "convert",
               "summary": "give the epub chapter picker the shared select class",
+              "group": "Fixed"
+            },
+            {
+              "hash": "aa4f582",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "keep the iOS header crisp and out of the status bar",
+              "group": "Fixed"
+            },
+            {
+              "hash": "e922fc8",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "thumb-sized small buttons and a two-up stat grid",
+              "group": "Fixed"
+            },
+            {
+              "hash": "8c34631",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "put the tool first on a phone and soften the reading copy",
+              "group": "Fixed"
+            },
+            {
+              "hash": "646dc72",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "fit the phone layout to the new type scale",
+              "group": "Fixed"
+            },
+            {
+              "hash": "3836409",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "image",
+              "summary": "keep the contact sheet columns editable after a pick",
+              "group": "Fixed"
+            },
+            {
+              "hash": "a96a804",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "image",
+              "summary": "read the divider percentage the way the picture is split",
+              "group": "Fixed"
+            },
+            {
+              "hash": "68f39e9",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "updates",
+              "summary": "ask before refreshing a tool page, and announce the build",
+              "group": "Fixed"
+            },
+            {
+              "hash": "2c0f7fb",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "pwa",
+              "summary": "remember which tools were announced, not just the day",
+              "group": "Fixed"
+            },
+            {
+              "hash": "eaa5932",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "a11y",
+              "summary": "keep the heading outline sequential on the tools page",
+              "group": "Fixed"
+            },
+            {
+              "hash": "3e67464",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "image",
+              "summary": "make the redactor strength slider work",
+              "group": "Fixed"
+            },
+            {
+              "hash": "1aa4a50",
+              "date": "2026-11-19",
+              "type": "fix",
+              "scope": "a11y",
+              "summary": "raise text and field contrast to WCAG AA",
               "group": "Fixed"
             }
           ]
@@ -625,6 +1043,836 @@
               "type": "chore",
               "scope": "meta",
               "summary": "fold this release into the changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "4073150",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "812c1f9",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "59f2f19",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "ui",
+              "summary": "drop build-and-repository notes from the site copy",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "2cfcbd5",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "a868eaa",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "d29b52c",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh the generated changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "a904401",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh changelog and README for GPA scales, watermarks, and new tools",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "181a6dd",
+              "date": "2026-11-19",
+              "type": "docs",
+              "scope": "",
+              "summary": "refresh changelog and README for the five new image tools",
+              "group": "Maintenance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-18",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "3117e99",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "site",
+              "summary": "five more tools, new-tool tracking, and a changelog",
+              "group": "Added"
+            },
+            {
+              "hash": "ed04ff7",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add six more tools and a Tailwind v4 palette theme",
+              "group": "Added"
+            },
+            {
+              "hash": "2affb63",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "image",
+              "summary": "six new image and file tools",
+              "group": "Added"
+            },
+            {
+              "hash": "2035775",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "tools",
+              "summary": "searchable, category-filtered tool index",
+              "group": "Added"
+            },
+            {
+              "hash": "d493e15",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "",
+              "summary": "add invisible-character, keyword-density, duration, unit-price, GPA, and Mermaid ERD tools",
+              "group": "Added"
+            },
+            {
+              "hash": "3d80021",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add Roman numerals and number words converter",
+              "group": "Added"
+            },
+            {
+              "hash": "1c03131",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add aspect ratio calculator",
+              "group": "Added"
+            },
+            {
+              "hash": "d7528d5",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add date difference and working days calculator",
+              "group": "Added"
+            },
+            {
+              "hash": "2c69bed",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "add Caesar, ROT13, Atbash, and ROT47 cipher toolkit",
+              "group": "Added"
+            },
+            {
+              "hash": "a9bec04",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "add text wrapper and unwrapper",
+              "group": "Added"
+            },
+            {
+              "hash": "5b29992",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "add word and phrase frequency analysis",
+              "group": "Added"
+            },
+            {
+              "hash": "c7486a6",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add seedable JSON fixture generator",
+              "group": "Added"
+            },
+            {
+              "hash": "7972539",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add SQL DDL to Prisma, TypeScript, and Mongoose converter",
+              "group": "Added"
+            },
+            {
+              "hash": "8229bfc",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "generate C#, Kotlin, and Swift models from JSON",
+              "group": "Added"
+            },
+            {
+              "hash": "987259b",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add MongoDB ObjectId inspector",
+              "group": "Added"
+            },
+            {
+              "hash": "f0e1e5f",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add Compose to docker run converter",
+              "group": "Added"
+            },
+            {
+              "hash": "054a709",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add fluid clamp() generator",
+              "group": "Added"
+            },
+            {
+              "hash": "ea0c7cf",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON to Mongoose and Prisma model generator",
+              "group": "Added"
+            },
+            {
+              "hash": "301b731",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add SQL INSERT to JSON converter",
+              "group": "Added"
+            },
+            {
+              "hash": "b790f5e",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add SVG optimiser",
+              "group": "Added"
+            },
+            {
+              "hash": "e9e368b",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add .env to JSON and YAML converter",
+              "group": "Added"
+            },
+            {
+              "hash": "ead9da4",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add CSS gradient generator",
+              "group": "Added"
+            },
+            {
+              "hash": "780f887",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add HTML and SVG to JSX converter",
+              "group": "Added"
+            },
+            {
+              "hash": "87ddcc9",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add indentation converter",
+              "group": "Added"
+            },
+            {
+              "hash": "3c51c70",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add CSV and delimiter converter",
+              "group": "Added"
+            },
+            {
+              "hash": "c07900b",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add docker run to compose converter",
+              "group": "Added"
+            },
+            {
+              "hash": "a2fc668",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add HMAC and TOTP generator",
+              "group": "Added"
+            },
+            {
+              "hash": "8f3b936",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add XPath tester",
+              "group": "Added"
+            },
+            {
+              "hash": "0e85379",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON Lines formatter and converter",
+              "group": "Added"
+            },
+            {
+              "hash": "5e92edf",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add HTTP header parser and security review",
+              "group": "Added"
+            },
+            {
+              "hash": "a835688",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add MIME type lookup",
+              "group": "Added"
+            },
+            {
+              "hash": "b53e206",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add string escape and unescape toolkit",
+              "group": "Added"
+            },
+            {
+              "hash": "f81a2c4",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON to SQL generator",
+              "group": "Added"
+            },
+            {
+              "hash": "a4a8b99",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON Patch generator",
+              "group": "Added"
+            },
+            {
+              "hash": "78d0311",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON to Zod schema generator",
+              "group": "Added"
+            },
+            {
+              "hash": "f8f6f35",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add number base and bitwise converter",
+              "group": "Added"
+            },
+            {
+              "hash": "1460f36",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add HTTP status code reference",
+              "group": "Added"
+            },
+            {
+              "hash": "468b4d4",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add cURL to code converter",
+              "group": "Added"
+            },
+            {
+              "hash": "9099dad",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add UUID, ULID, and NanoID toolkit",
+              "group": "Added"
+            },
+            {
+              "hash": "5574ccb",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add chmod permission calculator",
+              "group": "Added"
+            },
+            {
+              "hash": "b7bf41e",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add CIDR and subnet calculator",
+              "group": "Added"
+            },
+            {
+              "hash": "daaa18a",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add semantic version checker",
+              "group": "Added"
+            },
+            {
+              "hash": "f49285c",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add query string and JSON converter",
+              "group": "Added"
+            },
+            {
+              "hash": "7b8783c",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON to Go, Rust, Python, and Java generator",
+              "group": "Added"
+            },
+            {
+              "hash": "394af7e",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add JSON flatten and unflatten",
+              "group": "Added"
+            },
+            {
+              "hash": "cbf43d3",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add XML to JSON converter",
+              "group": "Added"
+            },
+            {
+              "hash": "fb28cea",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add TOML converter and shared tool shell",
+              "group": "Added"
+            },
+            {
+              "hash": "d9abe62",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add CSV, JSONPath, schema, checksum, and gitignore tools",
+              "group": "Added"
+            },
+            {
+              "hash": "2906ba4",
+              "date": "2026-11-18",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add five new utility tools",
+              "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "a79c5f3",
+              "date": "2026-11-18",
+              "type": "refine",
+              "scope": "image",
+              "summary": "keep the palette page to two copy blocks",
+              "group": "Changed"
+            },
+            {
+              "hash": "6929f71",
+              "date": "2026-11-18",
+              "type": "refactor",
+              "scope": "ui",
+              "summary": "give every checkbox one shared, accessible design",
+              "group": "Changed"
+            }
+          ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "15b4e4c",
+              "date": "2026-11-18",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "give select the same caption gap as text inputs",
+              "group": "Fixed"
+            },
+            {
+              "hash": "5b73a00",
+              "date": "2026-11-18",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "align checkbox options with field grids and guard the select contract",
+              "group": "Fixed"
+            },
+            {
+              "hash": "8e4a233",
+              "date": "2026-11-18",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "shared select styling, new brand mark, and a UX pass",
+              "group": "Fixed"
+            },
+            {
+              "hash": "bf36907",
+              "date": "2026-11-18",
+              "type": "fix",
+              "scope": "text",
+              "summary": "let the keyword list textarea size itself",
+              "group": "Fixed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "781925a",
+              "date": "2026-11-18",
+              "type": "chore",
+              "scope": "",
+              "summary": "sync tool dates and changelog",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "9af0672",
+              "date": "2026-11-18",
+              "type": "docs",
+              "scope": "",
+              "summary": "list the new text and calculator tools",
+              "group": "Maintenance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-16",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "eb54d01",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "verify supported JWT signatures",
+              "group": "Added"
+            },
+            {
+              "hash": "891a56a",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "add flexible JSON and binary Base64",
+              "group": "Added"
+            },
+            {
+              "hash": "9606f5d",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "",
+              "summary": "complete initial tool lineup and add developer utilities",
+              "group": "Added"
+            },
+            {
+              "hash": "267c890",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "developer-tools",
+              "summary": "launch core developer utilities",
+              "group": "Added"
+            },
+            {
+              "hash": "e5a1876",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add stats and everyday calculators",
+              "group": "Added"
+            },
+            {
+              "hash": "7e7fa63",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "scientific-calculator",
+              "summary": "guide function entry",
+              "group": "Added"
+            },
+            {
+              "hash": "fd805dc",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "scientific-calculator",
+              "summary": "document operations and add integration",
+              "group": "Added"
+            },
+            {
+              "hash": "2d17f1e",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "group editable numeric inputs",
+              "group": "Added"
+            },
+            {
+              "hash": "23c2a30",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "scientific-calculator",
+              "summary": "add advanced math capabilities",
+              "group": "Added"
+            },
+            {
+              "hash": "b8d7314",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "home",
+              "summary": "invite community feedback and contributions",
+              "group": "Added"
+            },
+            {
+              "hash": "b8309fb",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add advanced calculator utilities",
+              "group": "Added"
+            },
+            {
+              "hash": "3db318b",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "calculators",
+              "summary": "add everyday calculator tools",
+              "group": "Added"
+            },
+            {
+              "hash": "a9ba270",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "navigate find and replace matches",
+              "group": "Added"
+            },
+            {
+              "hash": "e2503a1",
+              "date": "2026-11-16",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "add thirteen browser utilities",
+              "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "d0c4d49",
+              "date": "2026-11-16",
+              "type": "style",
+              "scope": "forms",
+              "summary": "add right padding to select controls",
+              "group": "Changed"
+            }
+          ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "cf747bb",
+              "date": "2026-11-16",
+              "type": "fix",
+              "scope": "forms",
+              "summary": "balance select caret spacing",
+              "group": "Fixed"
+            },
+            {
+              "hash": "46191bf",
+              "date": "2026-11-16",
+              "type": "fix",
+              "scope": "text-tools",
+              "summary": "highlight find and replace matches",
+              "group": "Fixed"
+            },
+            {
+              "hash": "0f1f83c",
+              "date": "2026-11-16",
+              "type": "fix",
+              "scope": "text-tools",
+              "summary": "explain and test browser voices",
+              "group": "Fixed"
+            },
+            {
+              "hash": "538c166",
+              "date": "2026-11-16",
+              "type": "fix",
+              "scope": "text-tools",
+              "summary": "apply speech settings without restarting",
+              "group": "Fixed"
+            },
+            {
+              "hash": "c88635c",
+              "date": "2026-11-16",
+              "type": "fix",
+              "scope": "text-tools",
+              "summary": "report unavailable speech voices",
+              "group": "Fixed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-15",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "20c23b3",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "add local read-aloud tool",
+              "group": "Added"
+            },
+            {
+              "hash": "69edf6d",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "text-tools",
+              "summary": "implement four browser-based text utilities",
+              "group": "Added"
+            },
+            {
+              "hash": "528677d",
+              "date": "2026-11-15",
+              "type": "feat",
+              "scope": "shell",
+              "summary": "establish ClickKit foundation and discovery",
+              "group": "Added"
+            }
+          ]
+        },
+        {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "1be8ebd",
+              "date": "2026-11-15",
+              "type": "refactor",
+              "scope": "ui",
+              "summary": "move app to Tailwind at repository root",
+              "group": "Changed"
+            },
+            {
+              "hash": "b80343d",
+              "date": "2026-11-15",
+              "type": "style",
+              "scope": "ui",
+              "summary": "refine typography and visual hierarchy",
+              "group": "Changed"
+            }
+          ]
+        },
+        {
+          "group": "Fixed",
+          "entries": [
+            {
+              "hash": "ea28459",
+              "date": "2026-11-15",
+              "type": "fix",
+              "scope": "text-tools",
+              "summary": "apply voice and rate changes during playback",
+              "group": "Fixed"
+            },
+            {
+              "hash": "61819cc",
+              "date": "2026-11-15",
+              "type": "fix",
+              "scope": "ui",
+              "summary": "clarify selected buttons and pointer cursors",
+              "group": "Fixed"
+            }
+          ]
+        },
+        {
+          "group": "Maintenance",
+          "entries": [
+            {
+              "hash": "3cf4348",
+              "date": "2026-11-15",
+              "type": "chore",
+              "scope": "deps",
+              "summary": "use current ESLint release",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "11c9e68",
+              "date": "2026-11-15",
+              "type": "chore",
+              "scope": "deps",
+              "summary": "update packages to current compatible releases",
+              "group": "Maintenance"
+            },
+            {
+              "hash": "ffd55be",
+              "date": "2026-11-15",
+              "type": "chore",
+              "scope": "",
+              "summary": "Initial commit",
               "group": "Maintenance"
             }
           ]
