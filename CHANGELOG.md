@@ -6,14 +6,23 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **audio** — add audio visualizer tool ([95ec768](https://github.com/detachedsoul/click-kit/commit/95ec768))
+- **video** — add browser-based video trimmer ([cde310f](https://github.com/detachedsoul/click-kit/commit/cde310f))
 - **video** — add video frame extraction tool ([c730e45](https://github.com/detachedsoul/click-kit/commit/c730e45))
 - **audio** — add MP3 export alongside WAV ([b512dda](https://github.com/detachedsoul/click-kit/commit/b512dda))
 - **audio** — add an in-browser audio trimmer ([a9ff6db](https://github.com/detachedsoul/click-kit/commit/a9ff6db))
 - **productivity** — add a world clock and time finder ([750eff2](https://github.com/detachedsoul/click-kit/commit/750eff2))
 - **productivity** — add a smart packing list ([561865e](https://github.com/detachedsoul/click-kit/commit/561865e))
 
+### Changed
+
+- **video** — simplify trimmer helper text ([2146f7b](https://github.com/detachedsoul/click-kit/commit/2146f7b))
+
 ### Fixed
 
+- **converters** — preserve Word paragraph line spacing ([a369f74](https://github.com/detachedsoul/click-kit/commit/a369f74))
+- **media** — keep trimmer playback within selection ([03c0897](https://github.com/detachedsoul/click-kit/commit/03c0897))
+- **pdf** — append separately selected merge files ([0a39038](https://github.com/detachedsoul/click-kit/commit/0a39038))
 - **converters** — increase Word PDF rendering fidelity ([0fb3618](https://github.com/detachedsoul/click-kit/commit/0fb3618))
 - **converters** — preserve Word page appearance in PDF ([48c9e99](https://github.com/detachedsoul/click-kit/commit/48c9e99))
 - **world-clock** — tick the live clocks every second ([0a35d06](https://github.com/detachedsoul/click-kit/commit/0a35d06))
@@ -25,6 +34,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — regenerate release notes ([500a9f1](https://github.com/detachedsoul/click-kit/commit/500a9f1))
 - **changelog** — regenerate release notes ([014c65c](https://github.com/detachedsoul/click-kit/commit/014c65c))
 - **changelog** — regenerate release notes ([1142421](https://github.com/detachedsoul/click-kit/commit/1142421))
 - **changelog** — include the audio trimmer in today's release ([6865432](https://github.com/detachedsoul/click-kit/commit/6865432))

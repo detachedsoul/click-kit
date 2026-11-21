@@ -7,6 +7,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "95ec768",
+              "date": "2026-11-21",
+              "type": "feat",
+              "scope": "audio",
+              "summary": "add audio visualizer tool",
+              "group": "Added"
+            },
+            {
+              "hash": "cde310f",
+              "date": "2026-11-21",
+              "type": "feat",
+              "scope": "video",
+              "summary": "add browser-based video trimmer",
+              "group": "Added"
+            },
+            {
               "hash": "c730e45",
               "date": "2026-11-21",
               "type": "feat",
@@ -49,8 +65,45 @@
           ]
         },
         {
+          "group": "Changed",
+          "entries": [
+            {
+              "hash": "2146f7b",
+              "date": "2026-11-21",
+              "type": "refine",
+              "scope": "video",
+              "summary": "simplify trimmer helper text",
+              "group": "Changed"
+            }
+          ]
+        },
+        {
           "group": "Fixed",
           "entries": [
+            {
+              "hash": "a369f74",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "preserve Word paragraph line spacing",
+              "group": "Fixed"
+            },
+            {
+              "hash": "03c0897",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "media",
+              "summary": "keep trimmer playback within selection",
+              "group": "Fixed"
+            },
+            {
+              "hash": "0a39038",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "pdf",
+              "summary": "append separately selected merge files",
+              "group": "Fixed"
+            },
             {
               "hash": "0fb3618",
               "date": "2026-11-21",
@@ -120,6 +173,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "500a9f1",
+              "date": "2026-11-21",
+              "type": "chore",
+              "scope": "changelog",
+              "summary": "regenerate release notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "014c65c",
               "date": "2026-11-21",
