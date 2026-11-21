@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ClipboardEvent } from "react";
 import Image from "next/image";
-import { ErrorNote, fieldClassName, hintClassName, labelClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { CheckboxField, ErrorNote, fieldClassName, hintClassName, labelClassName, selectClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { FileDownloadLink, FileField, MAX_IMAGE_BYTES, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { clampCrop, makeOcrCanvas, type CropPercent } from "@/features/image-tools/ocr-utils";
 
@@ -109,7 +109,7 @@ export const ImageToText = () => {
 				] as const).map(([key, label]) => <label className="text-[11px] text-muted" key={key}>{label}<input aria-label={`Crop ${label.toLowerCase()} percent`} className={percentInput} disabled={busy} max="100" min="0" onChange={(event) => updateCrop(key, Number(event.target.value))} type="number" value={crop[key]} /></label>)}</div>
 				<p className="mb-0 mt-2 text-[10px] text-muted">Set left and top offsets and the crop width and height. The crop always stays inside the image.</p>
 			</fieldset>
-			<label className="flex cursor-pointer items-center gap-2 text-xs text-ink"><input checked={threshold !== null} disabled={busy} onChange={(event) => setThreshold(event.target.checked ? 150 : null)} type="checkbox" />Improve contrast with black-and-white thresholding</label>
+			<CheckboxField checked={threshold !== null} disabled={busy} id="ocr-threshold-enabled" label="Improve contrast with black-and-white thresholding" onChange={(checked) => setThreshold(checked ? 150 : null)} />
 			{threshold !== null ? <label className="block text-xs text-muted" htmlFor="ocr-threshold">Threshold<input className="mt-2 w-full accent-forest" id="ocr-threshold" max="240" min="30" onChange={(event) => setThreshold(Number(event.target.value))} type="range" value={threshold} /></label> : null}
 			<div className="flex flex-wrap items-center gap-2"><button className={actionClass} disabled={busy} onClick={() => void extract()} type="button">{busy ? "Extracting…" : "Extract text"}</button>{busy ? <span aria-live="polite" className="text-xs text-muted">{status} · {progress}%</span> : null}</div>
 		</> : <p className={hintClassName}>Once an image is ready, choose a language, adjust the crop or rotation, and run OCR.</p>}
@@ -119,6 +119,5 @@ export const ImageToText = () => {
 			<label className={labelClassName} htmlFor="ocr-result">Extracted text<textarea className={`${fieldClassName} min-h-48 resize-y font-mono`} id="ocr-result" onChange={(event) => setText(event.target.value)} value={text} /></label>
 			<div className="flex flex-wrap items-center gap-2"><button className={secondaryClass} disabled={!text} onClick={() => void copyText()} type="button">{copied ? "Copied" : "Copy text"}</button>{textUrl ? <FileDownloadLink fileName={`${file?.name.replace(/\.[^.]+$/u, "") || "image"}-text.txt`} label="Download TXT" url={textUrl} /> : null}</div>
 		</> : null}
-		<p className={hintClassName}>OCR runs locally in a browser Web Worker. The selected language model is downloaded on first use and cached by Tesseract.js for later use. Neither your image nor extracted text is uploaded.</p>
 	</ToolPanel>;
 };

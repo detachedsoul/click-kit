@@ -30,7 +30,9 @@ describe("image to text OCR tool", () => {
 		expect(screen.getByRole("button", { name: "Rotate 90°" })).toBeTruthy();
 		expect(screen.getByLabelText("Crop left percent")).toHaveProperty("value", "0");
 		expect(screen.getByLabelText("Crop width percent")).toHaveProperty("value", "100");
-		expect(screen.getByLabelText("Improve contrast with black-and-white thresholding")).toBeTruthy();
+		const thresholdToggle = screen.getByLabelText("Improve contrast with black-and-white thresholding");
+		expect(thresholdToggle.className).toContain("checkbox-input");
+		expect(screen.queryByText(/Web Worker|language model is downloaded|cached by Tesseract|is uploaded/u)).toBeNull();
 		expect(screen.getByRole("button", { name: "Extract text" })).toHaveProperty("disabled", false);
 	});
 
