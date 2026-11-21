@@ -79,6 +79,7 @@ describe("changelog page", () => {
 		expect(dated.every((date) => /^\d{4}-\d{2}-\d{2}$/u.test(date))).toBe(true);
 		expect(changelog.releases[0].date).toBe("2026-11-21");
 		expect(changelog.releases[0].groups.flatMap((group) => group.entries).map((entry) => entry.summary)).toEqual([
+			"add an in-browser audio trimmer",
 			"add a world clock and time finder",
 			"add a smart packing list",
 		]);
