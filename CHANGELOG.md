@@ -14,6 +14,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **converters** — increase Word PDF rendering fidelity ([0fb3618](https://github.com/detachedsoul/click-kit/commit/0fb3618))
 - **converters** — preserve Word page appearance in PDF ([48c9e99](https://github.com/detachedsoul/click-kit/commit/48c9e99))
 - **world-clock** — tick the live clocks every second ([0a35d06](https://github.com/detachedsoul/click-kit/commit/0a35d06))
 - **world-clock** — show seconds and broaden the city picker ([53f6d81](https://github.com/detachedsoul/click-kit/commit/53f6d81))
@@ -24,6 +25,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — regenerate release notes ([014c65c](https://github.com/detachedsoul/click-kit/commit/014c65c))
 - **changelog** — regenerate release notes ([1142421](https://github.com/detachedsoul/click-kit/commit/1142421))
 - **changelog** — include the audio trimmer in today's release ([6865432](https://github.com/detachedsoul/click-kit/commit/6865432))
 - **changelog** — add the audio trimmer to today's notes ([d7acbf0](https://github.com/detachedsoul/click-kit/commit/d7acbf0))

@@ -52,6 +52,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "0fb3618",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "increase Word PDF rendering fidelity",
+              "group": "Fixed"
+            },
+            {
               "hash": "48c9e99",
               "date": "2026-11-21",
               "type": "fix",
@@ -112,6 +120,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "014c65c",
+              "date": "2026-11-21",
+              "type": "chore",
+              "scope": "changelog",
+              "summary": "regenerate release notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "1142421",
               "date": "2026-11-21",
