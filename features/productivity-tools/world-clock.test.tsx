@@ -1,8 +1,8 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { WorldClock } from "@/features/productivity-tools/world-clock";
-import { CLOCK_KEY, FAVOURITE_KEY } from "@/features/productivity-tools/world-clock-utils";
+import { CLOCK_KEY, CLOCK_TICK_MS, FAVOURITE_KEY } from "@/features/productivity-tools/world-clock-utils";
 
 const store = new Map<string, string>();
 
@@ -17,6 +17,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	vi.useRealTimers();
 	vi.unstubAllGlobals();
 	cleanup();
 });
@@ -39,6 +40,20 @@ describe("world clock and time finder", () => {
 		expect(document.body.textContent).toContain("same date");
 		expect(screen.getByRole("heading", { name: "Convert a meeting time" })).toBeTruthy();
 		expect(screen.getByRole("heading", { name: "Find a shared working hour" })).toBeTruthy();
+	});
+
+	it("updates the displayed seconds every second", async () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date("2026-11-21T12:34:56Z"));
+		render(<WorldClock />);
+		await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+		const clock = screen.getByLabelText("Lagos local time");
+		const before = clock.textContent;
+		expect(before).toMatch(/:56$/u);
+
+		await act(async () => { await vi.advanceTimersByTimeAsync(CLOCK_TICK_MS); });
+		expect(clock.textContent).not.toBe(before);
+		expect(clock.textContent).toMatch(/:57$/u);
 	});
 
 	it("adds a city from the worldwide list and saves it across reloads", async () => {

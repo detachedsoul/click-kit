@@ -6,6 +6,7 @@ import { ErrorNote, fieldClassName, hintClassName, labelClassName, rowButtonClas
 import { useStoredState } from "@/features/productivity-tools/stored-state";
 import {
 	CLOCK_KEY,
+	CLOCK_TICK_MS,
 	convertLocalTime,
 	dateDifference,
 	findWorkingOverlap,
@@ -59,7 +60,7 @@ export const WorldClock = () => {
 			}
 		};
 		const firstTick = window.setTimeout(tick, 0);
-		const timer = window.setInterval(tick, 15_000);
+		const timer = window.setInterval(tick, CLOCK_TICK_MS);
 		return () => {
 			window.clearTimeout(firstTick);
 			window.clearInterval(timer);

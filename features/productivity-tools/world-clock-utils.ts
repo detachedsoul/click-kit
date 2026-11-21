@@ -3,6 +3,7 @@ import { TIME_ZONES, dayKey, offsetLabel, zoneOffsetMinutes, zonedMidnight } fro
 export const CLOCK_KEY = "clickkit-world-clock-cities";
 export const FAVOURITE_KEY = "clickkit-world-clock-favourites";
 export const MAX_CITIES = 12;
+export const CLOCK_TICK_MS = 1_000;
 
 export type WorldCity = { continent: string; label: string; zone: string };
 
