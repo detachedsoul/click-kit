@@ -71,7 +71,11 @@ export const MultiFileField = ({
 				disabled={disabled}
 				id={id}
 				multiple
-				onChange={(event) => onFiles(Array.from(event.target.files ?? []))}
+				onChange={(event) => {
+					const files = Array.from(event.currentTarget.files ?? []);
+					event.currentTarget.value = "";
+					onFiles(files);
+				}}
 				type="file"
 			/>
 		</label>

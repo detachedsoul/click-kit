@@ -6,7 +6,7 @@ import { buttonClassName, ErrorNote, fieldClassName, hintClassName, labelClassNa
 import { describeBytes, FileDownloadLink, MultiFileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
 import { mergePdfs, readFileBytes, readPdfInfo } from "@/features/pdf-tools/pdf-engine";
 import { renderPageThumbnail } from "@/features/pdf-tools/pdf-render";
-import { ACCEPTED_PDF_TYPES, pageWord, pdfBaseName, pdfFileName, validatePdfFiles } from "@/features/pdf-tools/pdf-utils";
+import { ACCEPTED_PDF_TYPES, MAX_PDF_TOTAL_BYTES, pageWord, pdfBaseName, pdfFileName, validatePdfFiles } from "@/features/pdf-tools/pdf-utils";
 
 type Entry = { id: string; file: File; pages: number | null; problem: string };
 type Result = { blob: Blob; defaultName: string; pages: number; previews: { page: number; thumb: string }[] };
@@ -18,6 +18,7 @@ let nextId = 0;
 
 export const PdfMergeTool = () => {
 	const [entries, setEntries] = useState<Entry[]>([]);
+	const entriesRef = useRef<Entry[]>([]);
 	const [result, setResult] = useState<Result | null>(null);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
@@ -36,16 +37,28 @@ export const PdfMergeTool = () => {
 	const totalPages = entries.reduce((sum, entry) => sum + (entry.pages ?? 0), 0);
 	const totalBytes = entries.reduce((sum, entry) => sum + entry.file.size, 0);
 
+	const updateEntries = (update: (current: Entry[]) => Entry[]) => {
+		const next = update(entriesRef.current);
+		entriesRef.current = next;
+		setEntries(next);
+	};
+
 	const chooseFiles = async (files: File[]) => {
+		if (!files.length) return;
 		setResult(null);
 		const problem = validatePdfFiles(files);
 		if (problem) {
 			setError(problem);
 			return;
 		}
+		const combinedBytes = entriesRef.current.reduce((sum, entry) => sum + entry.file.size, 0) + files.reduce((sum, file) => sum + file.size, 0);
+		if (combinedBytes > MAX_PDF_TOTAL_BYTES) {
+			setError("Keep all selected PDFs under 200 MB.");
+			return;
+		}
 		setError("");
 		const pending: Entry[] = files.map((file) => ({ id: `pdf-${nextId++}`, file, pages: null, problem: "" }));
-		setEntries(pending);
+		updateEntries((current) => [...current, ...pending]);
 		const measured = await Promise.all(
 			pending.map(async (entry) => {
 				try {
@@ -56,12 +69,13 @@ export const PdfMergeTool = () => {
 				}
 			}),
 		);
-		setEntries(measured);
+		const measuredById = new Map(measured.map((entry) => [entry.id, entry]));
+		updateEntries((current) => current.map((entry) => measuredById.get(entry.id) ?? entry));
 	};
 
 	const move = (index: number, direction: -1 | 1) => {
 		setResult(null);
-		setEntries((current) => {
+		updateEntries((current) => {
 			const target = index + direction;
 			if (target < 0 || target >= current.length) return current;
 			const next = [...current];
@@ -72,7 +86,7 @@ export const PdfMergeTool = () => {
 
 	const remove = (id: string) => {
 		setResult(null);
-		setEntries((current) => current.filter((entry) => entry.id !== id));
+		updateEntries((current) => current.filter((entry) => entry.id !== id));
 	};
 
 	const merge = async () => {
@@ -114,7 +128,7 @@ export const PdfMergeTool = () => {
 			<MultiFileField
 				accept={ACCEPTED_PDF_TYPES}
 				disabled={busy}
-				hint="Pick two or more PDFs. They are joined in the order below — page content, fonts, and artwork are copied across untouched."
+				hint="Pick PDFs now or one at a time; each new selection is added to this list. They are joined in the order shown — remove any you don’t want."
 				id="merge-files"
 				label="PDFs to merge"
 				onFiles={(files) => void chooseFiles(files)}
