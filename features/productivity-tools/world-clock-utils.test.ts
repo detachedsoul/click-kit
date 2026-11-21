@@ -14,7 +14,17 @@ import {
 	zoneDateTime,
 	zoneName,
 	CLOCK_KEY,
+	WORLD_CITIES,
 } from "@/features/productivity-tools/world-clock-utils";
+
+describe("world city directory", () => {
+	it("offers valid locations across five continents", () => {
+		expect(WORLD_CITIES.length).toBeGreaterThanOrEqual(60);
+		expect(new Set(WORLD_CITIES.map((city) => city.zone)).size).toBe(WORLD_CITIES.length);
+		expect(new Set(WORLD_CITIES.map((city) => city.continent))).toEqual(new Set(["Africa", "Americas", "Europe", "Asia", "Oceania"]));
+		for (const city of WORLD_CITIES) expect(isZone(city.zone)).toBe(true);
+	});
+});
 
 describe("world clock", () => {
 	const instant = new Date("2026-01-15T12:00:00Z");

@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Heart, Plus, Star, Trash2 } from "lucide-react";
-import { ErrorNote, fieldClassName, hintClassName, labelClassName, rowButtonClassName, rowFieldClassName, selectClassName, smallActionClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
-import { TIME_ZONES } from "@/features/productivity-tools/timezone-utils";
+import { ErrorNote, fieldClassName, hintClassName, labelClassName, rowButtonClassName, selectClassName, smallActionClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { useStoredState } from "@/features/productivity-tools/stored-state";
 import {
 	CLOCK_KEY,
@@ -14,6 +13,7 @@ import {
 	isZone,
 	MAX_CITIES,
 	offsetAt,
+	WORLD_CITIES,
 	overlapSummary,
 	reviveZones,
 	toggleFavourite,
@@ -40,6 +40,7 @@ export const WorldClock = () => {
 	const [favourites, setFavourites] = useStoredState<string[]>(FAVOURITE_KEY, [], (raw) => reviveZones(raw));
 	const [now, setNow] = useState<Date | null>(null);
 	const [homeZone, setHomeZone] = useState("UTC");
+	const [selectedCity, setSelectedCity] = useState("");
 	const [newZone, setNewZone] = useState("");
 	const [sourceZone, setSourceZone] = useState("Africa/Lagos");
 	const [meetingTime, setMeetingTime] = useState("");
@@ -104,6 +105,7 @@ export const WorldClock = () => {
 			return;
 		}
 		setCities((current) => [...current, zone]);
+		setSelectedCity("");
 		setNewZone("");
 		setError("");
 		setMessage(`${zoneName(zone)} added to your clock.`);
@@ -155,7 +157,7 @@ export const WorldClock = () => {
 										</div>
 									</div>
 									<p className="m-0 font-mono text-[28px] leading-none tracking-[-.04em] text-ink" aria-label={`${zoneName(zone)} local time`}>
-										{now ? new Intl.DateTimeFormat("en-GB", { timeZone: zone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now) : "—:—"}
+										{now ? new Intl.DateTimeFormat("en-GB", { timeZone: zone, hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).format(now) : "—:—:—"}
 									</p>
 									<div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[11px] text-muted">
 										<span>{now ? new Intl.DateTimeFormat("en-GB", { timeZone: zone, weekday: "short", day: "numeric", month: "short", year: "numeric" }).format(now) : "Local date"}</span>
@@ -169,24 +171,34 @@ export const WorldClock = () => {
 					<p className="m-0 border border-dashed border-line p-4 text-sm text-muted">Your clock is empty. Add a city below to get time moving.</p>
 				)}
 
-				<div>
-					<label className={labelClassName} htmlFor="world-clock-zone">Add a city or IANA time zone</label>
-					<div className="mt-2 flex flex-wrap items-center gap-2">
+				<div className="grid gap-3 sm:grid-cols-2">
+					<div>
+						<label className={labelClassName} htmlFor="world-clock-city">Choose from {WORLD_CITIES.length} cities</label>
+						<select className={selectClassName} id="world-clock-city" onChange={(event) => { setSelectedCity(event.target.value); setError(""); }} value={selectedCity}>
+							<option value="">Choose a city…</option>
+							{["Africa", "Americas", "Europe", "Asia", "Oceania"].map((continent) => (
+								<optgroup key={continent} label={continent}>
+									{WORLD_CITIES.filter((city) => city.continent === continent).map((city) => (
+										<option disabled={cities.includes(city.zone)} key={city.zone} value={city.zone}>{city.label}</option>
+									))}
+								</optgroup>
+							))}
+						</select>
+						<button className={`${rowButtonClassName} mt-2`} disabled={!selectedCity || cities.length >= MAX_CITIES} onClick={() => addCity(selectedCity)} type="button"><Plus aria-hidden="true" size={13} /> Add city</button>
+					</div>
+					<div>
+						<label className={labelClassName} htmlFor="world-clock-zone">Or add a custom IANA time zone</label>
 						<input
 							aria-describedby={cityError ? "world-clock-error" : undefined}
-							className={rowFieldClassName}
+							className={fieldClassName}
 							id="world-clock-zone"
-							list="world-clock-zone-options"
 							onChange={(event) => { setNewZone(event.target.value); setError(""); }}
 							onKeyDown={(event) => { if (event.key === "Enter") addCity(); }}
-							placeholder="Try Asia/Singapore"
+							placeholder="America/Argentina/Buenos_Aires"
 							type="text"
 							value={newZone}
 						/>
-						<datalist id="world-clock-zone-options">
-							{TIME_ZONES.map((zone) => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
-						</datalist>
-						<button className={rowButtonClassName} disabled={cities.length >= MAX_CITIES} onClick={() => addCity()} type="button"><Plus aria-hidden="true" size={13} /> Add city</button>
+						<button className={`${rowButtonClassName} mt-2`} disabled={!newZone.trim() || cities.length >= MAX_CITIES} onClick={() => addCity()} type="button">Add custom zone</button>
 					</div>
 				</div>
 				{cityError ? <p className="m-0 text-xs text-[#8a3f30]" id="world-clock-error" role="alert">{cityError}</p> : null}
@@ -197,7 +209,7 @@ export const WorldClock = () => {
 						{quickAdd.map((zone) => <button className={smallActionClassName} key={zone} onClick={() => addCity(zone)} type="button">{zoneName(zone)}</button>)}
 					</div>
 				) : null}
-				<p className={hintClassName}>Add a standard city above, or type any valid IANA zone such as America/Argentina/Buenos_Aires. Cities and favourites are saved only in this browser.</p>
+				<p className={hintClassName}>Choose from cities across five continents, or add any valid IANA zone such as America/Argentina/Buenos_Aires. Cities and favourites are saved only in this browser.</p>
 			</section>
 
 			<section className="flex flex-col gap-3 border-t border-line pt-5" aria-labelledby="time-convert-title">

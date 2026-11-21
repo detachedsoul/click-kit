@@ -25,34 +25,53 @@ const setup = async () => {
 	const user = userEvent.setup();
 	render(<WorldClock />);
 	await screen.findByText(/Cities on your clock/u);
-	await waitFor(() => expect(screen.getByLabelText("Lagos local time").textContent).not.toBe("—:—"));
+	await waitFor(() => expect(screen.getByLabelText("Lagos local time").textContent).not.toBe("—:—:—"));
 	return user;
 };
 
 describe("world clock and time finder", () => {
 	it("starts with live local times, UTC offsets, and dates for three cities", async () => {
 		await setup();
-		expect(screen.getByLabelText("Lagos local time").textContent).toMatch(/^\d{2}:\d{2}$/u);
-		expect(screen.getByLabelText("London local time").textContent).toMatch(/^\d{2}:\d{2}$/u);
-		expect(screen.getByLabelText("New York local time").textContent).toMatch(/^\d{2}:\d{2}$/u);
+		expect(screen.getByLabelText("Lagos local time").textContent).toMatch(/^\d{2}:\d{2}:\d{2}$/u);
+		expect(screen.getByLabelText("London local time").textContent).toMatch(/^\d{2}:\d{2}:\d{2}$/u);
+		expect(screen.getByLabelText("New York local time").textContent).toMatch(/^\d{2}:\d{2}:\d{2}$/u);
 		expect(document.body.textContent).toContain("UTC+");
 		expect(document.body.textContent).toContain("same date");
 		expect(screen.getByRole("heading", { name: "Convert a meeting time" })).toBeTruthy();
 		expect(screen.getByRole("heading", { name: "Find a shared working hour" })).toBeTruthy();
 	});
 
-	it("adds a city from an IANA name and saves it across reloads", async () => {
+	it("adds a city from the worldwide list and saves it across reloads", async () => {
 		const user = await setup();
-		await user.type(screen.getByLabelText("Add a city or IANA time zone"), "Asia/Singapore");
+		await user.selectOptions(screen.getByLabelText(/Choose from \d+ cities/u), "Asia/Singapore");
 		await user.click(screen.getByRole("button", { name: "Add city" }));
 		expect(await screen.findByText("Asia/Singapore")).toBeTruthy();
 		await waitFor(() => expect(JSON.parse(store.get(CLOCK_KEY) ?? "[]")).toContain("Asia/Singapore"));
 	});
 
+	it("adds cities from different continents without needing to know their zone IDs", async () => {
+		const user = await setup();
+		const city = screen.getByLabelText(/Choose from \d+ cities/u);
+		for (const zone of ["Africa/Cairo", "Asia/Kathmandu", "Pacific/Auckland"]) {
+			await user.selectOptions(city, zone);
+			await user.click(screen.getByRole("button", { name: "Add city" }));
+		}
+		expect(await screen.findByLabelText("Cairo local time")).toBeTruthy();
+		expect(screen.getByLabelText("Kathmandu local time")).toBeTruthy();
+		expect(screen.getByLabelText("Auckland local time")).toBeTruthy();
+	});
+
+	it("adds a custom IANA zone outside the city directory", async () => {
+		const user = await setup();
+		await user.type(screen.getByLabelText("Or add a custom IANA time zone"), "America/Argentina/Buenos_Aires");
+		await user.click(screen.getByRole("button", { name: "Add custom zone" }));
+		expect(await screen.findByLabelText("Buenos Aires local time")).toBeTruthy();
+	});
+
 	it("tells you when a time zone name is not in the IANA database", async () => {
 		const user = await setup();
-		await user.type(screen.getByLabelText("Add a city or IANA time zone"), "Mars/Olympus");
-		await user.click(screen.getByRole("button", { name: "Add city" }));
+		await user.type(screen.getByLabelText("Or add a custom IANA time zone"), "Mars/Olympus");
+		await user.click(screen.getByRole("button", { name: "Add custom zone" }));
 		expect(screen.getByRole("alert").textContent).toContain("not a valid IANA time zone");
 	});
 
@@ -86,7 +105,6 @@ describe("world clock and time finder", () => {
 		await setup();
 		fireEvent.change(screen.getByLabelText("This time is in"), { target: { value: "America/New_York" } });
 		fireEvent.change(screen.getByLabelText("Date and local time"), { target: { value: "2026-03-08T02:30" } });
-		fireEvent.change(screen.getByLabelText("This time is in"), { target: { value: "America/New_York" } });
 		await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("does not exist"));
 	});
 
@@ -107,8 +125,8 @@ describe("world clock and time finder", () => {
 
 	it("rejects a duplicate city instead of making a second clock", async () => {
 		const user = await setup();
-		await user.type(screen.getByLabelText("Add a city or IANA time zone"), "Europe/London");
-		await user.click(screen.getByRole("button", { name: "Add city" }));
+		await user.type(screen.getByLabelText("Or add a custom IANA time zone"), "Europe/London");
+		await user.click(screen.getByRole("button", { name: "Add custom zone" }));
 		expect(screen.getByRole("alert").textContent).toContain("already on your clock");
 		expect(screen.getAllByLabelText("London local time")).toHaveLength(1);
 	});
