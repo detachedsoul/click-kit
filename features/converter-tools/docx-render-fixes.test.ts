@@ -1,7 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { fixDocxParagraphLayout, normalizeDocxLineSpacingXml } from "@/features/converter-tools/docx-render-fixes";
+import { fixDocxParagraphLayout, fixDocxTableLayout, hasRenderableDocxContent, normalizeDocxLineSpacingXml } from "@/features/converter-tools/docx-render-fixes";
 
 describe("DOCX browser-rendering fixes", () => {
+	it("adds cell breathing room and spacing around tables without flattening their contents", () => {
+		const root = document.createElement("div");
+		root.innerHTML = "<p>Before table</p><table><tbody><tr><td>Cell text</td><th>Heading</th></tr></tbody></table><p>After table</p>";
+		const table = root.querySelector("table")!;
+		fixDocxTableLayout(root);
+		expect(table.style.marginBlock).toBe("0.2em");
+		for (const cell of table.querySelectorAll<HTMLElement>("td, th")) {
+			expect(cell.style.paddingBlock).toBe("0.18em");
+			expect(cell.style.paddingInline).toBe("0.2em");
+		}
+		expect(table.textContent).toBe("Cell textHeading");
+	});
+
+	it("recognizes empty pagination pages but preserves text and image-only pages", () => {
+		const empty = document.createElement("section");
+		expect(hasRenderableDocxContent(empty)).toBe(false);
+		const text = document.createElement("section");
+		text.textContent = "Paragraph";
+		expect(hasRenderableDocxContent(text)).toBe(true);
+		const image = document.createElement("section");
+		image.innerHTML = "<img alt='Logo'>";
+		expect(hasRenderableDocxContent(image)).toBe(true);
+	});
+
 	it("uses Word's automatic default when a line rule is omitted", () => {
 		const xml = '<w:document xmlns:w="urn:word"><w:pPr><w:spacing w:after="0" w:line="240"/></w:pPr></w:document>';
 		expect(normalizeDocxLineSpacingXml(xml)).toContain('<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>');

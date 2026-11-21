@@ -34,6 +34,21 @@ export const normalizeDocxLineSpacing = async (bytes: Uint8Array) => {
 	return changed ? writeZip(entries.map(({ name, bytes: data }) => ({ name, data }))) : bytes.slice();
 };
 
+/** Keep collapsed table rules away from cell text and the paragraphs before and after each grid. */
+export const fixDocxTableLayout = (root: HTMLElement) => {
+	for (const table of root.querySelectorAll<HTMLElement>("table")) {
+		table.style.setProperty("margin-block", "0.2em", "important");
+		for (const cell of table.querySelectorAll<HTMLElement>("td, th")) {
+			cell.style.setProperty("padding-block", "0.18em", "important");
+			cell.style.setProperty("padding-inline", "0.2em", "important");
+		}
+	}
+};
+
+/** A page containing no text, table, or image is an empty pagination artifact. */
+export const hasRenderableDocxContent = (page: HTMLElement) =>
+	Boolean(page.textContent?.trim() || page.querySelector("table, img, svg, canvas, video, audio"));
+
 /** Correct too-short title line boxes and restore breathing room after centered all-caps headings. */
 export const fixDocxParagraphLayout = (root: HTMLElement) => {
 	for (const paragraph of root.querySelectorAll<HTMLElement>("p")) {

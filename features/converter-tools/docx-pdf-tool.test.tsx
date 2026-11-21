@@ -31,12 +31,12 @@ beforeEach(() => {
 		styleHost.innerHTML = "<style>.docx { color: #111; }</style>";
 		const wrapper = document.createElement("div");
 		wrapper.className = "docx-wrapper";
-		for (const [index, [width, height]] of [[816, 1056], [1056, 816]].entries()) {
+		for (const [index, [width, height]] of [[816, 1056], [816, 1056], [1056, 816]].entries()) {
 			const page = document.createElement("section");
 			page.className = "docx";
 			page.style.width = `${width}px`;
 			page.style.height = `${height}px`;
-			page.innerHTML = `<h1>Styled page ${index + 1}</h1><p>Source page content</p><img alt="Embedded document picture" src="data:image/png;base64,${Buffer.from(png).toString("base64")}">`;
+			page.innerHTML = index === 1 ? "" : `<h1>Styled page ${index + 1}</h1><p>Source page content</p><img alt="Embedded document picture" src="data:image/png;base64,${Buffer.from(png).toString("base64")}">`;
 			Object.defineProperty(page, "getBoundingClientRect", { value: () => ({ width, height, top: 0, left: 0, right: width, bottom: height, x: 0, y: 0, toJSON: () => ({}) }) });
 			wrapper.append(page);
 		}
