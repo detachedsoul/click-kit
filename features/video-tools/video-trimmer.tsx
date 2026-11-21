@@ -234,7 +234,7 @@ export const VideoTrimmer = () => {
 					Video file
 					<input accept={VIDEO_TRIM_ACCEPT} className={fileInputClassName} disabled={busy} id="video-trimmer-file" onChange={(event) => { chooseFile(event.target.files?.[0] ?? null); event.currentTarget.value = ""; }} type="file" />
 				</label>
-				<p className={hintClassName}>Files up to {Math.round(MAX_TRIM_VIDEO_BYTES / (1024 * 1024))} MB. Trimming runs locally using FFmpeg WebAssembly in a worker; first use downloads a roughly 32 MB video engine.</p>
+				<p className={hintClassName}>Files up to {Math.round(MAX_TRIM_VIDEO_BYTES / (1024 * 1024))} MB. Your video stays on this device.</p>
 				{error ? <ErrorNote message={error} /> : null}
 			</section>
 
@@ -299,7 +299,7 @@ export const VideoTrimmer = () => {
 										<input className="mt-2 h-11 w-full border border-field bg-surface px-3 font-mono text-sm text-ink" disabled={busy} id="video-trim-end-time" max={duration} min={Math.min(duration, start + 0.05)} onChange={(event) => setEndPoint(Number(event.target.value))} step="0.01" type="number" value={Number(end.toFixed(2))} />
 									</label>
 								</div>
-								<p className="m-0 text-xs text-muted">Selected clip: {formatTrimTime(trimLength)}. Output is re-encoded as H.264 video with AAC audio for broad MP4 compatibility.</p>
+								<p className="m-0 text-xs text-muted">Selected clip: {formatTrimTime(trimLength)}. The trimmed section will download as an MP4.</p>
 							</>
 						) : <p className="m-0 text-xs text-muted">Loading video metadata…</p>}
 					</section>
