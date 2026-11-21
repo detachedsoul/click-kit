@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AudioTrimmer } from "@/features/audio-tools/audio-trimmer";
+import { VideoFrameExtractor } from "@/features/video-tools/video-frame-extractor";
 import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
 import WordCounter from "@/features/text-tools/word-counter";
@@ -251,6 +252,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"barcode-scanner": BarcodeScanner,
 	"qr-generator": QrGeneratorTool,
 	"audio-trimmer": AudioTrimmer,
+	"video-frame-extractor": VideoFrameExtractor,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
 	"image-cropper": CropTool,
