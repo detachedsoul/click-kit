@@ -3,6 +3,7 @@
   "dates": {
     "age-calculator": null,
     "aspect-ratio": null,
+    "barcode-scanner": "2026-11-20",
     "base64": null,
     "bmi-calculator": null,
     "calculator": null,
@@ -167,6 +168,7 @@
     "timestamp-converter": null,
     "tip-split-calculator": null,
     "toml-json": null,
+    "typing-speed": "2026-11-20",
     "unicode-inspector": null,
     "unit-converter": null,
     "unit-price": null,

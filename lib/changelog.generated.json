@@ -7,6 +7,22 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "0036973",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "image",
+              "summary": "add a barcode and qr scanner",
+              "group": "Added"
+            },
+            {
+              "hash": "f47f954",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a typing speed tester",
+              "group": "Added"
+            },
+            {
               "hash": "0f46a2d",
               "date": "2026-11-20",
               "type": "feat",

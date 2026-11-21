@@ -57,6 +57,7 @@ import { FrequencyTool } from "@/features/text-tools/frequency-tool";
 import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
+import { BarcodeScanner } from "@/features/image-tools/barcode-scanner";
 import { CropTool } from "@/features/image-tools/crop-tool";
 import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
@@ -119,6 +120,7 @@ import { MeetingCostMeter } from "@/features/productivity-tools/meeting-cost";
 import { SubscriptionTracker } from "@/features/productivity-tools/subscription-tracker";
 import { ReadingList } from "@/features/productivity-tools/reading-list";
 import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
+import { TypingTester } from "@/features/productivity-tools/typing-tool";
 import { MealPlanner } from "@/features/productivity-tools/meal-planner";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -243,6 +245,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"word-frequency": FrequencyTool,
 	"text-wrapper": WrapTool,
 	"text-cipher": CipherTool,
+	"barcode-scanner": BarcodeScanner,
 	"qr-generator": QrGeneratorTool,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
@@ -275,6 +278,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"recipe-scaler": RecipeTool,
 	"team-splitter": TeamTool,
 	"meeting-planner": MeetingPlanner,
+	"typing-speed": TypingTester,
 	"pace-calculator": PaceCalculator,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,

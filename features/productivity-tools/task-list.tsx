@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, hintClassName, labelClassName, rowButtonClassName, rowFieldClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import {
 	addTask,
 	clearDone,
@@ -58,9 +58,9 @@ export const TaskList = () => {
 				<label className={labelClassName} htmlFor="task-text">
 					Add a task
 				</label>
-				<div className="mt-2 flex flex-wrap gap-2">
+				<div className="mt-2 flex flex-wrap items-center gap-2">
 					<input
-						className={`${fieldClassName} min-w-0 flex-1`}
+						className={rowFieldClassName}
 						id="task-text"
 						maxLength={MAX_TEXT}
 						onChange={(event) => {
@@ -74,7 +74,7 @@ export const TaskList = () => {
 						type="text"
 						value={draft}
 					/>
-					<button className={primaryButtonClassName} onClick={add} type="button">
+					<button className={rowButtonClassName} onClick={add} type="button">
 						Add
 					</button>
 				</div>
@@ -108,7 +108,7 @@ export const TaskList = () => {
 										<input
 											aria-label={`Rename ${task.text}`}
 											autoFocus
-											className={`${fieldClassName} mt-0 min-w-0 flex-1`}
+											className={rowFieldClassName}
 											maxLength={MAX_TEXT}
 											onBlur={() => {
 												setTasks(renameTask(tasks, task.id, editDraft));
