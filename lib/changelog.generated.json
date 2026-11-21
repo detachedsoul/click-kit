@@ -7,6 +7,14 @@
           "group": "Added",
           "entries": [
             {
+              "hash": "561865e",
+              "date": "2026-11-20",
+              "type": "feat",
+              "scope": "productivity",
+              "summary": "add a smart packing list",
+              "group": "Added"
+            },
+            {
               "hash": "0036973",
               "date": "2026-11-20",
               "type": "feat",

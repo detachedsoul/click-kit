@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **productivity** — add a smart packing list ([561865e](https://github.com/detachedsoul/click-kit/commit/561865e))
 - **image** — add a barcode and qr scanner ([0036973](https://github.com/detachedsoul/click-kit/commit/0036973))
 - **productivity** — add a typing speed tester ([f47f954](https://github.com/detachedsoul/click-kit/commit/f47f954))
 - **convert** — add word to pdf and pdf to word ([0f46a2d](https://github.com/detachedsoul/click-kit/commit/0f46a2d))
