@@ -7,10 +7,13 @@ describe("DOCX browser-rendering fixes", () => {
 		root.innerHTML = "<p>Before table</p><table><tbody><tr><td>Cell text</td><th>Heading</th></tr></tbody></table><p>After table</p>";
 		const table = root.querySelector("table")!;
 		fixDocxTableLayout(root);
-		expect(table.style.marginBlock).toBe("0.2em");
+		expect(table.style.marginTop).toBe("0.2em");
+		expect(table.style.marginBottom).toBe("0.2em");
 		for (const cell of table.querySelectorAll<HTMLElement>("td, th")) {
-			expect(cell.style.paddingBlock).toBe("0.18em");
-			expect(cell.style.paddingInline).toBe("0.2em");
+			expect(cell.style.paddingTop).toBe("0.18em");
+			expect(cell.style.paddingBottom).toBe("0.18em");
+			expect(cell.style.paddingLeft).toBe("0.2em");
+			expect(cell.style.paddingRight).toBe("0.2em");
 		}
 		expect(table.textContent).toBe("Cell textHeading");
 	});
