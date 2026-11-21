@@ -84,6 +84,11 @@ describe("Word to PDF tool", () => {
 		expect(Math.round(pdf.getPage(1).getSize().height)).toBe(612);
 		expect(mocks.renderAsync).toHaveBeenCalledWith(expect.any(ArrayBuffer), expect.any(HTMLElement), expect.any(HTMLElement), expect.objectContaining({ breakPages: true, ignoreFonts: false, renderHeaders: true }));
 		expect(mocks.html2canvas).toHaveBeenCalledTimes(2);
+		expect(mocks.html2canvas.mock.calls[0][1]).toMatchObject({ backgroundColor: "#ffffff", scale: 3, useCORS: true });
+		const clone = document.implementation.createHTMLDocument();
+		clone.body.innerHTML = '<section id="docx-render-preview" style="max-height: 480px; overflow: auto"><section class="docx"></section></section>';
+		mocks.html2canvas.mock.calls[0][1].onclone(clone, clone.body);
+		expect(clone.getElementById("docx-render-preview")?.getAttribute("style")).toContain("overflow: visible");
 		expect(mocks.html2canvas.mock.calls[0][0].querySelector("img")?.getAttribute("alt")).toBe("Embedded document picture");
 		expect(screen.getByText(/not selectable or searchable/u)).toBeTruthy();
 	});

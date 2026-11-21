@@ -12,7 +12,8 @@ type Output = { blob: Blob; mode: PdfMode; name: string; pageCount: number; word
 
 const MAX_BYTES = 30 * 1024 * 1024;
 const MAX_PAGES = 100;
-const CAPTURE_SCALE = 2;
+const MAX_CAPTURE_PIXELS = 10_000_000;
+const MAX_CAPTURE_SCALE = 3;
 const ACCEPT = ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 const waitForImagesAndFonts = async (root: HTMLElement) => {
@@ -83,11 +84,20 @@ export const DocxPdfTool = () => {
 					setProgress(`Capturing page ${index + 1} of ${pages.length}…`);
 					const bounds = page.getBoundingClientRect();
 					if (bounds.width <= 0 || bounds.height <= 0) throw new Error("A Word page has no visible size. Switch back to Visual layout and try again.");
+					const scale = Math.min(MAX_CAPTURE_SCALE, Math.sqrt(MAX_CAPTURE_PIXELS / (bounds.width * bounds.height)));
 					const canvas = await html2canvas(page, {
 						allowTaint: false,
 						backgroundColor: "#ffffff",
 						logging: false,
-						scale: CAPTURE_SCALE,
+						onclone: (clonedDocument) => {
+							const preview = clonedDocument.getElementById("docx-render-preview");
+							if (preview) {
+								preview.style.height = "auto";
+								preview.style.maxHeight = "none";
+								preview.style.overflow = "visible";
+							}
+						},
+						scale,
 						useCORS: true,
 						width: Math.ceil(bounds.width),
 						height: Math.ceil(bounds.height),
@@ -165,7 +175,7 @@ export const DocxPdfTool = () => {
 			{error ? <ErrorNote message={error} /> : null}
 			{busy ? <p className={hintClassName} role="status">{progress || (mode === "visual" ? "Rendering Word pages…" : "Rebuilding selectable text…")}</p> : null}
 			{mode === "visual" ? (
-				<section aria-label="Rendered Word preview" className="max-h-[480px] overflow-auto border border-line bg-[#eeede7]">
+				<section aria-label="Rendered Word preview" className="max-h-[480px] overflow-auto border border-line bg-[#eeede7]" id="docx-render-preview">
 					<div ref={stylesRef} />
 					<div ref={renderRef} />
 				</section>
@@ -177,7 +187,7 @@ export const DocxPdfTool = () => {
 							{ label: "Pages", value: String(output.pageCount) },
 							...(output.wordCount === undefined ? [] : [{ label: "Words", value: output.wordCount.toLocaleString() }]),
 							{ label: "PDF size", value: describeBytes(output.blob.size) },
-							{ label: "Output", value: output.mode === "visual" ? "Visual page images" : "Selectable text" },
+							{ label: "Output", value: output.mode === "visual" ? "High-resolution visual pages" : "Selectable text" },
 						]}
 					/>
 					<div className="flex flex-wrap items-center gap-2">
