@@ -81,6 +81,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "4e7497f",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "use explicit Word table spacing",
+              "group": "Fixed"
+            },
+            {
               "hash": "e1047fd",
               "date": "2026-11-21",
               "type": "fix",
