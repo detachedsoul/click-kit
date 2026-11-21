@@ -81,6 +81,22 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "347ee83",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "honor Word line spacing and wrapping",
+              "group": "Fixed"
+            },
+            {
+              "hash": "346558e",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "changelog",
+              "summary": "include audio visualizer in release notes",
+              "group": "Fixed"
+            },
+            {
               "hash": "a369f74",
               "date": "2026-11-21",
               "type": "fix",
