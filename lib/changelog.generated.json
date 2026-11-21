@@ -81,6 +81,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "9865dba",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "increase Word table clearance",
+              "group": "Fixed"
+            },
+            {
               "hash": "4e7497f",
               "date": "2026-11-21",
               "type": "fix",

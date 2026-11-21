@@ -20,6 +20,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **converters** — increase Word table clearance ([9865dba](https://github.com/detachedsoul/click-kit/commit/9865dba))
 - **converters** — use explicit Word table spacing ([4e7497f](https://github.com/detachedsoul/click-kit/commit/4e7497f))
 - **converters** — space Word tables and drop blank pages ([e1047fd](https://github.com/detachedsoul/click-kit/commit/e1047fd))
 - **image** — style OCR option and remove implementation note ([028b601](https://github.com/detachedsoul/click-kit/commit/028b601))
