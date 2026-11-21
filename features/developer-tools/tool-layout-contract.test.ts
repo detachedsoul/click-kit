@@ -9,7 +9,11 @@ import { describe, expect, it } from "vitest";
  * 2. every <select> uses the shared `select-input` class, which is the only
  *    thing keeping the caret inset equal to the text inset;
  * 3. every range slider carries the brand accent, because a bare one falls back
- *    to the browser's own blue and looks like it belongs to another site.
+ *    to the browser's own blue and looks like it belongs to another site;
+ * 4. a field that shares a row with a button uses the row field class, because the
+ *    caption margin a stacked field carries pushes it down inside the row and
+ *    stretches the button beside it, and `mt-0` cannot cancel it — both are margin
+ *    classes, and the stylesheet decides which one wins.
  */
 
 const ROOT = join(process.cwd(), "features");
@@ -123,12 +127,26 @@ const selectOverrideViolations = (file: string, source: string): Violation[] => 
 	return violations;
 };
 
+/** Fields that share a row with a button: `flex-1` means a row, and a row field must not carry the caption margin. */
+const rowFieldViolations = (file: string, lines: string[]): Violation[] => {
+	const violations: Violation[] = [];
+	lines.forEach((line, index) => {
+		// `rowFieldClassName` contains `fieldClassName`, so it has to be ruled out first.
+		if (line.includes("rowFieldClassName")) return;
+		if (!line.includes("fieldClassName")) return;
+		if (!/\bflex-1\b/u.test(line)) return;
+		violations.push(`${file.split("features/")[1]}:${index + 1}`);
+	});
+	return violations;
+};
+
 /** The caption gap: what sits between a label and its control must match for inputs and selects. */
 const captionGap = () => {
 	const css = readFileSync(CSS, "utf8");
 	const block = /\.select-input \{([\s\S]*?)\n\t\}/.exec(css)?.[1] ?? "";
 	const selectGap = /margin-top:\s*([\d.]+)rem/.exec(block)?.[1];
-	const fieldClass = /export const fieldClassName =\s*"([^"]*)"/.exec(readFileSync(TOOL_UI, "utf8"))?.[1] ?? "";
+	// The class is built from a shared part these days, so it can be a template literal.
+	const fieldClass = /export const fieldClassName =\s*[`"]([^`"]*)[`"]/u.exec(readFileSync(TOOL_UI, "utf8"))?.[1] ?? "";
 	const inputGap = /\bmt-(\d+(?:\.\d+)?)\b/.exec(fieldClass)?.[1];
 	return { selectGap: Number(selectGap), inputGap: Number(inputGap) * 0.25 };
 };
@@ -148,6 +166,11 @@ describe("tool layout contract", () => {
 		const { selectGap, inputGap } = captionGap();
 		expect(selectGap).toBeGreaterThan(0);
 		expect(selectGap).toBeCloseTo(inputGap, 5);
+	});
+
+	it("keeps the caption margin off a field that shares a row with a button", () => {
+		const violations = sourceFiles().flatMap((file) => rowFieldViolations(file, readFileSync(file, "utf8").split("\n")));
+		expect(violations, `Use rowFieldClassName for a field beside a button, so the two sit level:\n${violations.join("\n")}`).toEqual([]);
 	});
 
 	it("gives every slider the brand accent", () => {

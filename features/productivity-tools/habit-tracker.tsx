@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buttonClassName, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, hintClassName, labelClassName, rowButtonClassName, rowFieldClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import {
 	createHabit,
 	currentStreak,
@@ -92,9 +92,9 @@ export const HabitTracker = () => {
 				<label className={labelClassName} htmlFor="habit-name">
 					A habit you want to keep
 				</label>
-				<div className="mt-2 flex flex-wrap gap-2">
+				<div className="mt-2 flex flex-wrap items-center gap-2">
 					<input
-						className={`${fieldClassName} min-w-0 flex-1`}
+						className={rowFieldClassName}
 						id="habit-name"
 						maxLength={MAX_NAME}
 						onChange={(event) => {
@@ -108,7 +108,7 @@ export const HabitTracker = () => {
 						type="text"
 						value={name}
 					/>
-					<button className={primaryButtonClassName} onClick={add} type="button">
+					<button className={rowButtonClassName} onClick={add} type="button">
 						Track it
 					</button>
 				</div>
