@@ -1,6 +1,7 @@
 import {
 	AlignLeft,
 	ArrowLeftRight,
+	AudioWaveform,
 	Banknote,
 	BarChart3,
 	Binary,
@@ -264,6 +265,7 @@ export const tools: Tool[] = [
 	{ id: "image-contact-sheet", name: "Contact sheet builder", description: "Tile a batch of photos into one review sheet with optional file-name captions, laid out to a grid you choose.", category: "image", slug: "image-contact-sheet", keywords: ["contact sheet", "proof sheet", "grid", "montage", "photo review", "thumbnail sheet"], icon: LayoutGrid, status: "available" },
 	{ id: "image-compare", name: "Before & after comparison", description: "Put two versions of a picture side by side behind a draggable divider, then export the comparison as one image.", category: "image", slug: "image-compare", keywords: ["compare", "before after", "diff", "slider", "compression check", "quality"], icon: Columns2, status: "available" },
 	{ id: "file-splitter", name: "File splitter & joiner", description: "Split any file into numbered parts that fit an upload or email limit, then join the parts back into one identical file.", category: "image", slug: "file-splitter", keywords: ["split file", "join parts", "chunks", "large file", "merge", "upload limit", "attachment"], icon: Scissors, status: "available" },
+	{ id: "audio-trimmer", name: "Audio trimmer", description: "Cut a precise section from an MP3, WAV, M4A, or other browser-supported audio file. Shape the waveform, preview the selection, and download a trimmed PCM WAV — all on your device.", category: "image", slug: "audio-trimmer", keywords: ["audio trimmer", "trim audio", "cut audio", "mp3 cutter", "wav cutter", "m4a", "waveform", "audio clip", "podcast", "ringtone"], icon: AudioWaveform, status: "available" },
 	{ id: "zip-creator", name: "ZIP file creator", description: "Pack several files into one .zip archive in the browser, with optional compression and duplicate-name handling.", category: "image", slug: "zip-creator", keywords: ["zip", "archive", "compress", "bundle", "pack", "folder", "deflate"], icon: FileArchive, status: "available" },
 	{ id: "world-clock", name: "World clock & time finder", description: "Keep live local times for your cities, compare IANA time zones and UTC offsets, convert meeting times with date changes, find shared working hours, and save favourite places — with daylight saving handled for the date you choose.", category: "productivity", slug: "world-clock", keywords: ["world clock", "time finder", "local time", "world time", "time zone", "timezone", "UTC offset", "meeting time", "daylight saving", "cities", "remote team"], icon: Globe, status: "available" },
 	{ id: "meeting-planner", name: "Meeting time planner", description: "See the same hour across several time zones, with daylight saving handled, and find the window that works for everyone.", category: "productivity", slug: "meeting-planner", keywords: ["time zone", "timezone", "meeting", "overlap", "world clock", "remote team", "scheduling"], icon: Globe, status: "available" },
