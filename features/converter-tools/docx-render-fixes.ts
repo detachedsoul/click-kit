@@ -33,3 +33,30 @@ export const normalizeDocxLineSpacing = async (bytes: Uint8Array) => {
 	}
 	return changed ? writeZip(entries.map(({ name, bytes: data }) => ({ name, data }))) : bytes.slice();
 };
+
+/** Correct too-short title line boxes and restore breathing room after centered all-caps headings. */
+export const fixDocxParagraphLayout = (root: HTMLElement) => {
+	for (const paragraph of root.querySelectorAll<HTMLElement>("p")) {
+		const paragraphStyle = window.getComputedStyle(paragraph);
+		const text = paragraph.textContent?.trim() ?? "";
+		const textElements = [paragraph, ...paragraph.querySelectorAll<HTMLElement>("span")];
+		const largestFontSize = Math.max(0, ...textElements.map((element) => Number.parseFloat(window.getComputedStyle(element).fontSize) || 0));
+		const lineHeight = Number.parseFloat(paragraphStyle.lineHeight);
+
+		// Some Word styles specify an exact line box shorter than their large display font.
+		// Keep that from making a document title collide with the paragraph underneath.
+		if (largestFontSize > 0 && Number.isFinite(lineHeight) && lineHeight + 0.5 < largestFontSize) {
+			paragraph.style.lineHeight = `${Math.ceil(largestFontSize * 1.2)}px`;
+		}
+
+		const fontWeight = Number.parseInt(paragraphStyle.fontWeight, 10);
+		const isBold = paragraphStyle.fontWeight === "bold" || (Number.isFinite(fontWeight) && fontWeight >= 600);
+		const isCenteredHeading = text.length >= 12
+			&& text === text.toLocaleUpperCase()
+			&& paragraphStyle.textAlign === "center"
+			&& isBold;
+		if (isCenteredHeading && (Number.parseFloat(paragraphStyle.marginBottom) || 0) < 16) {
+			paragraph.style.marginBottom = "16px";
+		}
+	}
+};

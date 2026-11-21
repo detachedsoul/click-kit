@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
-import { normalizeDocxLineSpacing } from "@/features/converter-tools/docx-render-fixes";
+import { fixDocxParagraphLayout, normalizeDocxLineSpacing } from "@/features/converter-tools/docx-render-fixes";
 import { rasterPagesToPdf, type RasterPage } from "@/features/converter-tools/word-pdf-visual";
 import { docxToPdfTextOnly } from "@/features/converter-tools/word-pdf";
 
@@ -80,6 +80,7 @@ export const DocxPdfTool = () => {
 			wordWrappingRules.textContent = `.docx-wrapper .docx p, .docx-wrapper .docx li, .docx-wrapper .docx td, .docx-wrapper .docx th { word-break: normal !important; overflow-wrap: break-word !important; hyphens: manual !important; }`;
 			stylesRef.current.append(wordWrappingRules);
 			await waitForImagesAndFonts(renderRef.current);
+			fixDocxParagraphLayout(renderRef.current);
 			const pages = Array.from(renderRef.current.querySelectorAll<HTMLElement>(".docx-wrapper > section.docx"));
 			if (!pages.length) throw new Error("The Word file did not contain any pages the browser could render.");
 			if (pages.length > MAX_PAGES) throw new Error(`This document has ${pages.length} pages. Split it into files of ${MAX_PAGES} pages or fewer to keep rendering within browser memory limits.`);
