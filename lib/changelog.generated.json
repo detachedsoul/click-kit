@@ -81,6 +81,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "e1047fd",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "space Word tables and drop blank pages",
+              "group": "Fixed"
+            },
+            {
               "hash": "028b601",
               "date": "2026-11-21",
               "type": "fix",

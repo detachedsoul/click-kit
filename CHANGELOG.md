@@ -20,6 +20,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **converters** — space Word tables and drop blank pages ([e1047fd](https://github.com/detachedsoul/click-kit/commit/e1047fd))
 - **image** — style OCR option and remove implementation note ([028b601](https://github.com/detachedsoul/click-kit/commit/028b601))
 - **converters** — prevent Word title overlap and crowding ([b7c3660](https://github.com/detachedsoul/click-kit/commit/b7c3660))
 - **converters** — honor Word line spacing and wrapping ([347ee83](https://github.com/detachedsoul/click-kit/commit/347ee83))
