@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	audioFileType,
 	clampTrimRange,
+	encodeTrimmedMp3,
 	encodeTrimmedWav,
 	formatAudioTime,
 	MAX_AUDIO_BYTES,
@@ -99,6 +100,17 @@ describe("WAV export", () => {
 		const view = new DataView(await blob.arrayBuffer());
 		expect(view.getUint16(22, true)).toBe(2);
 		expect([view.getInt16(44, true), view.getInt16(46, true), view.getInt16(48, true), view.getInt16(50, true)]).toEqual([-32768, 32767, 0, -16384]);
+	});
+
+	it("encodes the selected frames as a playable MP3", async () => {
+		const samples = new Float32Array(44_100);
+		for (let frame = 0; frame < samples.length; frame += 1) samples[frame] = Math.sin((frame / 44_100) * Math.PI * 440 * 2) * 0.5;
+		const blob = await encodeTrimmedMp3(fakeBuffer([Array.from(samples)], 44_100), 0, 1, 128);
+		const bytes = new Uint8Array(await blob.arrayBuffer());
+		expect(blob.type).toBe("audio/mpeg");
+		expect(bytes.length).toBeGreaterThan(1_000);
+		expect(bytes[0]).toBe(0xff);
+		expect(bytes[1] & 0xe0).toBe(0xe0);
 	});
 
 	it("expands identical trim points to the smallest non-empty WAV selection", () => {

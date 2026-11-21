@@ -1,7 +1,10 @@
-/** Keep the browser decode path honest: the output is PCM WAV, so no server or codec upload is involved. */
+/** The source and both output encoders stay on-device; no audio is uploaded to a server. */
 export const MAX_AUDIO_BYTES = 100 * 1024 * 1024;
 export const MIN_SELECTION_SECONDS = 0.01;
 export const PEAK_COUNT = 800;
+export const MP3_BITRATES = [128, 192, 256, 320] as const;
+export type Mp3Bitrate = (typeof MP3_BITRATES)[number];
+export const MAX_MP3_BYTES = 100 * 1024 * 1024;
 export const AUDIO_ACCEPT = ".mp3,.wav,.m4a,.aac,.ogg,.oga,.opus,.flac,.webm,.mp4,audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,audio/opus,audio/flac,audio/webm";
 
 const EXTENSION_TYPE: Record<string, string> = {
@@ -72,6 +75,7 @@ export const encodeTrimmedWav = (buffer: AudioBuffer, startSeconds: number, endS
 	const channels = buffer.numberOfChannels;
 	const bytesPerSample = 2;
 	const dataBytes = frames * channels * bytesPerSample;
+	if (dataBytes > 0xffff_ffff - 36) throw new Error("That WAV selection is too large. Choose a shorter section or export it as MP3.");
 	const output = new ArrayBuffer(44 + dataBytes);
 	const view = new DataView(output);
 	const writeText = (offset: number, text: string) => {
@@ -100,4 +104,68 @@ export const encodeTrimmedWav = (buffer: AudioBuffer, startSeconds: number, endS
 		}
 	}
 	return new Blob([output], { type: "audio/wav" });
+};
+
+/**
+ * MP3 is encoded entirely in JS so exporting does not need a server or FFmpeg runtime.
+ * If an AudioBuffer uses an unusual rate, linearly resample it to 44.1 kHz, which LAME supports.
+ */
+export const encodeTrimmedMp3 = async (buffer: AudioBuffer, startSeconds: number, endSeconds: number, bitrate: Mp3Bitrate) => {
+	const { start, end } = clampTrimRange(buffer.duration, startSeconds, endSeconds);
+	const inputStart = Math.max(0, Math.floor(start * buffer.sampleRate));
+	const inputEnd = Math.min(buffer.length, Math.ceil(end * buffer.sampleRate));
+	const inputFrames = inputEnd - inputStart;
+	if (inputFrames <= 0) throw new Error("Select a longer section of audio before exporting.");
+
+	const supportedRates = new Set([8_000, 11_025, 12_000, 16_000, 22_050, 24_000, 32_000, 44_100, 48_000]);
+	const sampleRate = supportedRates.has(buffer.sampleRate) ? buffer.sampleRate : 44_100;
+	const ratio = buffer.sampleRate / sampleRate;
+	const outputFrames = Math.ceil(inputFrames / ratio);
+	const estimate = Math.ceil((outputFrames / sampleRate) * bitrate * 1_000 / 8);
+	if (estimate > MAX_MP3_BYTES) throw new Error("That MP3 would exceed 100 MB. Choose a shorter section or a lower bitrate.");
+
+	const { Mp3Encoder } = await import("@breezystack/lamejs");
+	const sourceChannels = Array.from({ length: buffer.numberOfChannels }, (_, index) => buffer.getChannelData(index));
+	const channels = buffer.numberOfChannels === 1 ? 1 : 2;
+	const encoder = new Mp3Encoder(channels, sampleRate, bitrate);
+	const blocks: Uint8Array[] = [];
+	const blockSize = 1_152;
+	const toInt16 = (value: number) => {
+		const sample = Math.max(-1, Math.min(1, value));
+		return sample < 0 ? Math.round(sample * 0x8000) : Math.round(sample * 0x7fff);
+	};
+
+	for (let firstOutput = 0; firstOutput < outputFrames; firstOutput += blockSize) {
+		const count = Math.min(blockSize, outputFrames - firstOutput);
+		const left = new Int16Array(count);
+		const right = channels === 2 ? new Int16Array(count) : undefined;
+		for (let index = 0; index < count; index += 1) {
+			const sourcePosition = inputStart + (firstOutput + index) * ratio;
+			const floor = Math.min(inputEnd - 1, Math.floor(sourcePosition));
+			const ceil = Math.min(inputEnd - 1, floor + 1);
+			const fraction = sourcePosition - floor;
+			const sampleAt = (channel: number) => {
+				const data = sourceChannels[channel];
+				return (data[floor] ?? 0) * (1 - fraction) + (data[ceil] ?? 0) * fraction;
+			};
+			const mix = (outputChannel: number) => {
+				if (buffer.numberOfChannels <= 2) return sampleAt(outputChannel);
+				let sum = 0;
+				let count = 0;
+				for (let channel = outputChannel; channel < buffer.numberOfChannels; channel += 2) {
+					sum += sampleAt(channel);
+					count += 1;
+				}
+				return count ? sum / count : 0;
+			};
+			left[index] = toInt16(mix(0));
+			if (right) right[index] = toInt16(mix(1));
+		}
+		const encoded = encoder.encodeBuffer(left, right);
+		if (encoded.length) blocks.push(encoded);
+	}
+	const tail = encoder.flush();
+	if (tail.length) blocks.push(tail);
+	if (!blocks.length) throw new Error("The MP3 encoder did not produce audio. Try WAV instead.");
+	return new Blob(blocks.map((block) => new Uint8Array(block).buffer), { type: "audio/mpeg" });
 };

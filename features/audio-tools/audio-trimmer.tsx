@@ -2,21 +2,25 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Pause, Play, Scissors, Upload } from "lucide-react";
-import { ErrorNote, fieldClassName, hintClassName, labelClassName, smallActionClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { ErrorNote, fieldClassName, hintClassName, labelClassName, smallActionClassName, selectClassName, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { fileInputClassName } from "@/features/image-tools/image-file-shared";
 import {
 	AUDIO_ACCEPT,
 	clampTrimRange,
+	encodeTrimmedMp3,
 	encodeTrimmedWav,
 	audioFileType,
 	formatAudioTime,
 	MAX_AUDIO_BYTES,
+	MP3_BITRATES,
+	type Mp3Bitrate,
 	validateAudioFile,
 	waveformPeaks,
 } from "@/features/audio-tools/audio-trimmer-utils";
 
 const PEAK_WIDTH = 1000;
 const PEAK_HEIGHT = 120;
+type ExportFormat = "wav" | "mp3";
 
 const Waveform = ({ peaks, duration, start, end, current }: { peaks: number[]; duration: number; start: number; end: number; current: number }) => {
 	const selectionStart = duration ? (start / duration) * PEAK_WIDTH : 0;
@@ -46,8 +50,12 @@ export const AudioTrimmer = () => {
 	const [current, setCurrent] = useState(0);
 	const [playing, setPlaying] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [encoding, setEncoding] = useState(false);
 	const [error, setError] = useState("");
 	const [exported, setExported] = useState<Blob | null>(null);
+	const [exportFormat, setExportFormat] = useState<ExportFormat>("wav");
+	const [exportedFormat, setExportedFormat] = useState<ExportFormat>("wav");
+	const [bitrate, setBitrate] = useState<Mp3Bitrate>(192);
 
 	const sourceUrl = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
 	const outputUrl = useMemo(() => (exported ? URL.createObjectURL(exported) : ""), [exported]);
@@ -141,13 +149,20 @@ export const AudioTrimmer = () => {
 		} else begin();
 	};
 
-	const exportSelection = () => {
+	const exportSelection = async () => {
 		if (!buffer) return;
+		setEncoding(true);
 		try {
-			setExported(encodeTrimmedWav(buffer, start, end));
+			const output = exportFormat === "wav"
+				? encodeTrimmedWav(buffer, start, end)
+				: await encodeTrimmedMp3(buffer, start, end, bitrate);
+			setExported(output);
+			setExportedFormat(exportFormat);
 			setError("");
 		} catch (caught) {
-			setError(caught instanceof Error ? caught.message : "Could not export this selection.");
+			setError(caught instanceof Error ? caught.message : `Could not export this selection as ${exportFormat.toUpperCase()}.`);
+		} finally {
+			setEncoding(false);
 		}
 	};
 
@@ -164,7 +179,7 @@ export const AudioTrimmer = () => {
 					Audio file
 					<input accept={AUDIO_ACCEPT} className={fileInputClassName} disabled={loading} id="audio-trimmer-file" onChange={(event) => { void loadFile(event.target.files?.[0] ?? null); event.currentTarget.value = ""; }} type="file" />
 				</label>
-				<p className={hintClassName}>Files up to {Math.round(MAX_AUDIO_BYTES / 1024 / 1024)} MB. Input support depends on your browser&apos;s built-in audio decoder; the trimmed download is standard PCM WAV.</p>
+				<p className={hintClassName}>Files up to {Math.round(MAX_AUDIO_BYTES / 1024 / 1024)} MB. Input support depends on your browser&apos;s built-in audio decoder; download as uncompressed WAV or MP3.</p>
 				{loading ? <p className="m-0 text-xs text-muted" role="status">Decoding audio…</p> : null}
 				{error ? <ErrorNote message={error} /> : null}
 			</section>
@@ -204,13 +219,29 @@ export const AudioTrimmer = () => {
 						<p className="m-0 text-xs text-muted">Selected section: {formatAudioTime(selectedLength)}. Set either end to hundredths of a second, or drag its slider.</p>
 					</section>
 
+					<div className="grid gap-3 sm:grid-cols-2">
+						<label className={labelClassName} htmlFor="audio-export-format">Download format
+							<select className={selectClassName} id="audio-export-format" onChange={(event) => { setExportFormat(event.target.value as ExportFormat); setExported(null); }} value={exportFormat}>
+								<option value="wav">WAV · uncompressed PCM</option>
+								<option value="mp3">MP3 · compressed</option>
+							</select>
+						</label>
+						{exportFormat === "mp3" ? (
+							<label className={labelClassName} htmlFor="audio-mp3-bitrate">MP3 quality · {bitrate} kbps
+								<select className={selectClassName} id="audio-mp3-bitrate" onChange={(event) => { setBitrate(Number(event.target.value) as Mp3Bitrate); setExported(null); }} value={bitrate}>
+									{MP3_BITRATES.map((rate) => <option key={rate} value={rate}>{rate} kbps</option>)}
+								</select>
+							</label>
+						) : <p className={`${hintClassName} self-end`}>WAV keeps the decoded samples without MP3 compression.</p>}
+					</div>
+
 					<div className="flex flex-wrap items-center gap-2">
 						<button className={smallActionClassName} onClick={playSelection} type="button"><Play aria-hidden="true" size={13} /> Preview selection</button>
 						<button className={smallActionClassName} disabled={!playing} onClick={stopAudio} type="button"><Pause aria-hidden="true" size={13} /> Pause</button>
-						<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-1.5 border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={exportSelection} type="button"><Scissors aria-hidden="true" size={13} /> Export trimmed WAV</button>
-						{outputUrl ? <a className={smallActionClassName} download={`${stem}_trimmed.wav`} href={outputUrl}><Download aria-hidden="true" size={13} /> Download WAV</a> : null}
+						<button className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-1.5 border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-wait disabled:opacity-70" disabled={encoding} onClick={() => { void exportSelection(); }} type="button"><Scissors aria-hidden="true" size={13} /> {encoding ? "Encoding…" : `Export trimmed ${exportFormat.toUpperCase()}`}</button>
+						{outputUrl ? <a className={smallActionClassName} download={`${stem}_trimmed.${exportedFormat}`} href={outputUrl}><Download aria-hidden="true" size={13} /> Download {exportedFormat.toUpperCase()}</a> : null}
 					</div>
-					{exported ? <p className="m-0 text-xs text-ink" role="status">Trimmed WAV ready · {(exported.size / 1024).toFixed(1)} KB · {formatAudioTime(selectedLength)}</p> : null}
+					{exported ? <p className="m-0 text-xs text-ink" role="status">Trimmed {exportedFormat.toUpperCase()} ready · {(exported.size / 1024).toFixed(1)} KB · {formatAudioTime(selectedLength)}</p> : null}
 					<audio
 						aria-hidden="true"
 						className="sr-only"
@@ -232,7 +263,7 @@ export const AudioTrimmer = () => {
 				</>
 			) : (
 				<p className="m-0 flex items-center gap-2 border border-dashed border-line p-4 text-xs leading-relaxed text-muted">
-					<Upload aria-hidden="true" className="shrink-0 text-forest" size={16} /> Choose an audio file to see its waveform, set a precise range, preview it, and export a trimmed WAV.
+					<Upload aria-hidden="true" className="shrink-0 text-forest" size={16} /> Choose an audio file to see its waveform, set a precise range, preview it, and download a trimmed WAV or MP3.
 				</p>
 			)}
 		</ToolPanel>

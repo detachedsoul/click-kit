@@ -67,6 +67,17 @@ describe("audio trimmer", () => {
 		expect(screen.getByRole("status").textContent).toContain("Trimmed WAV ready");
 	});
 
+	it("exports MP3 at the chosen bitrate and downloads with the right extension", async () => {
+		const { user } = await upload();
+		await user.selectOptions(screen.getByLabelText("Download format"), "mp3");
+		await user.selectOptions(screen.getByLabelText(/MP3 quality/u), "128");
+		await user.click(screen.getByRole("button", { name: /Export trimmed MP3/u }));
+		const link = await screen.findByRole("link", { name: /Download MP3/u });
+		expect(link.getAttribute("download")).toBe("voice_trimmed.mp3");
+		expect(link.getAttribute("href")).toBe("blob:audio-test");
+		expect(screen.getByRole("status").textContent).toContain("Trimmed MP3 ready");
+	});
+
 	it("plays the selection and can pause it", async () => {
 		const { container, user } = await upload();
 		const audio = container.querySelector("audio");
