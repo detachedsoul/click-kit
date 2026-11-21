@@ -35,7 +35,7 @@ export const HtmlToMarkdownTool = () => {
 	return (
 		<ToolPanel>
 			<TextAreaField
-				hint="Paste a full page or just a fragment. Scripts, styles, and the page head are dropped; headings, lists, quotes, code, tables, links, and images become Markdown."
+				hint="Paste a full page or just a fragment. Scripts, styles, and the page head are dropped; common text structure, links, and image references become Markdown. CSS, exact visual layout, and bundled image files are not preserved."
 				id="html-markdown-input"
 				label="HTML input"
 				onChange={setSource}

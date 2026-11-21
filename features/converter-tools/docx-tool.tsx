@@ -43,7 +43,7 @@ export const DocxTool = () => {
 		<ToolPanel>
 			<FileField
 				accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-				hint="Headings, paragraphs, bullet lists, bold and italic text, and tables come across. Comments, tracked changes, and text boxes are left out rather than guessed at."
+				hint="Text structure becomes Markdown/plain text: headings, lists, emphasis, and tables. Page layout, fonts, pictures, columns, comments, tracked changes, and text boxes are not a 1:1 match and are not included."
 				id="docx-file"
 				label="Word document (.docx)"
 				onFile={(chosen) => {

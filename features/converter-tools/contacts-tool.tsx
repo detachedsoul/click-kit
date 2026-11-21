@@ -59,8 +59,8 @@ export const ContactsConverterTool = () => {
 			<TextAreaField
 				hint={
 					direction === "vcard-to-csv"
-						? "Paste one card or a whole address book. Wrapped lines are joined back together, and typed numbers keep their spacing."
-						: "The first line is the header. Headings are matched loosely, so Name, Full name, and NAME all work."
+						? "Paste one card or a whole address book. Wrapped lines are joined back together; common contact fields are mapped, while photos and extra/custom vCard properties are not represented in CSV."
+						: "The first line is the header. Headings are matched loosely; only the listed contact columns are written back, so other CSV fields are not included in vCards."
 				}
 				id="contacts-input"
 				label={direction === "vcard-to-csv" ? "vCards" : "CSV"}
@@ -85,7 +85,7 @@ export const ContactsConverterTool = () => {
 					value={result.value}
 				/>
 			) : null}
-			<p className={hintClassName}>Names, numbers, and addresses are handled in this tab; nothing is uploaded.</p>
+			<p className={hintClassName}>Only the fields shown in the CSV columns are round-tripped; extra phone numbers, emails, photos, and custom vCard properties can be lost. Nothing is uploaded.</p>
 		</ToolPanel>
 	);
 };

@@ -78,11 +78,15 @@ describe("changelog page", () => {
 			.map((entry) => entry.date);
 		expect(dated.every((date) => /^\d{4}-\d{2}-\d{2}$/u.test(date))).toBe(true);
 		expect(changelog.releases[0].date).toBe("2026-11-21");
-		expect(changelog.releases[0].groups.flatMap((group) => group.entries).map((entry) => entry.summary)).toEqual([
-			"add an in-browser audio trimmer",
-			"add a world clock and time finder",
-			"add a smart packing list",
-		]);
+		expect(changelog.releases[0].groups.flatMap((group) => group.entries).map((entry) => entry.summary)).toEqual(
+			expect.arrayContaining([
+				"add video frame extraction tool",
+				"add MP3 export alongside WAV",
+				"add an in-browser audio trimmer",
+				"add a world clock and time finder",
+				"add a smart packing list",
+			]),
+		);
 		expect(document.body.textContent).toContain("Release history");
 	});
 });

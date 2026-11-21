@@ -1,11 +1,9 @@
 /**
- * Word documents (.docx) to PDF.
+ * Text-only Word (.docx) to PDF fallback.
  *
- * The text is read out of `word/document.xml`, with its headings, its bold and italic runs, its
- * lists, and its tables, and then laid out again on fresh A4 or Letter pages with pdf-lib.
- * Nothing is rasterised: the result is real text you can select and search. Word-only extras —
- * comments, tracked changes, text boxes, images, footnotes — are left behind, and the tool says
- * so rather than quietly dropping them.
+ * This intentionally rebuilds text with standard fonts and simple layout, so it does not match
+ * the Word document visually. Use the visual renderer in word-pdf-tool for a layout-preserving
+ * PDF; this mode exists for selectable/searchable text and states its limitations in the UI.
  */
 
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
@@ -246,7 +244,7 @@ export type WordPdfResult = { bytes: Uint8Array; pageCount: number; wordCount: n
  * Renders the text of a .docx onto fresh pages. Throws when the document has nothing to say,
  * because an empty PDF is not a useful answer.
  */
-export const docxToPdf = async (bytes: Uint8Array, options: WordPdfOptions = {}): Promise<WordPdfResult> => {
+export const docxToPdfTextOnly = async (bytes: Uint8Array, options: WordPdfOptions = {}): Promise<WordPdfResult> => {
 	const blocks = await readDocxBlocks(bytes);
 	const wordCount = blocks.reduce((total, block) => {
 		if (block.kind === "table") return total + block.rows.flat().join(" ").split(/\s+/u).filter(Boolean).length;

@@ -67,8 +67,8 @@ export const CalendarConverterTool = () => {
 			<TextAreaField
 				hint={
 					direction === "ics-to-csv"
-						? "Times keep the wall clock written in the file; repeating events are carried as their rule text."
-						: "Dates can be 2026-11-20 10:00 or just 2026-11-20. Timed events are written in UTC, the way calendar apps expect."
+						? "Event title, dates, location, description, and recurrence text come across. Attendees, alarms, organizer details, and other calendar properties are not represented in CSV."
+						: "Dates can be 2026-11-20 10:00 or just 2026-11-20. Timed events are written as UTC; timezone identity and unsupported calendar properties are not a 1:1 round trip."
 				}
 				id="calendar-input"
 				label={direction === "ics-to-csv" ? "Calendar (.ics)" : "CSV"}

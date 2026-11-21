@@ -2,7 +2,7 @@ import zlib from "node:zlib";
 import { PDFDocument, PDFRawStream } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 import { writeZip } from "@/features/converter-tools/zip-write";
-import { docxToPdf, printable } from "@/features/converter-tools/word-pdf";
+import { docxToPdfTextOnly, printable } from "@/features/converter-tools/word-pdf";
 
 const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
@@ -57,7 +57,7 @@ const drawnText = (content: string) =>
 		.join("");
 
 const convert = async (body: string, numbering?: string, options?: { pageSize?: "a4" | "letter" }) => {
-	const result = await docxToPdf(docxOf(body, numbering), options);
+	const result = await docxToPdfTextOnly(docxOf(body, numbering), options);
 	return { ...result, doc: await PDFDocument.load(result.bytes) };
 };
 
@@ -150,10 +150,10 @@ describe("Word to PDF", () => {
 	});
 
 	it("refuses a document with nothing in it", async () => {
-		await expect(docxToPdf(docxOf(""))).rejects.toThrow(/no text/u);
+		await expect(docxToPdfTextOnly(docxOf(""))).rejects.toThrow(/no text/u);
 	});
 
 	it("refuses a file that is not a Word document", async () => {
-		await expect(docxToPdf(writeZip([{ data: "nope", name: "readme.txt" }]))).rejects.toThrow(/not a Word document/u);
+		await expect(docxToPdfTextOnly(writeZip([{ data: "nope", name: "readme.txt" }]))).rejects.toThrow(/not a Word document/u);
 	});
 });
