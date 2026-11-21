@@ -284,4 +284,36 @@
 		-webkit-appearance: auto;
 		background: none;
 	}
+
+	/* The tool lives inside a full product page: breadcrumbs, the tool's introduction, and related
+	   cards are useful on screen but belong nowhere on this printed packing list. Keep the one
+	   tool panel, and within it keep only the sections marked as print content. */
+	body:has([data-print-page="packing-list"]) > * {
+		display: none !important;
+	}
+
+	body:has([data-print-page="packing-list"]) > main {
+		display: block !important;
+		margin: 0;
+		padding: 0;
+	}
+
+	body:has([data-print-page="packing-list"]) > main > [data-print-page="packing-list"] {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+	}
+
+	body:has([data-print-page="packing-list"]) [data-print-page="packing-list"] > :not([data-print="packing-list"]) {
+		display: none !important;
+	}
+
+	body:has([data-print-page="packing-list"]) [data-print="packing-list"] {
+		display: block !important;
+		margin: 0;
+		border: 0;
+		background: #fff;
+		padding: 0;
+		box-shadow: none;
+	}
 }
