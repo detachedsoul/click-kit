@@ -31,6 +31,19 @@ export const errorClassName = "m-0 whitespace-pre-wrap break-words text-xs text-
 export const buttonClassName =
 	"inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
+/**
+ * The small action that stands beside <CopyTextButton>. Copy is 34 pixels tall and sets its label
+ * at 11 pixels; a full-size button next to it is four pixels taller and looks like a mistake when
+ * the two sit in one row, which is where they always sit.
+ */
+const smallActionParts = "inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-1.5 px-2.5 text-[11px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
+/** A secondary action at Copy's height: a link or a button beside it. */
+export const smallActionClassName = `${smallActionParts} border border-line bg-surface text-[#54554e] hover:border-[#5f6259] hover:text-ink`;
+
+/** The main action of a panel at Copy's height, for the row where Copy stands first. */
+export const smallPrimaryActionClassName = `${smallActionParts} border border-forest bg-forest text-white hover:bg-[#354d44]`;
+
 const primaryParts = "cursor-pointer items-center justify-center gap-1.5 border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
 
 export const primaryButtonClassName = `inline-flex min-h-10 ${primaryParts}`;

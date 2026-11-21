@@ -112,6 +112,18 @@ describe("the barcode scanner", () => {
 		expect(link.getAttribute("target")).toBe("_blank");
 	});
 
+	it("puts the open link at the same height as the copy button beside it", async () => {
+		decoder.readImageFile.mockResolvedValue([{ format: "qr_code", value: "https://example.com/hello" }]);
+		const user = await setup();
+		await uploadPicture(user);
+
+		const link = await screen.findByRole("link", { name: /Open link/u });
+		const [copy] = screen.getAllByRole("button", { name: "Copy" });
+		// Copy is 34px; anything standing in its row has to be 34px too.
+		expect(copy.className).toContain("min-h-[34px]");
+		expect(link.className).toContain("min-h-[34px]");
+	});
+
 	it("copies the value and keeps the scan in the history", async () => {
 		decoder.readImageFile.mockResolvedValue([{ format: "ean_13", value: "4901234567894" }]);
 		const user = await setup();

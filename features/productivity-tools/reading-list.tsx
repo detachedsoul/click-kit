@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, Trash2 } from "lucide-react";
-import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, smallActionClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { CopyTextButton } from "@/features/text-tools/text-tool-shared";
 import { todayIso } from "@/features/productivity-tools/local-day";
 import { clearStore, useStoredState } from "@/features/productivity-tools/stored-state";
@@ -168,7 +168,7 @@ export const ReadingList = () => {
 			<div className="flex flex-wrap items-center gap-3">
 				<CopyTextButton text={readingListAsMarkdown(books)} />
 				<button
-					className={buttonClassName}
+					className={smallActionClassName}
 					onClick={() => {
 						setBooks([]);
 						clearStore(READING_KEY);

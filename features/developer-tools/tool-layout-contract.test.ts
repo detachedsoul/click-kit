@@ -13,7 +13,10 @@ import { describe, expect, it } from "vitest";
  * 4. a field that shares a row with a button uses the row field class, because the
  *    caption margin a stacked field carries pushes it down inside the row and
  *    stretches the button beside it, and `mt-0` cannot cancel it — both are margin
- *    classes, and the stylesheet decides which one wins.
+ *    classes, and the stylesheet decides which one wins;
+ * 5. anything standing beside a Copy button is a small action, because Copy is 34
+ *    pixels tall and the full-size buttons are 36 and 40, which reads as a mistake
+ *    when the two sit in one row.
  */
 
 const ROOT = join(process.cwd(), "features");
@@ -140,6 +143,22 @@ const rowFieldViolations = (file: string, lines: string[]): Violation[] => {
 	return violations;
 };
 
+/** A full-size button beside a Copy button: Copy is 34px, the buttons are 36 and 40. */
+const copyRowViolations = (file: string, lines: string[]): Violation[] => {
+	const violations: Violation[] = [];
+	lines.forEach((line, index) => {
+		// Imports name every class in the file and sit nowhere near a row.
+		if (line.trimStart().startsWith("import ")) return;
+		if (!/className=/u.test(line)) return;
+		if (!/buttonClassName|primaryButtonClassName/u.test(line)) return;
+		const near = lines.slice(Math.max(0, index - 6), index + 7);
+		if (near.some((line2) => !line2.trimStart().startsWith("import ") && line2.includes("CopyTextButton"))) {
+			violations.push(`${file.split("features/")[1]}:${index + 1}`);
+		}
+	});
+	return violations;
+};
+
 /** The caption gap: what sits between a label and its control must match for inputs and selects. */
 const captionGap = () => {
 	const css = readFileSync(CSS, "utf8");
@@ -171,6 +190,11 @@ describe("tool layout contract", () => {
 	it("keeps the caption margin off a field that shares a row with a button", () => {
 		const violations = sourceFiles().flatMap((file) => rowFieldViolations(file, readFileSync(file, "utf8").split("\n")));
 		expect(violations, `Use rowFieldClassName for a field beside a button, so the two sit level:\n${violations.join("\n")}`).toEqual([]);
+	});
+
+	it("keeps anything beside a Copy button at Copy's height", () => {
+		const violations = sourceFiles().flatMap((file) => copyRowViolations(file, readFileSync(file, "utf8").split("\n")));
+		expect(violations, `Copy is 34px tall: use smallActionClassName or smallPrimaryActionClassName beside it:\n${violations.join("\n")}`).toEqual([]);
 	});
 
 	it("gives every slider the brand accent", () => {

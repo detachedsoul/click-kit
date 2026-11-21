@@ -6,7 +6,7 @@ import { FileField } from "@/features/image-tools/image-file-shared";
 import { cameraNote, decodeSource, openCamera, readImageFile, setTorch, supportsTorch, type Raw } from "@/features/image-tools/scan-decoder";
 import { formatName, HISTORY_KEY, makeScan, recordScan, reviveScans, scanWhen, shorten, webUrlOf, type Scan, type ScanSource } from "@/features/image-tools/scan-utils";
 import { useStoredState } from "@/features/productivity-tools/stored-state";
-import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, SegmentedControl, smallActionClassName, smallPrimaryActionClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { CopyTextButton } from "@/features/text-tools/text-tool-shared";
 
 type Source = "camera" | "image";
@@ -220,8 +220,8 @@ export const BarcodeScanner = () => {
 					<div className="flex flex-wrap items-center gap-2">
 						<CopyTextButton text={latest.value} />
 						{latestUrl ? (
-							<a className={primaryButtonClassName} href={latestUrl} rel="noopener noreferrer" target="_blank">
-								<ExternalLink aria-hidden="true" className="mr-1.5" size={13} /> Open link
+							<a className={smallPrimaryActionClassName} href={latestUrl} rel="noopener noreferrer" target="_blank">
+								<ExternalLink aria-hidden="true" size={13} /> Open link
 							</a>
 						) : null}
 						<span className="text-xs text-muted">{latestUrl ? "Copy the value, or open the link in a new tab." : latest.detail}</span>
@@ -253,7 +253,7 @@ export const BarcodeScanner = () => {
 										</div>
 										<CopyTextButton text={scan.value} />
 										{url ? (
-											<a className={`${buttonClassName} inline-flex items-center border-line bg-surface text-ink hover:border-[#5f6259]`} href={url} rel="noopener noreferrer" target="_blank">
+											<a className={smallActionClassName} href={url} rel="noopener noreferrer" target="_blank">
 												Open
 											</a>
 										) : null}

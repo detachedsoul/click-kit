@@ -13,6 +13,7 @@ import {
 	hintClassName,
 	labelClassName,
 	primaryButtonClassName,
+	smallPrimaryActionClassName,
 } from "@/features/developer-tools/tool-ui";
 
 type Mode = "uuid" | "ulid" | "nanoid";
@@ -170,7 +171,7 @@ export const IdToolkitTool = () => {
 						</label>
 					</div>
 					<div className="flex flex-wrap items-center gap-3">
-						<button className={primaryButtonClassName} type="button" onClick={() => generate("nanoid")}>
+						<button className={smallPrimaryActionClassName} type="button" onClick={() => generate("nanoid")}>
 							Generate new
 						</button>
 						<CopyTextButton text={freshNano || nanoResult.value} />
