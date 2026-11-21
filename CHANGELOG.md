@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **productivity** — add a world clock and time finder ([750eff2](https://github.com/detachedsoul/click-kit/commit/750eff2))
 - **productivity** — add a smart packing list ([561865e](https://github.com/detachedsoul/click-kit/commit/561865e))
 - **image** — add a barcode and qr scanner ([0036973](https://github.com/detachedsoul/click-kit/commit/0036973))
 - **productivity** — add a typing speed tester ([f47f954](https://github.com/detachedsoul/click-kit/commit/f47f954))
