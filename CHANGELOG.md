@@ -20,6 +20,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
+- **converters** — prevent Word title overlap and crowding ([b7c3660](https://github.com/detachedsoul/click-kit/commit/b7c3660))
 - **converters** — honor Word line spacing and wrapping ([347ee83](https://github.com/detachedsoul/click-kit/commit/347ee83))
 - **changelog** — include audio visualizer in release notes ([346558e](https://github.com/detachedsoul/click-kit/commit/346558e))
 - **converters** — preserve Word paragraph line spacing ([a369f74](https://github.com/detachedsoul/click-kit/commit/a369f74))
@@ -36,6 +37,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
+- **changelog** — record Word rendering fix ([241da4c](https://github.com/detachedsoul/click-kit/commit/241da4c))
 - **changelog** — regenerate release notes ([500a9f1](https://github.com/detachedsoul/click-kit/commit/500a9f1))
 - **changelog** — regenerate release notes ([014c65c](https://github.com/detachedsoul/click-kit/commit/014c65c))
 - **changelog** — regenerate release notes ([1142421](https://github.com/detachedsoul/click-kit/commit/1142421))
