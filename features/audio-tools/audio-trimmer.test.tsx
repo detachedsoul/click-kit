@@ -89,6 +89,37 @@ describe("audio trimmer", () => {
 		expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled();
 	});
 
+	it("restarts an active preview from the new start when either trim point changes, then stops at the end", async () => {
+		const { container, user } = await upload();
+		const audio = container.querySelector("audio") as HTMLAudioElement;
+		let paused = true;
+		let currentTime = 0;
+		Object.defineProperty(audio, "paused", { configurable: true, get: () => paused });
+		Object.defineProperty(audio, "currentTime", { configurable: true, get: () => currentTime, set: (value: number) => { currentTime = value; } });
+		vi.mocked(HTMLMediaElement.prototype.pause).mockImplementation(function (this: HTMLMediaElement) {
+			if (this === audio) paused = true;
+		});
+		vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (this: HTMLMediaElement) {
+			if (this === audio) paused = false;
+			return Promise.resolve();
+		});
+
+		await user.click(screen.getByRole("button", { name: /Preview selection/u }));
+		fireEvent.loadedMetadata(audio);
+		await waitFor(() => expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce());
+		fireEvent.change(screen.getByLabelText(/Start time/u), { target: { value: "0.5" } });
+		await waitFor(() => expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2));
+		expect(currentTime).toBe(0.5);
+		expect(paused).toBe(false);
+		fireEvent.change(screen.getByLabelText(/End time/u), { target: { value: "1.25" } });
+		await waitFor(() => expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(3));
+		expect(currentTime).toBe(0.5);
+		currentTime = 1.5;
+		fireEvent.timeUpdate(audio);
+		expect(currentTime).toBe(1.25);
+		expect(paused).toBe(true);
+	});
+
 	it("tells the user when the browser cannot decode the chosen file", async () => {
 		decodeAudioData.mockRejectedValueOnce(new Error("unsupported codec"));
 		const user = userEvent.setup();

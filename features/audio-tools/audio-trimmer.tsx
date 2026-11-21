@@ -72,6 +72,23 @@ export const AudioTrimmer = () => {
 		setPlaying(false);
 	};
 
+	const restartAudioSelection = (range: { start: number; end: number }) => {
+		const audio = audioRef.current;
+		if (!audio || audio.paused) return;
+		audio.pause();
+		try {
+			audio.currentTime = range.start;
+			setCurrent(range.start);
+			void audio.play().then(() => setPlaying(true)).catch(() => {
+				setPlaying(false);
+				setError("This browser could not play the selected audio section.");
+			});
+		} catch {
+			setPlaying(false);
+			setError("This browser could not seek to the selected start point.");
+		}
+	};
+
 	const loadFile = async (nextFile: File | null) => {
 		if (!nextFile) return;
 		try {
@@ -122,6 +139,8 @@ export const AudioTrimmer = () => {
 		setStart(range.start);
 		setEnd(range.end);
 		setExported(null);
+		setError("");
+		restartAudioSelection(range);
 	};
 
 	const updateEnd = (value: number) => {
@@ -130,6 +149,8 @@ export const AudioTrimmer = () => {
 		setStart(range.start);
 		setEnd(range.end);
 		setExported(null);
+		setError("");
+		restartAudioSelection(range);
 	};
 
 	const playSelection = () => {
@@ -247,13 +268,15 @@ export const AudioTrimmer = () => {
 						className="sr-only"
 						onEnded={() => { setCurrent(end); setPlaying(false); }}
 						onPause={() => setPlaying(false)}
-						onTimeUpdate={(event) => {
-							const time = event.currentTarget.currentTime;
-							setCurrent(time);
-							if (time >= end) {
-								event.currentTarget.pause();
-								setPlaying(false);
-							}
+							onTimeUpdate={(event) => {
+							const audio = event.currentTarget;
+						const time = audio.currentTime;
+						if (time >= end) {
+							audio.currentTime = end;
+							setCurrent(end);
+							audio.pause();
+							setPlaying(false);
+						} else setCurrent(time);
 						}}
 						preload="metadata"
 						ref={audioRef}

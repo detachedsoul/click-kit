@@ -45,7 +45,11 @@ const loadVideo = async () => {
 	Object.defineProperty(video, "duration", { configurable: true, value: 10 });
 	Object.defineProperty(video, "readyState", { configurable: true, value: 2 });
 	let playhead = 0;
-	Object.defineProperty(video, "currentTime", { configurable: true, get: () => playhead, set: (value: number) => { playhead = value; } });
+	let paused = true;
+	Object.defineProperty(video, "currentTime", { configurable: true, get: () => playhead, set: (value: number) => { playhead = value; queueMicrotask(() => fireEvent.seeked(video)); } });
+	Object.defineProperty(video, "paused", { configurable: true, get: () => paused });
+	vi.spyOn(video, "pause").mockImplementation(() => { paused = true; });
+	vi.spyOn(video, "play").mockImplementation(() => { paused = false; return Promise.resolve(); });
 	fireEvent.loadedMetadata(video);
 	return { user, video };
 };
@@ -62,6 +66,33 @@ describe("video trimmer", () => {
 		expect(start).toHaveProperty("value", "2.25");
 		expect(end).toHaveProperty("value", "8");
 		expect(screen.getByText(/Selected clip: 0:05.75/u)).toBeTruthy();
+	});
+
+	it("restarts active playback from the selected start when either trim point changes", async () => {
+		const { user, video } = await loadVideo();
+		await user.click(screen.getByRole("button", { name: "Preview selected section" }));
+		await vi.waitFor(() => expect(video.play).toHaveBeenCalledOnce());
+		fireEvent.change(screen.getByRole("slider", { name: /Selection start/u }), { target: { value: "2" } });
+		await vi.waitFor(() => expect(video.play).toHaveBeenCalledTimes(2));
+		expect(video.currentTime).toBe(2);
+		expect(video.paused).toBe(false);
+		fireEvent.change(screen.getByRole("slider", { name: /Selection end/u }), { target: { value: "8" } });
+		await vi.waitFor(() => expect(video.play).toHaveBeenCalledTimes(3));
+		expect(video.currentTime).toBe(2);
+		expect(video.paused).toBe(false);
+	});
+
+	it("clamps playback at a selected end and will not resume past it with the native play control", async () => {
+		const { video } = await loadVideo();
+		fireEvent.change(screen.getByRole("slider", { name: /Selection end/u }), { target: { value: "8" } });
+		video.currentTime = 8.4;
+		fireEvent.timeUpdate(video);
+		expect(video.currentTime).toBe(8);
+		expect(video.paused).toBe(true);
+		await video.play();
+		fireEvent.play(video);
+		expect(video.paused).toBe(true);
+		expect(video.currentTime).toBe(8);
 	});
 
 	it("trims the selected time range in the FFmpeg worker and provides an MP4 download", async () => {

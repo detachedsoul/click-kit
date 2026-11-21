@@ -32,6 +32,7 @@ export const VideoTrimmer = () => {
 	const ffmpegRef = useRef<FfmpegInstance | null>(null);
 	const runtimePromiseRef = useRef<Promise<void> | null>(null);
 	const requestRef = useRef(0);
+	const playbackRequestRef = useRef(0);
 	const [file, setFile] = useState<File | null>(null);
 	const [duration, setDuration] = useState(0);
 	const [start, setStart] = useState(0);
@@ -61,6 +62,7 @@ export const VideoTrimmer = () => {
 			setError(caught instanceof Error ? caught.message : "Choose a supported video file.");
 			return;
 		}
+		playbackRequestRef.current += 1;
 		videoRef.current?.pause();
 		setFile(nextFile);
 		setDuration(0);
@@ -85,12 +87,43 @@ export const VideoTrimmer = () => {
 		setError("");
 	};
 
+	const playFromSelectionStart = (time = start) => {
+		const video = videoRef.current;
+		if (!video) return;
+		const request = playbackRequestRef.current + 1;
+		playbackRequestRef.current = request;
+		setError("");
+		video.pause();
+		const begin = () => {
+			if (request !== playbackRequestRef.current || videoRef.current !== video) return;
+			void video.play().catch(() => setError("This browser could not play the selected section."));
+		};
+		if (Math.abs(video.currentTime - time) < 0.02 && video.readyState >= 2) {
+			begin();
+			return;
+		}
+		video.addEventListener("seeked", begin, { once: true });
+		try {
+			video.currentTime = time;
+		} catch {
+			video.removeEventListener("seeked", begin);
+			setError("This browser could not seek to the selected start point.");
+		}
+	};
+
+	const restartVideoIfPlaying = (range: { start: number; end: number }) => {
+		if (!videoRef.current || videoRef.current.paused) return;
+		playFromSelectionStart(range.start);
+	};
+
 	const setStartPoint = (value: number) => {
 		if (!duration) return;
 		const range = clampVideoTrimRange(duration, value, end);
 		setStart(range.start);
 		setEnd(range.end);
 		setOutput(null);
+		setError("");
+		restartVideoIfPlaying(range);
 	};
 
 	const setEndPoint = (value: number) => {
@@ -99,27 +132,13 @@ export const VideoTrimmer = () => {
 		setStart(range.start);
 		setEnd(range.end);
 		setOutput(null);
+		setError("");
+		restartVideoIfPlaying(range);
 	};
 
-	const previewSelection = async () => {
-		const video = videoRef.current;
-		if (!video || !duration) return;
-		setError("");
-		video.pause();
-		const playFromStart = () => {
-			if (!videoRef.current) return;
-			void video.play().catch(() => setError("This browser could not play the selected section."));
-		};
-		if (Math.abs(video.currentTime - start) < 0.02 && video.readyState >= 2) playFromStart();
-		else {
-			video.addEventListener("seeked", playFromStart, { once: true });
-			try {
-				video.currentTime = start;
-			} catch {
-				video.removeEventListener("seeked", playFromStart);
-				setError("This browser could not seek to the selected start point.");
-			}
-		}
+	const previewSelection = () => {
+		if (!videoRef.current || !duration) return;
+		playFromSelectionStart(start);
 	};
 
 	const getFFmpegConstructor = async () => {
@@ -232,12 +251,24 @@ export const VideoTrimmer = () => {
 							onError={() => setError("This browser could not preview that video. Try an MP4 or WebM encoded with a browser-supported codec.")}
 							onLoadedMetadata={onMetadata}
 							onDurationChange={onMetadata}
+							onPlay={() => {
+								const video = videoRef.current;
+								if (!video) return;
+								if (video.currentTime >= end && end < duration) {
+									video.pause();
+									video.currentTime = end;
+									setCurrent(end);
+								} else if (video.currentTime < start) video.currentTime = start;
+							}}
 							onTimeUpdate={() => {
 								const video = videoRef.current;
-							if (!video) return;
-							setCurrent(video.currentTime);
-							if (!video.paused && video.currentTime >= end) video.pause();
-						}}
+								if (!video) return;
+								if (video.currentTime >= end) {
+									video.currentTime = end;
+									setCurrent(end);
+									video.pause();
+								} else setCurrent(video.currentTime);
+							}}
 							onPause={() => setCurrent(videoRef.current?.currentTime ?? 0)}
 						/>
 						{duration > 0 ? (
