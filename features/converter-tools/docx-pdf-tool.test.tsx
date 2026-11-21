@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { PDFDocument } from "pdf-lib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DocxPdfTool } from "@/features/converter-tools/docx-pdf-tool";
+import { readZipFile } from "@/features/converter-tools/zip-reader";
 import { writeZip } from "@/features/converter-tools/zip-write";
 
 const mocks = vi.hoisted(() => ({ renderAsync: vi.fn(), html2canvas: vi.fn() }));
@@ -55,7 +56,7 @@ afterEach(() => {
 });
 
 const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
-const docx = (body = "<w:p><w:r><w:t>Quarterly report</w:t></w:r></w:p>") => {
+const docx = (body = '<w:p><w:pPr><w:spacing w:line="240"/></w:pPr><w:r><w:t>Quarterly report</w:t></w:r></w:p>') => {
 	const bytes = writeZip([
 		{ data: `<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="${W}"><w:body>${body}<w:sectPr/></w:body></w:document>`, name: "word/document.xml" },
 	]);
@@ -83,6 +84,8 @@ describe("Word to PDF tool", () => {
 		expect(Math.round(pdf.getPage(1).getSize().width)).toBe(792);
 		expect(Math.round(pdf.getPage(1).getSize().height)).toBe(612);
 		expect(mocks.renderAsync).toHaveBeenCalledWith(expect.any(ArrayBuffer), expect.any(HTMLElement), expect.any(HTMLElement), expect.objectContaining({ breakPages: true, ignoreFonts: false, renderHeaders: true }));
+		const renderedDocx = new Uint8Array(mocks.renderAsync.mock.calls[0][0] as ArrayBuffer);
+		expect(await readZipFile(renderedDocx, "word/document.xml")).toContain('w:lineRule="auto"');
 		expect(mocks.html2canvas).toHaveBeenCalledTimes(2);
 		expect(mocks.html2canvas.mock.calls[0][1]).toMatchObject({ backgroundColor: "#ffffff", scale: 3, useCORS: true });
 		const sourceParagraph = mocks.html2canvas.mock.calls[0][0].querySelector("p");

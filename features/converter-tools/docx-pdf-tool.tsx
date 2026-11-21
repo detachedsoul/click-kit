@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { buttonClassName, ErrorNote, hintClassName, primaryButtonClassName, SegmentedControl, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { describeBytes, FileDownloadLink, FileField, useObjectUrl } from "@/features/image-tools/image-file-shared";
+import { normalizeDocxLineSpacing } from "@/features/converter-tools/docx-render-fixes";
 import { rasterPagesToPdf, type RasterPage } from "@/features/converter-tools/word-pdf-visual";
 import { docxToPdfTextOnly } from "@/features/converter-tools/word-pdf";
 
@@ -59,9 +60,10 @@ export const DocxPdfTool = () => {
 			await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
 			const { renderAsync } = await import("docx-preview");
 			const html2canvas = (await import("html2canvas")).default;
+			const renderBytes = await normalizeDocxLineSpacing(bytes);
 			renderRef.current.replaceChildren();
 			stylesRef.current.replaceChildren();
-			await renderAsync(bytes.slice().buffer, renderRef.current, stylesRef.current, {
+			await renderAsync(renderBytes.slice().buffer, renderRef.current, stylesRef.current, {
 				breakPages: true,
 				className: "docx",
 				ignoreFonts: false,
@@ -74,6 +76,9 @@ export const DocxPdfTool = () => {
 				renderHeaders: true,
 				useBase64URL: true,
 			});
+			const wordWrappingRules = document.createElement("style");
+			wordWrappingRules.textContent = `.docx-wrapper .docx p, .docx-wrapper .docx li, .docx-wrapper .docx td, .docx-wrapper .docx th { word-break: normal !important; overflow-wrap: break-word !important; hyphens: manual !important; }`;
+			stylesRef.current.append(wordWrappingRules);
 			await waitForImagesAndFonts(renderRef.current);
 			const pages = Array.from(renderRef.current.querySelectorAll<HTMLElement>(".docx-wrapper > section.docx"));
 			if (!pages.length) throw new Error("The Word file did not contain any pages the browser could render.");
