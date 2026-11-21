@@ -81,6 +81,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "028b601",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "image",
+              "summary": "style OCR option and remove implementation note",
+              "group": "Fixed"
+            },
+            {
               "hash": "b7c3660",
               "date": "2026-11-21",
               "type": "fix",
