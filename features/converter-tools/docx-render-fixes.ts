@@ -37,13 +37,13 @@ export const normalizeDocxLineSpacing = async (bytes: Uint8Array) => {
 /** Keep collapsed table rules away from cell text and the paragraphs before and after each grid. */
 export const fixDocxTableLayout = (root: HTMLElement) => {
 	for (const table of root.querySelectorAll<HTMLElement>("table")) {
-		table.style.setProperty("margin-top", "0.2em", "important");
-		table.style.setProperty("margin-bottom", "0.2em", "important");
+		table.style.setProperty("margin-top", "0.6em", "important");
+		table.style.setProperty("margin-bottom", "0.4em", "important");
 		for (const cell of table.querySelectorAll<HTMLElement>("td, th")) {
-			cell.style.setProperty("padding-top", "0.18em", "important");
-			cell.style.setProperty("padding-bottom", "0.18em", "important");
-			cell.style.setProperty("padding-left", "0.2em", "important");
-			cell.style.setProperty("padding-right", "0.2em", "important");
+			cell.style.setProperty("padding-top", "0.5em", "important");
+			cell.style.setProperty("padding-bottom", "0.5em", "important");
+			cell.style.setProperty("padding-left", "0.25em", "important");
+			cell.style.setProperty("padding-right", "0.25em", "important");
 		}
 	}
 };
