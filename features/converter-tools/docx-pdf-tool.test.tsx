@@ -85,10 +85,14 @@ describe("Word to PDF tool", () => {
 		expect(mocks.renderAsync).toHaveBeenCalledWith(expect.any(ArrayBuffer), expect.any(HTMLElement), expect.any(HTMLElement), expect.objectContaining({ breakPages: true, ignoreFonts: false, renderHeaders: true }));
 		expect(mocks.html2canvas).toHaveBeenCalledTimes(2);
 		expect(mocks.html2canvas.mock.calls[0][1]).toMatchObject({ backgroundColor: "#ffffff", scale: 3, useCORS: true });
+		const sourceParagraph = mocks.html2canvas.mock.calls[0][0].querySelector("p");
+		if (!sourceParagraph) throw new Error("The fixture needs a paragraph to test line spacing.");
+		sourceParagraph.style.lineHeight = "28px";
 		const clone = document.implementation.createHTMLDocument();
-		clone.body.innerHTML = '<section id="docx-render-preview" style="max-height: 480px; overflow: auto"><section class="docx"></section></section>';
+		clone.body.innerHTML = '<section id="docx-render-preview" style="max-height: 480px; overflow: auto"><div class="docx-wrapper"><section class="docx"><p>Source page content</p></section></div></section>';
 		mocks.html2canvas.mock.calls[0][1].onclone(clone, clone.body);
 		expect(clone.getElementById("docx-render-preview")?.getAttribute("style")).toContain("overflow: visible");
+		expect(clone.querySelector(".docx p")?.getAttribute("style")).toContain("line-height: 28px");
 		expect(mocks.html2canvas.mock.calls[0][0].querySelector("img")?.getAttribute("alt")).toBe("Embedded document picture");
 		expect(screen.getByText(/not selectable or searchable/u)).toBeTruthy();
 	});

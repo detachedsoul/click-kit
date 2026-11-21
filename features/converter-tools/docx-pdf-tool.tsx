@@ -96,6 +96,20 @@ export const DocxPdfTool = () => {
 								preview.style.maxHeight = "none";
 								preview.style.overflow = "visible";
 							}
+							// Convert Word's calculated line spacing to resolved browser pixel values
+							// before html2canvas rasterizes it. This avoids losing calc/point-based
+							// line heights in the PDF while keeping the browser-rendered spacing.
+							const clonedPage = clonedDocument.querySelectorAll<HTMLElement>(".docx-wrapper > section.docx")[index];
+							if (!clonedPage) return;
+							const sourceParagraphs = page.querySelectorAll<HTMLElement>("p");
+						const clonedParagraphs = clonedPage.querySelectorAll<HTMLElement>("p");
+						for (const [paragraphIndex, sourceParagraph] of sourceParagraphs.entries()) {
+							const resolvedLineHeight = window.getComputedStyle(sourceParagraph).lineHeight;
+							const clonedParagraph = clonedParagraphs[paragraphIndex];
+							if (clonedParagraph && resolvedLineHeight && resolvedLineHeight !== "normal") {
+								clonedParagraph.style.lineHeight = resolvedLineHeight;
+							}
+							}
 						},
 						scale,
 						useCORS: true,
