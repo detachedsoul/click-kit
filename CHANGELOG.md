@@ -6,6 +6,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
+- **audio** — add an in-browser audio trimmer ([a9ff6db](https://github.com/detachedsoul/click-kit/commit/a9ff6db))
 - **productivity** — add a world clock and time finder ([750eff2](https://github.com/detachedsoul/click-kit/commit/750eff2))
 - **productivity** — add a smart packing list ([561865e](https://github.com/detachedsoul/click-kit/commit/561865e))
 
