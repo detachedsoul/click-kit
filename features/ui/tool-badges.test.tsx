@@ -71,12 +71,17 @@ describe("changelog page", () => {
 		expect(document.body.textContent).not.toContain(entries[0].hash);
 	});
 
-	it("lists the tools each release day introduced", () => {
+	it("lists the tools each release day introduced under the actual day", () => {
 		render(<ChangelogPage />);
 		const dated = changelog.releases
 			.flatMap((release) => release.groups.flatMap((group) => group.entries))
 			.map((entry) => entry.date);
 		expect(dated.every((date) => /^\d{4}-\d{2}-\d{2}$/u.test(date))).toBe(true);
+		expect(changelog.releases[0].date).toBe("2026-11-21");
+		expect(changelog.releases[0].groups.flatMap((group) => group.entries).map((entry) => entry.summary)).toEqual([
+			"add a world clock and time finder",
+			"add a smart packing list",
+		]);
 		expect(document.body.textContent).toContain("Release history");
 	});
 });

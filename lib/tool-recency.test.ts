@@ -13,6 +13,8 @@ describe("tool dates", () => {
 
 	it("knows when the newest tools arrived", () => {
 		expect(toolAddedOn("meeting-planner")).toBeTruthy();
+		expect(toolAddedOn("packing-list")).toBe("2026-11-21");
+		expect(toolAddedOn("world-clock")).toBe("2026-11-21");
 		expect(toolAddedOn("word-counter")).toBeNull();
 		expect(TOOL_TRACKING_SINCE).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 	});
