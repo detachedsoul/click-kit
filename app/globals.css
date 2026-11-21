@@ -250,3 +250,38 @@
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/*
+ * Printing a packing list should print the list. The site's own furniture and the controls that
+ * built the list are noise on paper, and anything the tool marks `data-print="hide"` — a Remove
+ * button, a template row — is an action that cannot be taken with a pen.
+ */
+@media print {
+	header,
+	footer,
+	[data-print="hide"] {
+		display: none !important;
+	}
+
+	body {
+		background: #fff;
+	}
+
+	[data-print="sheet"] {
+		border: 0;
+		background: #fff;
+		padding: 0;
+	}
+
+	[data-print="sheet"] li {
+		break-inside: avoid;
+	}
+
+	/* The styled checkbox draws its tick with a background image, which browsers leave off the
+	   page unless asked; the native control prints what it means. */
+	[data-print="sheet"] .checkbox-input {
+		appearance: auto;
+		-webkit-appearance: auto;
+		background: none;
+	}
+}

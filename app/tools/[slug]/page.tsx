@@ -121,6 +121,7 @@ import { SubscriptionTracker } from "@/features/productivity-tools/subscription-
 import { ReadingList } from "@/features/productivity-tools/reading-list";
 import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
 import { TypingTester } from "@/features/productivity-tools/typing-tool";
+import { PackingList } from "@/features/productivity-tools/packing-list";
 import { MealPlanner } from "@/features/productivity-tools/meal-planner";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -279,6 +280,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"team-splitter": TeamTool,
 	"meeting-planner": MeetingPlanner,
 	"typing-speed": TypingTester,
+	"packing-list": PackingList,
 	"pace-calculator": PaceCalculator,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
