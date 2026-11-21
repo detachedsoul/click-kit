@@ -52,6 +52,14 @@
           "group": "Fixed",
           "entries": [
             {
+              "hash": "48c9e99",
+              "date": "2026-11-21",
+              "type": "fix",
+              "scope": "converters",
+              "summary": "preserve Word page appearance in PDF",
+              "group": "Fixed"
+            },
+            {
               "hash": "0a35d06",
               "date": "2026-11-21",
               "type": "fix",
@@ -104,6 +112,14 @@
         {
           "group": "Maintenance",
           "entries": [
+            {
+              "hash": "1142421",
+              "date": "2026-11-21",
+              "type": "chore",
+              "scope": "changelog",
+              "summary": "regenerate release notes",
+              "group": "Maintenance"
+            },
             {
               "hash": "6865432",
               "date": "2026-11-21",
