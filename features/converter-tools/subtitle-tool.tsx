@@ -43,7 +43,7 @@ export const SubtitleConverterTool = () => {
 	return (
 		<ToolPanel>
 			<TextAreaField
-				hint={`Looks like ${detected === "vtt" ? "WebVTT" : "SubRip (SRT)"}. Both formats read the same way, so you can paste either.`}
+				hint={`Looks like ${detected === "vtt" ? "WebVTT" : "SubRip (SRT)"}. Cue text and timing convert; cue IDs, VTT positioning/styling, and file-level metadata are not preserved.`}
 				id="subtitle-input"
 				label="Subtitles"
 				onChange={setSource}

@@ -71,6 +71,23 @@ describe("pdf merger", () => {
 		expect(document.body.textContent).toContain("Pages in total3");
 	});
 
+	it("adds separately chosen PDFs instead of replacing the earlier selection", async () => {
+		const user = userEvent.setup();
+		render(<PdfMergeTool />);
+		await upload(user, [await makePdf(1, "first.pdf")]);
+		expect(await screen.findByText("first.pdf")).toBeTruthy();
+		await upload(user, [await makePdf(1, "second.pdf")]);
+		await waitFor(() => expect(screen.getByRole("button", { name: "Merge PDFs" })).toHaveProperty("disabled", false));
+		expect(screen.getByText("first.pdf")).toBeTruthy();
+		expect(screen.getByText("second.pdf")).toBeTruthy();
+		expect(document.body.textContent).toContain("Files2");
+		await user.click(screen.getByRole("button", { name: "Merge PDFs" }));
+		const link = await screen.findByRole("link", { name: /Download first-merged\.pdf/u });
+		const response = await fetch(link.getAttribute("href") ?? "");
+		const merged = await PDFDocument.load(new Uint8Array(await response.arrayBuffer()));
+		expect(merged.getPageCount()).toBe(2);
+	});
+
 	it("merges in list order and downloads a real PDF", async () => {
 		const user = userEvent.setup();
 		render(<PdfMergeTool />);

@@ -60,7 +60,7 @@ export const MarkdownToHtmlTool = () => {
 	return (
 		<ToolPanel>
 			<TextAreaField
-				hint="Paste Markdown and get HTML back. Everything is escaped first, so a stray <script> tag comes out as text. Links to javascript: or data: URLs are left as plain text."
+				hint="Paste Markdown and get HTML for the supported Markdown syntax. This is a semantic text conversion, not a visual copy of the source; unsupported extensions remain text. Everything is escaped first, and unsafe javascript: or data: links are left as plain text."
 				id="markdown-html-input"
 				label="Markdown input"
 				onChange={setSource}

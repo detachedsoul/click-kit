@@ -7,16 +7,49 @@ export const ToolPanel = ({ children }: { children: ReactNode }) => (
 	<div className="flex flex-col gap-6 p-7 max-[760px]:gap-[18px] max-[760px]:p-[18px] max-[520px]:gap-4 max-[520px]:p-4">{children}</div>
 );
 
-export const fieldClassName =
-	"mt-2 block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e] max-[520px]:h-12";
+/**
+ * The box every field shares. Split out because a field and a button on one line have to agree
+ * about their height, and because the caption margin a stacked field carries cannot be cancelled
+ * by adding `mt-0` beside it — both are margin classes, and the stylesheet decides which wins,
+ * not the order they are written in.
+ */
+const fieldParts = "block h-11 w-full border border-field bg-surface px-3 text-sm text-ink outline-2 outline-offset-2 outline-transparent focus:border-accent focus:outline-accent disabled:cursor-not-allowed disabled:border-[#e2dfd5] disabled:bg-[#f4f3ef] disabled:text-[#a7a69e] max-[520px]:h-12";
+
+export const fieldClassName = `mt-2 ${fieldParts}`;
+
+/** A field in a row that puts a button beside it: no caption margin, and the same height as the button. */
+export const rowFieldClassName = `${fieldParts} min-w-0 flex-1`;
 export const selectClassName = "select-input";
 export const labelClassName = "block text-xs font-semibold text-[#3c3d37]";
 export const hintClassName = "m-0 text-xs leading-relaxed text-muted";
 export const errorClassName = "m-0 whitespace-pre-wrap break-words text-xs text-[#8a3f30]";
+/**
+ * Buttons are flex rows, not inline blocks: an icon and a label written as
+ * `<Icon /> Start camera` are two items in a flex container, and the whitespace between them is
+ * not rendered — so without a gap the icon sits flush against the word.
+ */
 export const buttonClassName =
-	"min-h-9 cursor-pointer border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-export const primaryButtonClassName =
-	"inline-flex min-h-10 cursor-pointer items-center justify-center border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
+	"inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
+/**
+ * The small action that stands beside <CopyTextButton>. Copy is 34 pixels tall and sets its label
+ * at 11 pixels; a full-size button next to it is four pixels taller and looks like a mistake when
+ * the two sit in one row, which is where they always sit.
+ */
+const smallActionParts = "inline-flex min-h-[34px] cursor-pointer items-center justify-center gap-1.5 px-2.5 text-[11px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
+/** A secondary action at Copy's height: a link or a button beside it. */
+export const smallActionClassName = `${smallActionParts} border border-line bg-surface text-[#54554e] hover:border-[#5f6259] hover:text-ink`;
+
+/** The main action of a panel at Copy's height, for the row where Copy stands first. */
+export const smallPrimaryActionClassName = `${smallActionParts} border border-forest bg-forest text-white hover:bg-[#354d44]`;
+
+const primaryParts = "cursor-pointer items-center justify-center gap-1.5 border border-forest bg-forest px-4 text-xs font-medium text-white hover:bg-[#354d44] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
+
+export const primaryButtonClassName = `inline-flex min-h-10 ${primaryParts}`;
+
+/** The primary button at field height, for a row where a field stands beside it. */
+export const rowButtonClassName = `inline-flex min-h-11 max-[520px]:min-h-12 ${primaryParts}`;
 
 /**
  * One button in a row of mutually exclusive choices. Built from scratch rather than by

@@ -64,7 +64,7 @@ export const EpubTool = () => {
 		<ToolPanel>
 			<FileField
 				accept=".epub,application/epub+zip"
-				hint="The book is unpacked in this tab. Chapters come out in reading order, with their own headings, paragraphs, and emphasis kept."
+				hint="Chapter text comes out in reading order with headings and emphasis. Page design, CSS, fonts, and embedded image files are not bundled into the Markdown, so this is a text conversion, not a visual copy."
 				id="epub-file"
 				label="EPUB book"
 				onFile={(chosen) => {

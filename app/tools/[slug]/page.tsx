@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { AudioTrimmer } from "@/features/audio-tools/audio-trimmer";
+import { AudioVisualizer } from "@/features/audio-tools/audio-visualizer";
+import { VideoFrameExtractor } from "@/features/video-tools/video-frame-extractor";
+import { VideoTrimmer } from "@/features/video-tools/video-trimmer";
 import Shell from "@/components/shell";
 import ToolCard from "@/components/tool-card";
 import WordCounter from "@/features/text-tools/word-counter";
@@ -57,6 +61,9 @@ import { FrequencyTool } from "@/features/text-tools/frequency-tool";
 import { WrapTool } from "@/features/text-tools/wrap-tool";
 import { CipherTool } from "@/features/text-tools/cipher-tool";
 import { ImageCompressorTool, ImageResizerTool, PasswordGeneratorTool, PomodoroTimerTool, QrGeneratorTool, RandomPickerTool } from "@/features/productivity-tools/productivity-components";
+import { BarcodeScanner } from "@/features/image-tools/barcode-scanner";
+import { DuplicateFileFinder } from "@/features/image-tools/duplicate-file-finder";
+import { ImageToText } from "@/features/image-tools/image-to-text";
 import { CropTool } from "@/features/image-tools/crop-tool";
 import { PdfMergeTool } from "@/features/pdf-tools/merge-tool";
 import { PdfSplitTool } from "@/features/pdf-tools/split-tool";
@@ -119,6 +126,9 @@ import { MeetingCostMeter } from "@/features/productivity-tools/meeting-cost";
 import { SubscriptionTracker } from "@/features/productivity-tools/subscription-tracker";
 import { ReadingList } from "@/features/productivity-tools/reading-list";
 import { HabitTracker } from "@/features/productivity-tools/habit-tracker";
+import { TypingTester } from "@/features/productivity-tools/typing-tool";
+import { PackingList } from "@/features/productivity-tools/packing-list";
+import { WorldClock } from "@/features/productivity-tools/world-clock";
 import { MealPlanner } from "@/features/productivity-tools/meal-planner";
 import { MeetingPlanner } from "@/features/productivity-tools/meeting-planner";
 import { PaceCalculator } from "@/features/calculators/pace-calculator";
@@ -243,7 +253,14 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"word-frequency": FrequencyTool,
 	"text-wrapper": WrapTool,
 	"text-cipher": CipherTool,
+	"barcode-scanner": BarcodeScanner,
+	"duplicate-file-finder": DuplicateFileFinder,
+	"image-to-text": ImageToText,
 	"qr-generator": QrGeneratorTool,
+	"audio-trimmer": AudioTrimmer,
+	"audio-visualizer": AudioVisualizer,
+	"video-frame-extractor": VideoFrameExtractor,
+	"video-trimmer": VideoTrimmer,
 	"image-compressor": ImageCompressorTool,
 	"image-resizer": ImageResizerTool,
 	"image-cropper": CropTool,
@@ -275,6 +292,9 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"recipe-scaler": RecipeTool,
 	"team-splitter": TeamTool,
 	"meeting-planner": MeetingPlanner,
+	"typing-speed": TypingTester,
+	"packing-list": PackingList,
+	"world-clock": WorldClock,
 	"pace-calculator": PaceCalculator,
 	"password-generator": PasswordGeneratorTool,
 	"pomodoro-timer": PomodoroTimerTool,
@@ -391,7 +411,7 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 		],
 	};
 
-	return <Shell>
+	return <Shell data-print-page={tool.slug === "packing-list" ? "packing-list" : undefined}>
 		<script dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }} type="application/ld+json" />
 		<header className="py-[45px] pb-[30px] max-[620px]:py-6 max-[620px]:pb-5">
 			<nav className="flex flex-wrap items-center gap-x-[9px] gap-y-1 text-[11px] text-[#5f6259]" aria-label="Breadcrumb"><Link className="hover:text-accent-dark" href="/">Home</Link><span aria-hidden="true">/</span><Link className="hover:text-accent-dark" href={`/category/${category.id}`}>{category.name}</Link><span aria-hidden="true">/</span><span>{tool.name}</span></nav>
@@ -404,7 +424,7 @@ const ToolPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
 			<p className="m-0 max-w-[570px] text-sm leading-[1.65] text-[#60635b]">{tool.description}</p>
 		</header>
 		{tool.status === "available" && AvailableTool
-			? <section className="mb-[90px] mt-1 border border-line border-t-[3px] border-t-forest bg-surface shadow-[0_18px_50px_#29291f0b] max-[620px]:mb-[66px]" aria-label={`${tool.name} tool`}><AvailableTool /></section>
+			? <section className="mb-[90px] mt-1 border border-line border-t-[3px] border-t-forest bg-surface shadow-[0_18px_50px_#29291f0b] max-[620px]:mb-[66px]" aria-label={`${tool.name} tool`} data-print={tool.slug === "packing-list" ? "packing-list" : undefined}><AvailableTool /></section>
 			: <section className="mx-auto mb-[110px] mt-[42px] max-w-[680px] border border-line bg-surface p-[45px_35px] text-center shadow-[0_16px_40px_#322c2009] max-[620px]:mb-[67px] max-[620px]:mt-8 max-[620px]:p-[35px_21px]" aria-labelledby="planned-title">
 				<Icon className="text-accent" size={27} strokeWidth={1.6} aria-hidden="true" />
 				<h2 id="planned-title" className="mb-2.5 mt-[18px] font-serif text-[32px] font-normal leading-[1.05] tracking-[-.02em]">A useful tool is taking shape.</h2>

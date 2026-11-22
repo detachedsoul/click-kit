@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
+import { buttonClassName, choiceButtonClassName, ErrorNote, fieldClassName, hintClassName, labelClassName, primaryButtonClassName, smallActionClassName, StatGrid, ToolPanel } from "@/features/developer-tools/tool-ui";
 import { CopyTextButton } from "@/features/text-tools/text-tool-shared";
 import { todayIso } from "@/features/productivity-tools/local-day";
 import { clearStore, useStoredState } from "@/features/productivity-tools/stored-state";
@@ -155,7 +155,7 @@ export const SubscriptionTracker = () => {
 			<div className="flex flex-wrap items-center gap-3">
 				<CopyTextButton text={subscriptionsAsMarkdown(subscriptions, CURRENCY, today)} />
 				<button
-					className={buttonClassName}
+					className={smallActionClassName}
 					onClick={() => {
 						setSubscriptions([]);
 						clearStore(SUBSCRIPTION_KEY);
