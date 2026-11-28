@@ -9,11 +9,12 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:changelog-sync": "vitest run lib/changelog-sync.test.ts",
     "tool-dates": "node scripts/collect-tool-dates.mjs",
     "changelog": "node scripts/build-changelog.mjs",
     "sync-meta": "npm run tool-dates && npm run changelog",
     "pdf-worker": "node scripts/copy-pdf-worker.mjs",
-    "postinstall": "node scripts/copy-pdf-worker.mjs && node scripts/copy-zxing.mjs && node scripts/copy-ffmpeg-core.mjs",
+    "postinstall": "node scripts/copy-pdf-worker.mjs && node scripts/copy-zxing.mjs && node scripts/copy-ffmpeg-core.mjs && node scripts/install-git-hooks.mjs",
     "prebuild": "node scripts/copy-pdf-worker.mjs && node scripts/copy-zxing.mjs && node scripts/copy-ffmpeg-core.mjs"
   },
   "dependencies": {

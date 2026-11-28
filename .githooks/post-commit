@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+echo "Running the changelog sync test after commit..."
+if npm run test:changelog-sync; then
+  exit 0
+fi
+
+cat >&2 <<'EOF'
+
+The commit was created, but the changelog sync test failed.
+Run `npm run changelog`, commit CHANGELOG.md and lib/changelog.generated.json,
+and rerun `npm run test:changelog-sync` before continuing.
+EOF
+exit 1
