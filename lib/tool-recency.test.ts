@@ -12,10 +12,16 @@ describe("tool dates", () => {
 	});
 
 	it("knows when the newest tools arrived", () => {
+		expect(toolAddedOn("api-tester")).toBe("2026-11-15");
+		expect(toolAddedOn("email-preview")).toBe("2026-11-15");
 		expect(toolAddedOn("meeting-planner")).toBeTruthy();
 		expect(toolAddedOn("packing-list")).toBe("2026-11-21");
 		expect(toolAddedOn("world-clock")).toBe("2026-11-21");
 		expect(toolAddedOn("audio-visualizer")).toBe("2026-11-21");
+		expect(toolAddedOn("subtitle-editor")).toBe("2026-11-15");
+		expect(toolAddedOn("regex-visual-explainer")).toBe("2026-11-15");
+		expect(toolAddedOn("csv-data-profiler")).toBe("2026-11-15");
+		expect(toolAddedOn("browser-capability-tester")).toBe("2026-11-15");
 		expect(toolAddedOn("word-counter")).toBeNull();
 		expect(TOOL_TRACKING_SINCE).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 	});

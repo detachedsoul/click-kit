@@ -47,9 +47,6 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
-- **image** — add a barcode and QR scanner ([0036973](https://github.com/detachedsoul/click-kit/commit/0036973))
-- **productivity** — give the typing test a proper page of text ([bdcbc88](https://github.com/detachedsoul/click-kit/commit/bdcbc88))
-- **productivity** — add a typing speed tester ([f47f954](https://github.com/detachedsoul/click-kit/commit/f47f954))
 - **convert** — add word to pdf and pdf to word ([0f46a2d](https://github.com/detachedsoul/click-kit/commit/0f46a2d))
 - **pdf** — let any mark be dragged anywhere and explain the editor ([2258bb7](https://github.com/detachedsoul/click-kit/commit/2258bb7))
 - **pdf** — restyle a note that is already on the page ([1288542](https://github.com/detachedsoul/click-kit/commit/1288542))
@@ -61,6 +58,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 - **convert** — add html tables to csv ([d81f603](https://github.com/detachedsoul/click-kit/commit/d81f603))
 - **productivity** — add a reading list ([3a3fd77](https://github.com/detachedsoul/click-kit/commit/3a3fd77))
 - **pdf** — add a long-page stitcher and an overlay ([3a3d309](https://github.com/detachedsoul/click-kit/commit/3a3d309))
+- **image** — add a barcode and QR scanner ([0036973](https://github.com/detachedsoul/click-kit/commit/0036973))
+- **productivity** — give the typing test a proper page of text ([bdcbc88](https://github.com/detachedsoul/click-kit/commit/bdcbc88))
+- **productivity** — add a typing speed tester ([f47f954](https://github.com/detachedsoul/click-kit/commit/f47f954))
 
 ### Changed
 
@@ -69,9 +69,9 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Fixed
 
-- **productivity** — make the typing tester say how it works ([7ef1dab](https://github.com/detachedsoul/click-kit/commit/7ef1dab))
 - **ui** — keep every range slider on the brand accent ([91e11b6](https://github.com/detachedsoul/click-kit/commit/91e11b6))
 - **pdf** — type notes straight onto the page and line up the mark buttons ([5527387](https://github.com/detachedsoul/click-kit/commit/5527387))
+- **productivity** — make the typing tester say how it works ([7ef1dab](https://github.com/detachedsoul/click-kit/commit/7ef1dab))
 
 ### Maintenance
 
@@ -283,11 +283,16 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Added
 
-- **image** — add multilingual image text OCR ([5ed8890](https://github.com/detachedsoul/click-kit/commit/5ed8890))
-- **image** — add duplicate file finder ([83512f0](https://github.com/detachedsoul/click-kit/commit/83512f0))
+- **developer** — add csv data profiler ([5657137](https://github.com/detachedsoul/click-kit/commit/5657137))
+- **developer** — add regex visual explainer ([28842af](https://github.com/detachedsoul/click-kit/commit/28842af))
+- **developer** — add html email previewer ([08972ec](https://github.com/detachedsoul/click-kit/commit/08972ec))
+- **developer** — add cors-safe api tester ([51ad7d8](https://github.com/detachedsoul/click-kit/commit/51ad7d8))
+- **converters** — add subtitle editor ([233d5e4](https://github.com/detachedsoul/click-kit/commit/233d5e4))
 - **text-tools** — add local read-aloud tool ([20c23b3](https://github.com/detachedsoul/click-kit/commit/20c23b3))
 - **text-tools** — implement four browser-based text utilities ([69edf6d](https://github.com/detachedsoul/click-kit/commit/69edf6d))
 - **shell** — establish ClickKit foundation and discovery ([528677d](https://github.com/detachedsoul/click-kit/commit/528677d))
+- **image** — add multilingual image text OCR ([5ed8890](https://github.com/detachedsoul/click-kit/commit/5ed8890))
+- **image** — add duplicate file finder ([83512f0](https://github.com/detachedsoul/click-kit/commit/83512f0))
 
 ### Changed
 
@@ -301,7 +306,7 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 ### Maintenance
 
-- **changelog** — enforce generated notes stay in sync ([220280b](https://github.com/detachedsoul/click-kit/commit/220280b))
 - **deps** — use current ESLint release ([3cf4348](https://github.com/detachedsoul/click-kit/commit/3cf4348))
 - **deps** — update packages to current compatible releases ([11c9e68](https://github.com/detachedsoul/click-kit/commit/11c9e68))
 - Initial commit ([ffd55be](https://github.com/detachedsoul/click-kit/commit/ffd55be))
+- **changelog** — enforce generated notes stay in sync ([220280b](https://github.com/detachedsoul/click-kit/commit/220280b))

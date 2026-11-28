@@ -32,6 +32,11 @@ import { SubnetTool } from "@/features/developer-tools/subnet-tool";
 import { ChmodTool } from "@/features/developer-tools/chmod-tool";
 import { IdToolkitTool } from "@/features/developer-tools/id-tool";
 import { CurlTool } from "@/features/developer-tools/curl-tool";
+import { ApiTesterTool } from "@/features/developer-tools/api-tester-tool";
+import { RegexExplainerTool } from "@/features/developer-tools/regex-explainer-tool";
+import { CsvProfileTool } from "@/features/developer-tools/csv-profile-tool";
+import { BrowserCapabilityTool } from "@/features/developer-tools/browser-capability-tool";
+import { EmailPreviewTool } from "@/features/developer-tools/email-preview-tool";
 import { HttpStatusTool } from "@/features/developer-tools/http-status-tool";
 import { NumberBaseTool } from "@/features/developer-tools/number-base-tool";
 import { JsonZodTool } from "@/features/developer-tools/zod-tool";
@@ -92,6 +97,7 @@ import { MarkdownToHtmlTool } from "@/features/converter-tools/markdown-html-too
 import { RtfTool } from "@/features/converter-tools/rtf-tool";
 import { HtmlToMarkdownTool } from "@/features/converter-tools/html-markdown-tool";
 import { SubtitleConverterTool } from "@/features/converter-tools/subtitle-tool";
+import { SubtitleEditorTool } from "@/features/converter-tools/subtitle-editor-tool";
 import { ContactsConverterTool } from "@/features/converter-tools/contacts-tool";
 import { CalendarConverterTool } from "@/features/converter-tools/calendar-tool";
 import { DocxTool } from "@/features/converter-tools/docx-tool";
@@ -198,6 +204,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"base64": Base64Tool,
 	"uuid-generator": UuidGeneratorTool,
 	"regex-tester": RegexTesterTool,
+	"regex-visual-explainer": RegexExplainerTool,
 	"timestamp-converter": TimestampConverterTool,
 	"url-inspector": UrlInspectorTool,
 	"hash-generator": HashGeneratorTool,
@@ -211,6 +218,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"env-validator": EnvValidatorTool,
 	"color-contrast": ColorContrastTool,
 	"csv-json": CsvJsonTool,
+	"csv-data-profiler": CsvProfileTool,
 	"jsonpath-tester": JsonPathTool,
 	"json-schema-validator": JsonSchemaValidatorTool,
 	"file-checksum": FileHashTool,
@@ -225,6 +233,8 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"chmod-calculator": ChmodTool,
 	"id-toolkit": IdToolkitTool,
 	"curl-converter": CurlTool,
+	"api-tester": ApiTesterTool,
+	"email-preview": EmailPreviewTool,
 	"http-status": HttpStatusTool,
 	"number-base": NumberBaseTool,
 	"json-zod": JsonZodTool,
@@ -285,6 +295,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"file-splitter": FileSplitTool,
 	"colour-shades": ShadesTool,
 	"user-agent-parser": UserAgentTool,
+	"browser-capability-tester": BrowserCapabilityTool,
 	"text-chunker": ChunkTool,
 	"post-length": PostLengthTool,
 	"css-shadow": ShadowTool,
@@ -326,6 +337,7 @@ const availableToolComponents: Record<string, ComponentType> = {
 	"markdown-to-html": MarkdownToHtmlTool,
 	"rtf-to-text": RtfTool,
 	"subtitle-converter": SubtitleConverterTool,
+	"subtitle-editor": SubtitleEditorTool,
 	"contacts-converter": ContactsConverterTool,
 	"calendar-converter": CalendarConverterTool,
 	"docx-to-pdf": DocxPdfTool,
