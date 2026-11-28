@@ -1,6 +1,24 @@
 {
   "releases": [
     {
+      "date": "2026-11-28",
+      "groups": [
+        {
+          "group": "Added",
+          "entries": [
+            {
+              "hash": "f60a394",
+              "date": "2026-11-28",
+              "type": "feat",
+              "scope": "developer",
+              "summary": "add browser capability tester",
+              "group": "Added"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "date": "2026-11-21",
       "groups": [
         {
