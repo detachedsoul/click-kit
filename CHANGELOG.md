@@ -8,6 +8,10 @@ Every change to ClickKit, newest first. Generated from git history with `npm run
 
 - **developer** — add browser capability tester ([f60a394](https://github.com/detachedsoul/click-kit/commit/f60a394))
 
+### Maintenance
+
+- **changelog** — check sync after every commit ([e816369](https://github.com/detachedsoul/click-kit/commit/e816369))
+
 ## 21 November 2026
 
 ### Added
